@@ -4,6 +4,7 @@ import { useSampleText } from "../hooks/use-sample-text";
 import Icon from "../assets/concord.png";
 
 import "./app.scss";
+import { Diagram } from "./diagram";
 
 export const App = () => {
   const sampleText = useSampleText();
@@ -11,6 +12,7 @@ export const App = () => {
     <div className="app">
       <img src={Icon}/>
       <Text text={sampleText} />
+      <Diagram />
     </div>
   );
 };
