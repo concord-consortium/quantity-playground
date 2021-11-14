@@ -1,4 +1,4 @@
-import { IAnyComplexType, types } from "mobx-state-tree";
+import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 
 export const InitialNode = types.model({
   nodeType: types.literal("initial"),
@@ -22,6 +22,34 @@ export const OperationNode = types.model({
 });
 
 export const AnyNode = types.union(InitialNode, RelatedNode, OperationNode);
+
+
+export const DQNode = types.model("BasicNode", {
+    id: types.identifier,
+    value: types.maybe(types.number),
+    previous: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode)))
+})
+.views(self => ({
+    get computedValue() {
+        if ( self.previous ){
+            // use of this is recommended in MST docs for referring to a computed property
+            // that is defined in the same views block. 
+            // Using self fails because typescript doesn't know about the newly added 
+            // property on self.
+            return this.previous.computedValue;
+        }
+        return self.value;
+    }
+}))
+.actions(self => ({
+    setPrevious(newPrevious: Instance<IAnyComplexType> | undefined ) {
+        self.previous = newPrevious;
+    }
+}));
+
+export const DQNodeList = types.model("NodeList", {
+    nodes: types.map(DQNode)
+});
 
 // Seems like the way this should work is with references instead of
 // containment.
