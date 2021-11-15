@@ -7,3 +7,8 @@ body {
   font-family: 'Lato', sans-serif;
   user-select: none;
 }
+
+.react-flow__node.selected {
+  border: 1px solid black;
+  border-radius: 5px;
+}
