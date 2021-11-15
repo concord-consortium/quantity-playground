@@ -8,7 +8,7 @@ interface IProps {
   }
   
 const _NodeForm: React.FC<IProps> = ({ node }) => {
-  const onChange = (evt: any) => {
+  const onValueChange = (evt: any) => {
     // This won't handle 0 correctly
     if (!evt.target.value) {
       node.setValue(undefined);
@@ -17,10 +17,24 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     }
   };
 
+  const onUnitChange = (evt: any) => {
+    if (!evt.target.value) {
+      node.setUnit(undefined);
+    } else {
+      node.setUnit(evt.target.value);
+    }
+  };
+
   return (
     <div style={{zIndex: 4, position: "absolute"}}>
-      <label>value:</label>
-      <input value={node.value || ""} onChange={onChange}/>
+      <div>
+        <label>value:</label>
+        <input value={node.value || ""} onChange={onValueChange}/>
+      </div>
+      <div>
+        <label>unit:</label>
+        <input value={node.unit || ""} onChange={onUnitChange}/>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { getUnitConversion } from "./unit-conversion";
 
 export const InitialNode = types.model({
   nodeType: types.literal("initial"),
@@ -23,22 +24,40 @@ export const OperationNode = types.model({
 
 export const AnyNode = types.union(InitialNode, RelatedNode, OperationNode);
 
-
 export const DQNode = types.model("BasicNode", {
     id: types.identifier,
+    unit: types.maybe(types.string),
     value: types.maybe(types.number),
+    // error: types.maybe(types.string),   
     previous: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode)))
 })
 .views(self => ({
+    // previous node values override current node values
     get computedValue() {
         if ( self.previous ){
-            // use of this is recommended in MST docs for referring to a computed property
+            // use of `this` is recommended in MST docs for referring to a computed property
             // that is defined in the same views block. 
             // Using self fails because typescript doesn't know about the newly added 
             // property on self.
+            const convertValue = getUnitConversion(this.previous.computedUnit, this.computedUnit);
+            if ( convertValue ) {
+                // This is a side effect
+                // self.error = undefined;
+                return convertValue(this.previous.computedValue);
+            } 
+            console.error("Error in unit conversion");
+            // This is a side effect
+            // self.error = "Error in unit conversion";
             return this.previous.computedValue;
         }
         return self.value;
+    },
+    // current node units override previous node units
+    get computedUnit() {
+        if ( self.unit ) {
+            return self.unit;
+        }
+        return this.previous?.computedUnit;
     }
 }))
 .actions(self => ({
@@ -47,6 +66,9 @@ export const DQNode = types.model("BasicNode", {
     },
     setValue(newValue?: number) {
         self.value = newValue;
+    },
+    setUnit(newUnit?: string) {
+        self.unit = newUnit;
     }
 }));
 
