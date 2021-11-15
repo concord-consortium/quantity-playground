@@ -44,6 +44,9 @@ export const DQNode = types.model("BasicNode", {
 .actions(self => ({
     setPrevious(newPrevious: Instance<IAnyComplexType> | undefined ) {
         self.previous = newPrevious;
+    },
+    setValue(newValue?: number) {
+        self.value = newValue;
     }
 }));
 

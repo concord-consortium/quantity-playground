@@ -1,7 +1,8 @@
-import { getSnapshot } from "mobx-state-tree";
+import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { addEdge, ArrowHeadType, Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc, removeElements, updateEdge } from "react-flow-renderer";
-import { DQNodeList } from "../models/dq-models";
+import { DQNode, DQNodeList } from "../models/dq-models";
+import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 
 const nodes = DQNodeList.create({
@@ -52,6 +53,7 @@ const nodeTypes = {
 
 export const Diagram = () => {
   const [elements, setElements] = useState(initialElements);
+  const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) =>
@@ -81,13 +83,22 @@ export const Diagram = () => {
 
   };
 
+  const onSelectionChange = (selectedElements: Elements | null) => {
+    if (selectedElements?.[0]?.type === "quantityNode" ) {
+      setSelectedNode(nodes.nodes.get(selectedElements[0].id));
+    }
+  };
+
   return (
     <div style={{ height: 600, width: 800 }}>
         <ReactFlow elements={elements} 
         nodeTypes={nodeTypes} 
         onEdgeUpdate={onEdgeUpdate}
         onConnect={onConnect}
-        onElementsRemove={onElementsRemove}/>
+        onElementsRemove={onElementsRemove}
+        onSelectionChange={onSelectionChange}>
+          { selectedNode && <NodeForm node={selectedNode}/> }
+        </ReactFlow>
     </div>
   );
 };

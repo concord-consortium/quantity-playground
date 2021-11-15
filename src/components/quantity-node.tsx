@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { Handle, Position } from "react-flow-renderer";
@@ -17,7 +18,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
       />
-      <div>
+      <div style={{padding: "10px"}}>
         Value: <strong>{data.node.computedValue}</strong>
       </div>
       <Handle
@@ -36,13 +37,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 // might get in the way of observer.
 // export const QuantityNode = memo(observer(_QuantityNode));
 
-// Also with testing the observer hasn't been needed yet
-// My guess is that Flow re-renders on all changes so
-// as long as the change triggers this re-render we are fine
-// if the model gets changed without a flow re-render we'll
-// have to see what happens
-// export const QuantityNode = observer(_QuantityNode);
-export const QuantityNode = _QuantityNode;
+// Also with testing the observer isn't needed for simple changes
+// like deleting edges or connecting edges.
+// My guess is that Flow re-renders on all changes like this
+// as long as the change triggers this re-render we are fine.
+//
+// But if the model gets changed without a flow re-render 
+// then, it doesn't update without the observer
+export const QuantityNode = observer(_QuantityNode);
 
-// Because it might be memoized or observed we have to set the display name
+// Because it is observed we have to set the display name
 QuantityNode.displayName = "QuantityNode";
