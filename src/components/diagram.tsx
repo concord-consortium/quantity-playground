@@ -1,5 +1,6 @@
+import { getSnapshot } from "mobx-state-tree";
 import React, { useState } from "react";
-import ReactFlow, { addEdge, ArrowHeadType, Elements, OnConnectFunc, OnEdgeUpdateFunc, updateEdge } from "react-flow-renderer";
+import ReactFlow, { addEdge, ArrowHeadType, Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc, removeElements, updateEdge } from "react-flow-renderer";
 import { DQNodeList } from "../models/dq-models";
 import { QuantityNode } from "./quantity-node";
 
@@ -18,6 +19,10 @@ const nodes = DQNodeList.create({
     }
   }
 });
+
+// For debugging
+(window as any).dqNodes = nodes;
+(window as any).getSnapshot = getSnapshot;
 
 const initialElements: Elements = [
   {
@@ -61,12 +66,28 @@ export const Diagram = () => {
     setElements((els) => addEdge(params, els));
   };
 
+  const onElementsRemove = (elementsToRemove: Elements) => {
+    for(const element of elementsToRemove) {
+      console.log(element);
+      if ((element as any).target) {
+        // This is a edge (I think)
+        const edge = element as Edge;
+        const targetModel = nodes.nodes.get(edge.target);
+        targetModel?.setPrevious(undefined);        
+      } 
+      // else it is a node
+    }
+    setElements((els) => removeElements(elementsToRemove, els));
+
+  };
+
   return (
     <div style={{ height: 600, width: 800 }}>
         <ReactFlow elements={elements} 
         nodeTypes={nodeTypes} 
         onEdgeUpdate={onEdgeUpdate}
-        onConnect={onConnect}/>
+        onConnect={onConnect}
+        onElementsRemove={onElementsRemove}/>
     </div>
   );
 };
