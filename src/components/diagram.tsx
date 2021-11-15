@@ -14,7 +14,7 @@ const dqRoot = DQRoot.create({
       },
       "2": {
           id: "2",
-          previous: "1"
+          inputB: "1"
       },
       "3": {
         id: "3",
@@ -45,7 +45,13 @@ const initialElements: Elements = [
     data: { node:  dqRoot.nodes.get("3") },
     position: { x: 250, y: 150 },
   },
-  { id: "e1-2", source: "1", target: "2", arrowHeadType: ArrowHeadType.Arrow },
+  { 
+    id: "e1-2", 
+    source: "1", 
+    target: "2", 
+    targetHandle: "b",
+    arrowHeadType: ArrowHeadType.Arrow 
+  },
 ];
 
 const nodeTypes = {
@@ -61,10 +67,16 @@ export const Diagram = () => {
     setElements((els) => updateEdge(oldEdge, newConnection, els));
 
   const onConnect: OnConnectFunc = (params) => {
-    const { source, target } = params;
+    const { source, target, targetHandle } = params;
+    console.log(`connection source: ${source} to target: ${target} on handle: ${targetHandle}`);
     if ( source && target ) {
       const targetModel = dqRoot.nodes.get(target);
-      targetModel?.setPrevious(dqRoot.nodes.get(source));
+      const sourceModel = dqRoot.nodes.get(source);
+      if (targetHandle === "a") {
+        targetModel?.setInputA(sourceModel);
+      } else if (targetHandle === "b") {
+        targetModel?.setInputB(sourceModel);        
+      }
     }
     setElements((els) => addEdge(params, els));
   };
@@ -75,8 +87,13 @@ export const Diagram = () => {
       if ((element as any).target) {
         // This is a edge (I think)
         const edge = element as Edge;
-        const targetModel = dqRoot.nodes.get(edge.target);
-        targetModel?.setPrevious(undefined);        
+        const { target, targetHandle } = edge;
+        const targetModel = dqRoot.nodes.get(target);
+        if (targetHandle === "a") {
+          targetModel?.setInputA(undefined);
+        } else if (targetHandle === "b") {
+          targetModel?.setInputB(undefined);        
+        }
       } 
       // else it is a node
     }

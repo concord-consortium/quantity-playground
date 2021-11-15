@@ -14,9 +14,18 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: "#555" }}
+        style={{ top: "30%", background: "#555" }}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
+        id="a"
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        style={{ top: "70%", background: "#555" }}
+        onConnect={(params) => console.log("handle onConnect", params)}
+        isConnectable={isConnectable}
+        id="b"
       />
       <div style={{padding: "10px"}}>
         <div>
@@ -27,6 +36,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         </div>
         <div>
           Unit: <strong>{data.node.computedUnit}</strong>
+        </div>
+        <div style={{position: "absolute", left: "-30px", top: "50%", transform: "translateY(-50%)", fontSize: "xx-large"}}>
+          {data.node.operation}
         </div>
       </div>
       <Handle

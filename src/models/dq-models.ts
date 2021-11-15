@@ -24,32 +24,62 @@ export const OperationNode = types.model({
 
 export const AnyNode = types.union(InitialNode, RelatedNode, OperationNode);
 
+export enum Operation {
+    Divide = "÷",
+    Multiply = "×",
+    Add = "+",
+    Subtract = "-"
+}
+
 export const DQNode = types.model("BasicNode", {
     id: types.identifier,
     name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
     // error: types.maybe(types.string),   
-    previous: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode)))
+    inputA: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode))),
+    inputB: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode))),
+    operation: types.maybe(types.enumeration<Operation>(Object.values(Operation)))
 })
 .views(self => ({
     // previous node values override current node values
     get computedValue() {
-        if ( self.previous ){
+        if ( self.inputA && !self.inputB || self.inputB && !self.inputA){
             // use of `this` is recommended in MST docs for referring to a computed property
             // that is defined in the same views block. 
             // Using self fails because typescript doesn't know about the newly added 
             // property on self.
-            const convertValue = getUnitConversion(this.previous.computedUnit, this.computedUnit);
+            const input = this.inputA || this.inputB;
+
+            const convertValue = getUnitConversion(input.computedUnit, this.computedUnit);
             if ( convertValue ) {
                 // This is a side effect
                 // self.error = undefined;
-                return convertValue(this.previous.computedValue);
+                return convertValue(input.computedValue);
             } 
             console.error("Error in unit conversion");
             // This is a side effect
             // self.error = "Error in unit conversion";
-            return this.previous.computedValue;
+            return this.input.computedValue;
+        }
+        if ( self.inputA && self.inputB ) {
+            // We ignore units in this case
+            switch (self.operation) {
+                case "÷":
+                    return this.inputA.computedValue / this.inputB.computedValue;
+                    break;
+                case "×":
+                    return this.inputA.computedValue * this.inputB.computedValue;
+                    break;
+                case "+":
+                    return this.inputA.computedValue + this.inputB.computedValue;
+                    break;
+                case "-":
+                    return this.inputA.computedValue - this.inputB.computedValue;
+                    break;
+                default:
+                    break;
+            }
         }
         return self.value;
     },
@@ -62,8 +92,11 @@ export const DQNode = types.model("BasicNode", {
     }
 }))
 .actions(self => ({
-    setPrevious(newPrevious: Instance<IAnyComplexType> | undefined ) {
-        self.previous = newPrevious;
+    setInputA(newInputA: Instance<IAnyComplexType> | undefined ) {
+        self.inputA = newInputA;
+    },
+    setInputB(newInputB: Instance<IAnyComplexType> | undefined ) {
+        self.inputB = newInputB;
     },
     setValue(newValue?: number) {
         self.value = newValue;
@@ -73,7 +106,11 @@ export const DQNode = types.model("BasicNode", {
     },
     setName(newName?: string) {
         self.name = newName;
+    },
+    setOperation(newOperation?: Operation) {
+        self.operation = newOperation;
     }
+
 }));
 
 export const DQRoot = types.model("DQRoot", {

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Instance } from "mobx-state-tree";
 import React from "react";
-import { DQNode } from "../models/dq-models";
+import { DQNode, Operation } from "../models/dq-models";
 
 interface IProps {
     node: Instance<typeof DQNode>;
@@ -33,6 +33,14 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     }
   };
 
+  const onOperationChange = (evt: any) => {
+    if (!evt.target.value) {
+      node.setOperation(undefined);
+    } else {
+      node.setOperation(evt.target.value);
+    }
+  };
+
   return (
     <div style={{zIndex: 4, position: "absolute"}}>
       <div>
@@ -46,6 +54,18 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
       <div>
         <label>unit:</label>
         <input value={node.unit || ""} onChange={onUnitChange}/>
+      </div>
+      <div>
+        <label>operation:</label>
+        <select value={node.operation || ""} onChange={onOperationChange}>
+          { // in an enumeration the keys are the names and the values are string or 
+            // numeric identifier
+          }
+          <option key="none" value="">none</option>
+          {Object.entries(Operation).map(([name, symbol]) => 
+            <option key={symbol} value={symbol}>{name}</option>
+          )}
+        </select>
       </div>
     </div>
   );
