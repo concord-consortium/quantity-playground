@@ -1,10 +1,10 @@
 {
-  "name": "starter-projects",
+  "name": "dq-playground",
   "version": "0.0.1",
   "description": "Concord Consortium starter projects",
   "main": "index.js",
   "jest": {
-    "testURL": "https://starter-projects.unexisting.url.com",
+    "testURL": "https://dq-playground.unexisting.url.com",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -54,14 +54,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/concord-consortium/starter-projects.git"
+    "url": "git+https://github.com/concord-consortium/dq-playground.git"
   },
   "author": "Concord Consortium",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/concord-consortium/starter-projects/issues"
+    "url": "https://github.com/concord-consortium/dq-playground/issues"
   },
-  "homepage": "https://github.com/concord-consortium/starter-projects#readme",
+  "homepage": "https://github.com/concord-consortium/dq-playground#readme",
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
     "all": true,
