@@ -20,6 +20,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       />
       <div style={{padding: "10px"}}>
         <div>
+          Name: <strong>{data.node.name}</strong>
+        </div>
+        <div>
           Value: <strong>{data.node.computedValue}</strong>
         </div>
         <div>

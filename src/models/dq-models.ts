@@ -26,6 +26,7 @@ export const AnyNode = types.union(InitialNode, RelatedNode, OperationNode);
 
 export const DQNode = types.model("BasicNode", {
     id: types.identifier,
+    name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
     // error: types.maybe(types.string),   
@@ -69,12 +70,20 @@ export const DQNode = types.model("BasicNode", {
     },
     setUnit(newUnit?: string) {
         self.unit = newUnit;
+    },
+    setName(newName?: string) {
+        self.name = newName;
     }
 }));
 
-export const DQNodeList = types.model("NodeList", {
+export const DQRoot = types.model("DQRoot", {
     nodes: types.map(DQNode)
-});
+})
+.actions(self => ({
+    addNode(newNode: Instance<typeof DQNode>) {
+        self.nodes.put(newNode);
+    }
+}));
 
 // Seems like the way this should work is with references instead of
 // containment.

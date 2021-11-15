@@ -25,8 +25,20 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     }
   };
 
+  const onNameChange = (evt: any) => {
+    if (!evt.target.value) {
+      node.setName(undefined);
+    } else {
+      node.setName(evt.target.value);
+    }
+  };
+
   return (
     <div style={{zIndex: 4, position: "absolute"}}>
+      <div>
+        <label>name:</label>
+        <input value={node.name || ""} onChange={onNameChange}/>
+      </div>
       <div>
         <label>value:</label>
         <input value={node.value || ""} onChange={onValueChange}/>
