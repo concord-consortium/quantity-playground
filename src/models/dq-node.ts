@@ -15,16 +15,43 @@ export enum Operation {
 // `m/s^2` instead of `(1/s)^2*m`
 const updatedRules = [...simplify.rules, "(1/n1)^c2*n3 -> n3/n1^c2"];
 
-function tryToSimplify(newUnit: string) {
-  try {    
-    const result = simplify(newUnit, updatedRules).toString();
-    if (result === "1") {
-      return `no unit (${newUnit})`;
+function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: string) {
+    if (!inputAUnit && !inputBUnit) {
+        // If there is no unit on both inputs then return no unit
+        // and don't show the "units cancel" message
+        return {};
     }
-    return result;
-  } catch (error) {
-    return newUnit;
-  }
+
+    const aUnit = inputAUnit || "1";
+    const bUnit = inputBUnit || "1";
+
+    let newUnit = "";
+    switch (operation) {
+        case "÷":
+            // The math.js simplify function doesn't handle cases like
+            // (m/s)/(m/s) well. We can probably work on the rules to improve this
+            // but that is a complex process, so instead just shortcut it
+            if (aUnit === bUnit) {
+                return {message: "units cancel"};
+            }
+            newUnit = `(${aUnit})/(${bUnit})`;
+            break;
+        case "×":
+            newUnit = `(${aUnit})*(${bUnit})`;
+            break;
+        default:
+            break;
+    }
+
+    try {    
+      const result = simplify(newUnit, updatedRules).toString();
+      if (result === "1") {
+        return {message: "units cancel"};
+      }
+      return {unit: result};
+    } catch (error) {
+      return {error: "cannot simplify combined unit"};
+    }
 }
 
 export const DQNode = types.model("BasicNode", {
@@ -38,74 +65,125 @@ export const DQNode = types.model("BasicNode", {
     operation: types.maybe(types.enumeration<Operation>(Object.values(Operation)))
 })
     .views(self => ({
+        get numberOfInputs() {
+            let count = 0;
+            if (self.inputA) {
+                count++;
+            }
+            if (self.inputB) {
+                count++;
+            }
+            return count;
+        },
+        get firstValidInput() {
+            return self.inputA || self.inputB;
+        }
+    }))
+    .views(self => ({
         // previous node values override current node values
-        get computedValue() {
-            if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
-                // use of `this` is recommended in MST docs for referring to a computed property
-                // that is defined in the same views block. 
-                // Using self fails because typescript doesn't know about the newly added 
-                // property on self.
-                const input = this.inputA || this.inputB;
+        get computedValueIncludingError(): {value?:number, error?:string} {
+            if ((self.numberOfInputs === 1)) {
+                // We have to cast the input to any because we are calling functions
+                // we are currently defining so TS doesn't know they are exist on 
+                // DQNode yet
+                const input = self.firstValidInput as any;
 
-                const convertValue = getUnitConversion(input.computedUnit, this.computedUnit);
+                const convertValue = getUnitConversion((input).computedUnit, this.computedUnit);
                 if (convertValue) {
-                    // This is a side effect
+                    // It'd be nice to record this error but doing it here would be
+                    // a side effect which probably shouldn't happen in a computed value
                     // self.error = undefined;
-                    return convertValue(input.computedValue);
+                    return {value: convertValue(input.computedValue)};
                 }
-                console.error("Error in unit conversion");
-                // This is a side effect
-                // self.error = "Error in unit conversion";
-                return input.computedValue;
+                return {error: "Error in unit conversion"};
             }
             if (self.inputA && self.inputB) {
-                // We ignore units in this case
+                // We currently ignore units in this case
+                let value;
                 switch (self.operation) {
                     case "÷":
-                        return this.inputA.computedValue / this.inputB.computedValue;
+                        value = this.inputA.computedValue / this.inputB.computedValue;
+                        break;
                     case "×":
-                        return this.inputA.computedValue * this.inputB.computedValue;
+                        value = this.inputA.computedValue * this.inputB.computedValue;
+                        break;
                     case "+":
-                        return this.inputA.computedValue + this.inputB.computedValue;
+                        value = this.inputA.computedValue + this.inputB.computedValue;
+                        break;
                     case "-":
-                        return this.inputA.computedValue - this.inputB.computedValue;
+                        value = this.inputA.computedValue - this.inputB.computedValue;
+                        break;
                     default:
                         break;
                 }
+                if (self.operation) {
+                    return {value};
+                } else {
+                    return {error: "no operation"};
+                }
             }
-            return self.value;
+            return {value: self.value};
         },
         // If there are two inputs then units can't be changed
         // otherwise current node units override previous node units
-        get computedUnit() {
-            if (self.inputA && self.inputB && self.operation) {
-                const inputAUnit = this.inputA.computedUnit || "unknown";
-                const inputBUnit = this.inputB.computedUnit || "unknown";
-                switch (self.operation) {
-                    case "÷":
-                        return tryToSimplify(`${inputAUnit}/${inputBUnit}`);
-                    case "×":
-                        return tryToSimplify(`${inputAUnit}*${inputBUnit}`);
-                    case "+":
-                    case "-":
-                        if (inputAUnit !== inputBUnit) {
-                            console.error("Incompatible units");
-                            return "error";
-                        }
-                        return inputAUnit;
-                    default:
-                        break;
+        get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
+            if (self.inputA && self.inputB) {
+                if (self.operation) {
+                    // If there is no unit, then use "1", that way the simplication of multiplication 
+                    // and division will work properly
+                    const inputAUnit = this.inputA.computedUnit;
+                    const inputBUnit = this.inputB.computedUnit;
+                    switch (self.operation) {
+                        case "÷":
+                        case "×":
+                            return tryToSimplify(self.operation, inputAUnit, inputBUnit);
+                        case "+":
+                        case "-":
+                            if (inputAUnit !== inputBUnit) {
+                                return {error: "incompatible units"};
+                            }
+                            return {unit: inputAUnit};
+                        default:
+                            break;
+                    }    
+                } else {
+                    // We have 2 inputs (with or without units), but no operation
+                    // The computedValue code above is already going to provide a warning about
+                    // this
+                    return {};
                 }
-
             }
             if (self.unit) {
-                return self.unit;
+                return {unit: self.unit};
             }
             if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
                 const input = this.inputA || this.inputB;
-                return input.computedUnit;
+                return {unit: input.computedUnit};
             }
-            return undefined;
+            if (!self.inputA && !self.inputB && !self.unit) {
+                // There is no unit specified and no input unit
+                // this might be on purpose for a unit-less operation
+                return {};
+            }
+            // We really shouldn't reach here
+            return {error: "unknown unit state"};
+        }
+    }))
+    .views(self => ({
+        get computedValue() {
+            return self.computedValueIncludingError.value;
+        },
+        get computedValueError() {
+            return self.computedValueIncludingError.error;
+        },
+        get computedUnit() {
+            return self.computedUnitIncludingMessageAndError.unit;
+        },
+        get computedUnitError() {
+            return self.computedUnitIncludingMessageAndError.error;
+        },
+        get computedUnitMessage() {
+            return self.computedUnitIncludingMessageAndError.message;
         }
     }))
     .actions(self => ({

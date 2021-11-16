@@ -37,6 +37,21 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         <div>
           Unit: <strong>{data.node.computedUnit}</strong>
         </div>
+        { data.node.computedValueError && 
+          <div>
+              ⚠️ {data.node.computedValueError}
+          </div>
+        }
+        { data.node.computedUnitError && 
+          <div>
+              ⚠️ {data.node.computedUnitError}
+          </div>
+        }
+        { data.node.computedUnitMessage && 
+          <div>
+              ⓘ {data.node.computedUnitMessage}
+          </div>
+        }
         <div style={{position: "absolute", left: "-20px", top: "50%", transform: "translateY(-50%)", fontSize: "xx-large"}}>
           {data.node.operation}
         </div>
