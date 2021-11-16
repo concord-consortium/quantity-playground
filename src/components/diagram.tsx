@@ -2,7 +2,7 @@ import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { addEdge, ArrowHeadType, Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc, removeElements, updateEdge } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
-import { DQNode } from "../models/dq-node";
+import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 
@@ -15,11 +15,13 @@ const dqRoot = DQRoot.create({
       },
       "2": {
           id: "2",
-          inputB: "1"
       },
       "3": {
         id: "3",
-    }
+        inputA: "1",
+        inputB: "2",
+        operation: Operation.Divide
+      }
   }
 });
 
@@ -38,18 +40,25 @@ const initialElements: Elements = [
     id: "2",
     type: "quantityNode", 
     data: { node:  dqRoot.nodes.get("2") },
-    position: { x: 250, y: 50 },
+    position: { x: 100, y: 200 },
   },
   {
     id: "3",
     type: "quantityNode", 
     data: { node:  dqRoot.nodes.get("3") },
-    position: { x: 250, y: 150 },
+    position: { x: 250, y: 150 },    
   },
   { 
-    id: "e1-2", 
+    id: "e1-3", 
     source: "1", 
-    target: "2", 
+    target: "3", 
+    targetHandle: "a",
+    arrowHeadType: ArrowHeadType.Arrow 
+  },
+  { 
+    id: "e2-3", 
+    source: "2", 
+    target: "3", 
     targetHandle: "b",
     arrowHeadType: ArrowHeadType.Arrow 
   },
