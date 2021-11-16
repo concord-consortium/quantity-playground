@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Instance } from "mobx-state-tree";
 import React from "react";
-import { DQNode, Operation } from "../models/dq-models";
+import { DQNode, Operation } from "../models/dq-node";
 
 interface IProps {
     node: Instance<typeof DQNode>;

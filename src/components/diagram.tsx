@@ -1,7 +1,8 @@
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { addEdge, ArrowHeadType, Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc, removeElements, updateEdge } from "react-flow-renderer";
-import { DQNode, DQRoot } from "../models/dq-models";
+import { DQRoot } from "../models/dq-models";
+import { DQNode } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 
