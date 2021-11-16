@@ -118,6 +118,7 @@
     "webpack-dev-server": "^4.4.0"
   },
   "dependencies": {
+    "mathjs": "^10.0.0",
     "mobx": "^6.3.6",
     "mobx-react-lite": "^3.2.2",
     "mobx-state-tree": "^5.0.4",

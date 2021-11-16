@@ -1,12 +1,30 @@
+import { simplify } from "mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { getUnitConversion } from "./unit-conversion";
-
 
 export enum Operation {
     Divide = "÷",
     Multiply = "×",
     Add = "+",
     Subtract = "-"
+}
+
+(window as any).simplify = simplify;
+
+// This custom rule makes sure that we end up with 
+// `m/s^2` instead of `(1/s)^2*m`
+const updatedRules = [...simplify.rules, "(1/n1)^c2*n3 -> n3/n1^c2"];
+
+function tryToSimplify(newUnit: string) {
+  try {    
+    const result = simplify(newUnit, updatedRules).toString();
+    if (result === "1") {
+      return `no unit (${newUnit})`;
+    }
+    return result;
+  } catch (error) {
+    return newUnit;
+  }
 }
 
 export const DQNode = types.model("BasicNode", {
@@ -65,9 +83,9 @@ export const DQNode = types.model("BasicNode", {
                 const inputBUnit = this.inputB.computedUnit || "unknown";
                 switch (self.operation) {
                     case "÷":
-                        return `${inputAUnit}/${inputBUnit}`;
+                        return tryToSimplify(`${inputAUnit}/${inputBUnit}`);
                     case "×":
-                        return `${inputAUnit}×${inputBUnit}`;
+                        return tryToSimplify(`${inputAUnit}*${inputBUnit}`);
                     case "+":
                     case "-":
                         if (inputAUnit !== inputBUnit) {

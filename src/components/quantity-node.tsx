@@ -32,7 +32,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           Name: <strong>{data.node.name}</strong>
         </div>
         <div>
-          Value: <strong>{data.node.computedValue}</strong>
+          Value: <strong>{Number.parseFloat(data.node.computedValue).toString()}</strong>
         </div>
         <div>
           Unit: <strong>{data.node.computedUnit}</strong>
