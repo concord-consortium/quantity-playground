@@ -37,7 +37,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         <div>
           Unit: <strong>{data.node.computedUnit}</strong>
         </div>
-        <div style={{position: "absolute", left: "-30px", top: "50%", transform: "translateY(-50%)", fontSize: "xx-large"}}>
+        <div style={{position: "absolute", left: "-20px", top: "50%", transform: "translateY(-50%)", fontSize: "xx-large"}}>
           {data.node.operation}
         </div>
       </div>

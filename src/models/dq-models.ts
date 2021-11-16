@@ -44,7 +44,7 @@ export const DQNode = types.model("BasicNode", {
 .views(self => ({
     // previous node values override current node values
     get computedValue() {
-        if ( self.inputA && !self.inputB || self.inputB && !self.inputA){
+        if ( (self.inputA && !self.inputB) || (self.inputB && !self.inputA)){
             // use of `this` is recommended in MST docs for referring to a computed property
             // that is defined in the same views block. 
             // Using self fails because typescript doesn't know about the newly added 
@@ -60,35 +60,56 @@ export const DQNode = types.model("BasicNode", {
             console.error("Error in unit conversion");
             // This is a side effect
             // self.error = "Error in unit conversion";
-            return this.input.computedValue;
+            return input.computedValue;
         }
         if ( self.inputA && self.inputB ) {
             // We ignore units in this case
             switch (self.operation) {
                 case "÷":
                     return this.inputA.computedValue / this.inputB.computedValue;
-                    break;
                 case "×":
                     return this.inputA.computedValue * this.inputB.computedValue;
-                    break;
                 case "+":
                     return this.inputA.computedValue + this.inputB.computedValue;
-                    break;
                 case "-":
                     return this.inputA.computedValue - this.inputB.computedValue;
-                    break;
                 default:
                     break;
             }
         }
         return self.value;
     },
-    // current node units override previous node units
+    // If there are two inputs then units can't be changed
+    // otherwise current node units override previous node units
     get computedUnit() {
+        if ( self.inputA && self.inputB && self.operation) {
+            const inputAUnit = this.inputA.computedUnit || "unknown";
+            const inputBUnit = this.inputB.computedUnit || "unknown";
+            switch (self.operation) {
+                case "÷":
+                    return `${inputAUnit}/${inputBUnit}`;
+                case "×":
+                    return `${inputAUnit}×${inputBUnit}`;
+                case "+":
+                case "-":
+                    if (inputAUnit !== inputBUnit) {
+                        console.error("Incompatible units");
+                        return "error";
+                    }
+                    return inputAUnit;
+                default:
+                    break;
+            }
+
+        }
         if ( self.unit ) {
             return self.unit;
         }
-        return this.previous?.computedUnit;
+        if ( (self.inputA && !self.inputB) || (self.inputB && !self.inputA)){
+            const input = this.inputA || this.inputB;
+            return input.computedUnit;
+        }
+        return undefined;
     }
 }))
 .actions(self => ({
