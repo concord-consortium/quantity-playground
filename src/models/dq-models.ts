@@ -1,28 +1,5 @@
-import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { Instance, types } from "mobx-state-tree";
 import { DQNode } from "./dq-node";
-
-export const InitialNode = types.model({
-  nodeType: types.literal("initial"),
-  dimension: types.maybe(types.string),
-  unit: types.maybe(types.string),
-  value: types.maybe(types.number)  
-});
-
-export const RelatedNode = types.model({
-  nodeType: types.literal("related"),
-  node: types.late((): IAnyComplexType => AnyNode),
-  unitOverride: types.maybe(types.string)
-});
-
-export const OperationNode = types.model({
-  nodeType: types.literal("operation"),
-  nodeA: types.late((): IAnyComplexType => AnyNode),
-  nodeB: types.late((): IAnyComplexType => AnyNode),
-  unitOverride: types.maybe(types.string),
-  operation: types.string
-});
-
-export const AnyNode = types.union(InitialNode, RelatedNode, OperationNode);
 
 export const DQRoot = types.model("DQRoot", {
     nodes: types.map(DQNode)
