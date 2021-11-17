@@ -136,6 +136,8 @@ export const Diagram = () => {
   const onSelectionChange = (selectedElements: Elements | null) => {
     if (selectedElements?.[0]?.type === "quantityNode" ) {
       setSelectedNode(dqRoot.nodes.get(selectedElements[0].id));
+    } else {
+      setSelectedNode(undefined);
     }
   };
 
