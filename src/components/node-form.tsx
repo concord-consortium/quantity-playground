@@ -13,7 +13,7 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     if (!evt.target.value) {
       node.setValue(undefined);
     } else {
-      node.setValue(parseInt(evt.target.value, 10));
+      node.setValue(parseFloat(evt.target.value));
     }
   };
 
@@ -49,7 +49,7 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
       </div>
       <div>
         <label>value:</label>
-        <input value={node.value || ""} onChange={onValueChange}/>
+        <input type="number" value={node.value || ""} onChange={onValueChange}/>
       </div>
       <div>
         <label>unit:</label>

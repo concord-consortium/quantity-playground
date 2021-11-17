@@ -193,7 +193,7 @@ export const DQNode = types.model("BasicNode", {
         setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
             self.inputB = newInputB;
         },
-        setValue(newValue?: number) {
+        setValue(newValue?: number) { 
             self.value = newValue;
         },
         setUnit(newUnit?: string) {

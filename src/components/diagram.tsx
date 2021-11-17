@@ -73,8 +73,30 @@ export const Diagram = () => {
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
 
   // gets called after end of edge gets dragged to another source or target
-  const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) =>
-    setElements((els) => updateEdge(oldEdge, newConnection, els));
+  const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
+
+    // We could try to be smart about this, and only update things that
+    // changed but it is easier to just break the old connection 
+    // and make a new one
+    const oldTargetNode = dqRoot.nodes.get(oldEdge.target);
+    const oldTargetHandle = oldEdge.targetHandle;
+    if (oldTargetHandle === "a") {
+      oldTargetNode?.setInputA(undefined);
+    } else if (oldTargetHandle === "b") {
+      oldTargetNode?.setInputB(undefined);
+    }
+    
+    const { source, target, targetHandle: newTargetHandle } = newConnection;
+    const newSourceNode = source ? dqRoot.nodes.get(source) : undefined;
+    const newTargetNode = target ? dqRoot.nodes.get(target) : undefined;
+    if (newTargetHandle === "a") {
+      newTargetNode?.setInputA(newSourceNode);
+    } else if (newTargetHandle === "b") {
+      newTargetNode?.setInputB(newSourceNode);
+    }
+
+    setElements((els) => updateEdge(oldEdge, newConnection, els));    
+  };
 
   const onConnect: OnConnectFunc = (params) => {
     const { source, target, targetHandle } = params;
