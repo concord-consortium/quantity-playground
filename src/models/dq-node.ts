@@ -1,5 +1,6 @@
 import { simplify } from "mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { ArrowHeadType, Elements } from "react-flow-renderer";
 import { getUnitConversion } from "./unit-conversion";
 
 export enum Operation {
@@ -59,12 +60,50 @@ export const DQNode = types.model("BasicNode", {
     name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
-    // error: types.maybe(types.string),   
-    inputA: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode))),
-    inputB: types.maybe(types.reference(types.late((): IAnyComplexType => DQNode))),
-    operation: types.maybe(types.enumeration<Operation>(Object.values(Operation)))
+    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
+    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
+    operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
+    
+    // The x and y values are required when initializing the react flow
+    // component. However the react flow component ignores them after this.
+    // To serialize the state the positions need to be extracted from the react flow
+    // and then applied to the models.
+    x: types.integer,
+    y: types.integer
 })
     .views(self => ({
+        get reactFlowElements() {
+            const elements: Elements = [];
+            const {id} = self;
+            const inputA = self.inputA as typeof self | undefined;
+            const inputB = self.inputB as typeof self | undefined;
+            elements.push({
+                id,
+                type: "quantityNode", 
+                data: { node:  self },
+                position: { x: self.x, y: self.y },                
+            });
+            if (inputA) {
+                elements.push({
+                    id: `e${inputA.id}-${id}-a`,
+                    source: inputA.id,
+                    target: id,
+                    targetHandle: "a",
+                    arrowHeadType: ArrowHeadType.Arrow
+                });
+            }
+            if (inputB) {
+                elements.push({
+                    id: `e${inputB.id}-${id}-b`,
+                    source: inputB.id,
+                    target: id,
+                    targetHandle: "b",
+                    arrowHeadType: ArrowHeadType.Arrow
+                });
+            }
+
+            return elements;
+        },
         get numberOfInputs() {
             let count = 0;
             if (self.inputA) {

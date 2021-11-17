@@ -1,6 +1,7 @@
+import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
-import ReactFlow, { addEdge, ArrowHeadType, Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc, removeElements, updateEdge } from "react-flow-renderer";
+import ReactFlow, { Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
@@ -11,16 +12,22 @@ const dqRoot = DQRoot.create({
   nodes: {
       "1": {
           id: "1",
-          value: 124          
+          value: 124,
+          x: 100,
+          y: 100       
       },
       "2": {
           id: "2",
+          x: 100,
+          y: 200
       },
       "3": {
-        id: "3",
-        inputA: "1",
-        inputB: "2",
-        operation: Operation.Divide
+          id: "3",
+          inputA: "1",
+          inputB: "2",
+          operation: Operation.Divide,
+          x: 250,
+          y: 150
       }
   }
 });
@@ -29,47 +36,11 @@ const dqRoot = DQRoot.create({
 (window as any).dqRoot = dqRoot;
 (window as any).getSnapshot = getSnapshot;
 
-const initialElements: Elements = [
-  {
-    id: "1",
-    type: "quantityNode", 
-    data: { node:  dqRoot.nodes.get("1") },
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: "2",
-    type: "quantityNode", 
-    data: { node:  dqRoot.nodes.get("2") },
-    position: { x: 100, y: 200 },
-  },
-  {
-    id: "3",
-    type: "quantityNode", 
-    data: { node:  dqRoot.nodes.get("3") },
-    position: { x: 250, y: 150 },    
-  },
-  { 
-    id: "e1-3", 
-    source: "1", 
-    target: "3", 
-    targetHandle: "a",
-    arrowHeadType: ArrowHeadType.Arrow 
-  },
-  { 
-    id: "e2-3", 
-    source: "2", 
-    target: "3", 
-    targetHandle: "b",
-    arrowHeadType: ArrowHeadType.Arrow 
-  },
-];
-
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
 
-export const Diagram = () => {
-  const [elements, setElements] = useState(initialElements);
+export const _Diagram = () => {
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
 
   // gets called after end of edge gets dragged to another source or target
@@ -94,8 +65,6 @@ export const Diagram = () => {
     } else if (newTargetHandle === "b") {
       newTargetNode?.setInputB(newSourceNode);
     }
-
-    setElements((els) => updateEdge(oldEdge, newConnection, els));    
   };
 
   const onConnect: OnConnectFunc = (params) => {
@@ -110,7 +79,6 @@ export const Diagram = () => {
         targetModel?.setInputB(sourceModel);        
       }
     }
-    setElements((els) => addEdge(params, els));
   };
 
   const onElementsRemove = (elementsToRemove: Elements) => {
@@ -126,11 +94,13 @@ export const Diagram = () => {
         } else if (targetHandle === "b") {
           targetModel?.setInputB(undefined);        
         }
-      } 
-      // else it is a node
+      } else {
+        // If this is the selected node we need to remove it from the state too
+        const nodeToRemove = dqRoot.nodes.get(element.id);
+        setSelectedNode((currentNode) => nodeToRemove === currentNode ? undefined : currentNode);
+        dqRoot.removeNodeById(element.id);
+      }
     }
-    setElements((els) => removeElements(elementsToRemove, els));
-
   };
 
   const onSelectionChange = (selectedElements: Elements | null) => {
@@ -143,26 +113,17 @@ export const Diagram = () => {
 
   const addNode = () => {
     const dqNode = DQNode.create({
-      id: nextId.toString()      
+      id: nextId.toString(),
+      x: 350,
+      y: 150   
     });
     dqRoot.addNode(dqNode);
-    setElements((els) => {
-      // make a copy
-      const newEls = els.map(el => el);
-      newEls.push({
-        id: nextId.toString(),
-        type: "quantityNode",
-        data: { node:  dqNode },
-        position: { x: 350, y: 150 },
-      });
-      return newEls;
-    });
     nextId++;
   };
 
   return (
     <div style={{ height: 600, width: 800 }}>
-        <ReactFlow elements={elements} 
+        <ReactFlow elements={dqRoot.reactFlowElements} 
         nodeTypes={nodeTypes} 
         onEdgeUpdate={onEdgeUpdate}
         onConnect={onConnect}
@@ -176,3 +137,6 @@ export const Diagram = () => {
     </div>
   );
 };
+
+export const Diagram = observer(_Diagram);
+Diagram.displayName = "Diagram";
