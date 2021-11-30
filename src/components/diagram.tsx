@@ -2,36 +2,58 @@ import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
-  OnEdgeUpdateFunc, OnLoadParams, MiniMap, Controls } from "react-flow-renderer";
+  OnEdgeUpdateFunc, OnLoadParams, MiniMap, Controls, isNode } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 
-let nextId = 4;
-const dqRoot = DQRoot.create({
-  nodes: {
-      "1": {
-          id: "1",
-          value: 124,
-          x: 100,
-          y: 100       
-      },
-      "2": {
-          id: "2",
-          x: 100,
-          y: 200
-      },
-      "3": {
-          id: "3",
-          inputA: "1",
-          inputB: "2",
-          operation: Operation.Divide,
-          x: 250,
-          y: 150
-      }
+let nextId = 0;
+const loadInitialState = () => {
+  const url = new URL(window.location.href);
+  const urlDiagram = url.searchParams.get("diagram");
+  
+  // Default diagram
+  let diagram = {
+    nodes: {
+        "1": {
+            id: "1",
+            value: 124,
+            x: 100,
+            y: 100       
+        },
+        "2": {
+            id: "2",
+            x: 100,
+            y: 200
+        },
+        "3": {
+            id: "3",
+            inputA: "1",
+            inputB: "2",
+            operation: Operation.Divide,
+            x: 250,
+            y: 150
+        }
+    }
+  };
+
+  // Override default diagram with URL param
+  if (urlDiagram) {
+    diagram = JSON.parse(urlDiagram);
   }
-});
+
+  // Figure out the nextId
+  let maxId = 0;
+  for (const idString of Object.keys(diagram.nodes)) {
+    const id = parseInt(idString, 10);
+    if (id > maxId) maxId = id;
+  }
+  nextId = maxId + 1;
+  return diagram;
+};
+
+const dqRoot = DQRoot.create(loadInitialState());
 
 // For debugging
 (window as any).dqRoot = dqRoot;
@@ -43,7 +65,7 @@ const nodeTypes = {
 
 export const _Diagram = () => {
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
-  const [, setRfInstance] = useState<OnLoadParams>();
+  const [rfInstance, setRfInstance] = useState<OnLoadParams>();
 
 
   // gets called after end of edge gets dragged to another source or target
@@ -124,6 +146,26 @@ export const _Diagram = () => {
     nextId++;
   };
 
+  const exportDiagram = () => {
+    const currentSnapshot = getSnapshot(dqRoot);
+    const currentModel = JSON.parse(JSON.stringify(currentSnapshot));
+    const currentDiagram = rfInstance?.toObject();
+    if (!currentDiagram) {
+      return;
+    }
+    for(const node of currentDiagram.elements) {
+      if (isNode(node)) {
+        const modelNode = currentModel.nodes[node.id];
+        modelNode.x = node.position.x;
+        modelNode.y = node.position.y;
+      }
+    }
+    console.log("Exported Diagram", currentModel);
+    const url = new URL(window.location.href);
+    url.searchParams.set("diagram", JSON.stringify(currentModel));
+    console.log(url.href);
+  };
+
   return (
     <div className="diagram">
         <ReactFlow elements={dqRoot.reactFlowElements} 
@@ -136,9 +178,10 @@ export const _Diagram = () => {
           <MiniMap/>
           <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }
-          <button style={{zIndex: 4, position: "absolute", right: 0, top: 0}} 
-            onClick={addNode}>Add Node
-          </button> 
+          <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
+            <button  onClick={addNode}>Add Node</button>
+            <button  onClick={exportDiagram}>Export</button>
+          </div>
         </ReactFlow>
     </div>
   );
