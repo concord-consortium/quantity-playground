@@ -13,6 +13,13 @@ const os = require('os');
 //   https://github.com/concord-consortium/s3-deploy-action/blob/main/README.md#top-branch-example
 const DEPLOY_PATH = process.env.DEPLOY_PATH;
 
+// Use the DEPLOY_PATH as the version
+// This way the version will indicate if it is a branch or tag.
+// This approach probably might not be good for production usage
+// but it is good enough for this prototype. 
+// It will look like `version/v1.2.3` or `branch/something-cool`
+const version = DEPLOY_PATH ?? 'unknown version';
+
 module.exports = (env, argv) => {
   const devMode = argv.mode !== 'production';
 
@@ -129,13 +136,19 @@ module.exports = (env, argv) => {
         filename: 'index.html',
         template: 'src/index.html',
         favicon: 'src/public/favicon.ico',
-        publicPath: '.'
+        publicPath: '.',
+        templateParameters: {
+          version
+        }
       }),
       ...(DEPLOY_PATH ? [new HtmlWebpackPlugin({
         filename: 'index-top.html',
         template: 'src/index.html',
         favicon: 'src/public/favicon.ico',
-        publicPath: DEPLOY_PATH
+        publicPath: DEPLOY_PATH,
+        templateParameters: {
+          version
+        }
       })] : []),
       new CleanWebpackPlugin(),
     ]
