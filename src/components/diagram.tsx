@@ -146,7 +146,7 @@ export const _Diagram = () => {
     nextId++;
   };
 
-  const exportDiagram = () => {
+  const copyDiagramURL = () => {
     const currentSnapshot = getSnapshot(dqRoot);
     const currentModel = JSON.parse(JSON.stringify(currentSnapshot));
     const currentDiagram = rfInstance?.toObject();
@@ -164,6 +164,7 @@ export const _Diagram = () => {
     const url = new URL(window.location.href);
     url.searchParams.set("diagram", JSON.stringify(currentModel));
     console.log(url.href);
+    navigator.clipboard.writeText(url.href);
   };
 
   return (
@@ -179,8 +180,8 @@ export const _Diagram = () => {
           <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }
           <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
-            <button  onClick={addNode}>Add Node</button>
-            <button  onClick={exportDiagram}>Export</button>
+            <button className="action" onClick={addNode}>Add Node</button>
+            <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button>
           </div>
         </ReactFlow>
     </div>
