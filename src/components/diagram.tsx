@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
-import ReactFlow, { Edge, Elements, OnConnectFunc, OnEdgeUpdateFunc } from "react-flow-renderer";
+import ReactFlow, { Edge, Elements, OnConnectFunc, 
+  OnEdgeUpdateFunc, OnLoadParams, MiniMap, Controls } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
@@ -42,6 +43,8 @@ const nodeTypes = {
 
 export const _Diagram = () => {
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
+  const [, setRfInstance] = useState<OnLoadParams>();
+
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
@@ -122,13 +125,16 @@ export const _Diagram = () => {
   };
 
   return (
-    <div style={{ height: 600, width: 800 }}>
+    <div className="diagram">
         <ReactFlow elements={dqRoot.reactFlowElements} 
-        nodeTypes={nodeTypes} 
-        onEdgeUpdate={onEdgeUpdate}
-        onConnect={onConnect}
-        onElementsRemove={onElementsRemove}
-        onSelectionChange={onSelectionChange}>
+          nodeTypes={nodeTypes} 
+          onEdgeUpdate={onEdgeUpdate}
+          onConnect={onConnect}
+          onElementsRemove={onElementsRemove}
+          onSelectionChange={onSelectionChange}
+          onLoad={setRfInstance}>
+          <MiniMap/>
+          <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }
           <button style={{zIndex: 4, position: "absolute", right: 0, top: 0}} 
             onClick={addNode}>Add Node
