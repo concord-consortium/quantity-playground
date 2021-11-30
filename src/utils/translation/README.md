@@ -1,6 +1,6 @@
 # Localization
 
-The modules within `utils/translation` can be used to add text localization to a dq-playground based application.
+The modules within `utils/translation` can be used to add text localization to a quantity-playground based application.
 
 ### How to use
 

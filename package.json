@@ -1,10 +1,10 @@
 {
-  "name": "dq-playground",
+  "name": "quantity-playground",
   "version": "0.0.1",
   "description": "Concord Consortium quantity playground",
   "main": "index.js",
   "jest": {
-    "testURL": "https://dq-playground.unexisting.url.com",
+    "testURL": "https://quantity-playground.unexisting.url.com",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -54,14 +54,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/concord-consortium/dq-playground.git"
+    "url": "git+https://github.com/concord-consortium/quantity-playground.git"
   },
   "author": "Concord Consortium",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/concord-consortium/dq-playground/issues"
+    "url": "https://github.com/concord-consortium/quantity-playground/issues"
   },
-  "homepage": "https://github.com/concord-consortium/dq-playground#readme",
+  "homepage": "https://github.com/concord-consortium/quantity-playground#readme",
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
     "all": true,
