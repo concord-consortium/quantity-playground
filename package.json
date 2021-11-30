@@ -1,7 +1,7 @@
 {
   "name": "dq-playground",
   "version": "0.0.1",
-  "description": "Concord Consortium starter projects",
+  "description": "Concord Consortium quantity playground",
   "main": "index.js",
   "jest": {
     "testURL": "https://dq-playground.unexisting.url.com",

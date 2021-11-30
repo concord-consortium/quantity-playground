@@ -1,4 +1,4 @@
-# Starter Projects Localization
+# Localization
 
 The modules within `utils/translation` can be used to add text localization to a dq-playground based application.
 
