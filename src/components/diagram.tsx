@@ -69,11 +69,11 @@ codapInterface.init(codapConfig).then(
       }
     },
     (msg) => {
-      console.log( `CODAP not found: ${msg}`)
+      console.log( "CODAP not found: " + msg);
     }
-)
+);
 
-  codapInterface.on('get', 'interactiveState', "",
+  codapInterface.on("get", "interactiveState", "",
       () => {
         return {success: true, values: getSnapshot(dqRoot)};
       });
