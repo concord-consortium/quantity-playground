@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { getSnapshot, Instance } from "mobx-state-tree";
+import { getSnapshot, applySnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
   OnEdgeUpdateFunc, OnLoadParams, MiniMap, Controls, isNode } from "react-flow-renderer";
@@ -7,12 +7,13 @@ import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
+import codapInterface from "../lib/CodapInterface";
 
 let nextId = 0;
 const loadInitialState = () => {
   const url = new URL(window.location.href);
   const urlDiagram = url.searchParams.get("diagram");
-  
+
   // Default diagram
   let diagram = {
     nodes: {
@@ -54,6 +55,28 @@ const loadInitialState = () => {
 };
 
 const dqRoot = DQRoot.create(loadInitialState());
+
+const codapConfig = {
+  customInteractiveStateHandler: true,
+  name: "Quantitative Playground",
+  version: "1.0"
+};
+
+codapInterface.init(codapConfig).then(
+    (o) => {
+      if (o.nodes) {
+        applySnapshot(dqRoot, o);
+      }
+    },
+    (msg) => {
+      console.log( `CODAP not found: ${msg}`)
+    }
+)
+
+  codapInterface.on('get', 'interactiveState', "",
+      () => {
+        return {success: true, values: getSnapshot(dqRoot)};
+      });
 
 // For debugging
 (window as any).dqRoot = dqRoot;

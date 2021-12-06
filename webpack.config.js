@@ -4,7 +4,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
+// const ESLintPlugin = require('eslint-webpack-plugin');
 const os = require('os');
 
 module.exports = (env, argv) => {
@@ -113,9 +113,9 @@ module.exports = (env, argv) => {
       warningsFilter: /export .* was not found in/
     },
     plugins: [
-      new ESLintPlugin({
-        extensions: ['ts', 'tsx', 'js', 'jsx'],
-      }),
+      // new ESLintPlugin({
+      //   extensions: ['ts', 'tsx', 'js', 'jsx'],
+      // }),
       new MiniCssExtractPlugin({
         filename: devMode ? "assets/[name].css" : "assets/[name].[contenthash].css"
       }),
