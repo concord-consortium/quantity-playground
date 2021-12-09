@@ -9,8 +9,8 @@ interface IProps {
   
 const _NodeForm: React.FC<IProps> = ({ node }) => {
   const onValueChange = (evt: any) => {
-    // This won't handle 0 correctly
-    if (!evt.target.value) {
+    // if the value is null or undefined just store undefined
+    if (evt.target.value == null) {
       node.setValue(undefined);
     } else {
       node.setValue(parseFloat(evt.target.value));
@@ -49,7 +49,7 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
       </div>
       <div>
         <label>value:</label>
-        <input type="number" value={node.value || ""} onChange={onValueChange}/>
+        <input type="number" value={node.value ?? ""} onChange={onValueChange}/>
       </div>
       <div>
         <label>unit:</label>
