@@ -212,6 +212,20 @@ export const DQNode = types.model("BasicNode", {
         get computedValue() {
             return self.computedValueIncludingError.value;
         },
+        get computedValueWithSignificantDigits() {
+            // Currently this just uses a fixed set of fractional digits instead of keeping track of
+            // significant digits 
+            const value = self.computedValueIncludingError.value;
+
+            // In practice Chrome's format returns "NaN" for undefined values, but typescript
+            // isn't happy with passing undefined
+            if (value === undefined) {
+                return "NaN";
+            }
+            // The first argument is the locale, using undefined means it should pick up the default
+            // browser locale
+            return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(value);
+        },
         get computedValueError() {
             return self.computedValueIncludingError.error;
         },
