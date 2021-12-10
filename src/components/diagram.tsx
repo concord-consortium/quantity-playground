@@ -1,12 +1,13 @@
 import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
   OnEdgeUpdateFunc, MiniMap, Controls, isNode } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
+import { ToolBar } from "./toolbar";
 
 let nextId = 0;
 const loadInitialState = () => {
@@ -82,6 +83,7 @@ const exportDiagramState = () => {
 };
 
 export const _Diagram = () => {
+  const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
 
   // gets called after end of edge gets dragged to another source or target
@@ -152,40 +154,48 @@ export const _Diagram = () => {
     }
   };
 
-  const addNode = () => {
+  const onDragOver = (event: any) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const onDrop = (event: any) => {
+    event.preventDefault();
+
+    if (!reactFlowWrapper.current || !dqRoot.rfInstance) {
+      return;
+    }
+
+    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
+    const position = dqRoot.rfInstance.project({
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    });
+
     const dqNode = DQNode.create({
       id: nextId.toString(),
-      x: 350,
-      y: 150   
+      x: position.x,
+      y: position.y   
     });
     dqRoot.addNode(dqNode);
     nextId++;
   };
 
-  const copyDiagramURL = () => {
-    const exportedDiagram = exportDiagramState();
-    const url = new URL(window.location.href);
-    url.searchParams.set("diagram", JSON.stringify(exportedDiagram));
-    console.log(url.href);
-    navigator.clipboard.writeText(url.href);
-  };
-
   return (
-    <div className="diagram">
+    <div className="diagram" ref={reactFlowWrapper}>
         <ReactFlow elements={dqRoot.reactFlowElements} 
           nodeTypes={nodeTypes} 
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
-          onLoad={(rfInstance) => dqRoot.setRfInstance(rfInstance)}>
+          onLoad={(rfInstance) => dqRoot.setRfInstance(rfInstance)}
+          onDrop={onDrop}
+          onDragOver={onDragOver}>
           <MiniMap/>
           <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }
-          <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
-            <button className="action" onClick={addNode}>Add Node</button>
-            <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button>
-          </div>
+          <ToolBar exportDiagramState={exportDiagramState}/>
         </ReactFlow>
     </div>
   );
