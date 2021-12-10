@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
-  OnEdgeUpdateFunc, OnLoadParams, MiniMap, Controls, isNode } from "react-flow-renderer";
+  OnEdgeUpdateFunc, MiniMap, Controls, isNode } from "react-flow-renderer";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
@@ -63,10 +63,26 @@ const nodeTypes = {
   quantityNode: QuantityNode,
 };
 
+const exportDiagramState = () => {
+  const currentSnapshot = getSnapshot(dqRoot);
+  const currentModel = JSON.parse(JSON.stringify(currentSnapshot));
+  const currentDiagram = dqRoot.rfInstance?.toObject();
+  if (!currentDiagram) {
+    return;
+  }
+  for(const node of currentDiagram.elements) {
+    if (isNode(node)) {
+      const modelNode = currentModel.nodes[node.id];
+      modelNode.x = node.position.x;
+      modelNode.y = node.position.y;
+    }
+  }
+  console.log("Exported Diagram", currentModel);
+  return currentModel;
+};
+
 export const _Diagram = () => {
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
-  const [rfInstance, setRfInstance] = useState<OnLoadParams>();
-
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
@@ -147,22 +163,9 @@ export const _Diagram = () => {
   };
 
   const copyDiagramURL = () => {
-    const currentSnapshot = getSnapshot(dqRoot);
-    const currentModel = JSON.parse(JSON.stringify(currentSnapshot));
-    const currentDiagram = rfInstance?.toObject();
-    if (!currentDiagram) {
-      return;
-    }
-    for(const node of currentDiagram.elements) {
-      if (isNode(node)) {
-        const modelNode = currentModel.nodes[node.id];
-        modelNode.x = node.position.x;
-        modelNode.y = node.position.y;
-      }
-    }
-    console.log("Exported Diagram", currentModel);
+    const exportedDiagram = exportDiagramState();
     const url = new URL(window.location.href);
-    url.searchParams.set("diagram", JSON.stringify(currentModel));
+    url.searchParams.set("diagram", JSON.stringify(exportedDiagram));
     console.log(url.href);
     navigator.clipboard.writeText(url.href);
   };
@@ -175,7 +178,7 @@ export const _Diagram = () => {
           onConnect={onConnect}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
-          onLoad={setRfInstance}>
+          onLoad={(rfInstance) => dqRoot.setRfInstance(rfInstance)}>
           <MiniMap/>
           <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }

@@ -1,10 +1,13 @@
 import { Instance, types, destroy } from "mobx-state-tree";
-import { Elements } from "react-flow-renderer";
+import { Elements, OnLoadParams } from "react-flow-renderer";
 import { DQNode } from "./dq-node";
 
 export const DQRoot = types.model("DQRoot", {
     nodes: types.map(DQNode)
 })
+.volatile(self => ({
+    rfInstance: undefined as OnLoadParams | undefined
+}))
 .views(self => ({
     get reactFlowElements() {
         const elements: Elements = [];
@@ -22,6 +25,9 @@ export const DQRoot = types.model("DQRoot", {
         const nodeToRemove = self.nodes.get(nodeId);
         // self.nodes.delete(nodeId);
         destroy(nodeToRemove);
+    },
+    setRfInstance(rfInstance: OnLoadParams) {
+        self.rfInstance = rfInstance;
     }
 }));
 
