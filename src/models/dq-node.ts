@@ -122,9 +122,10 @@ export const DQNode = types.model("BasicNode", {
         // previous node values override current node values
         get computedValueIncludingError(): {value?:number, error?:string} {
             if ((self.numberOfInputs === 1)) {
-                // We have to cast the input to any because we are calling functions
-                // we are currently defining so TS doesn't know they are exist on 
-                // DQNode yet
+                // We have to cast the input to any because we are calling the functions
+                // computedUnit and computedValue
+                // Those functions are what we are defining here so TS doesn't know they are exist on 
+                // DQNode yet.
                 const input = self.firstValidInput as any;
 
                 const convertValue = getUnitConversion((input).computedUnit, this.computedUnit);

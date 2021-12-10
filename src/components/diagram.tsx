@@ -19,10 +19,13 @@ import "react-flow-renderer/dist/theme-default.css";
 // The order matters the diagram css overrides some styles
 // from the react-flow css.
 import "./diagram.scss";
+import { NestedSet } from "./nested-set";
+
+const url = new URL(window.location.href);
+const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 let nextId = 0;
 const loadInitialState = () => {
-  const url = new URL(window.location.href);
   const urlDiagram = url.searchParams.get("diagram");
   
   // Default diagram
@@ -70,6 +73,7 @@ const dqRoot = DQRoot.create(loadInitialState());
 // For debugging
 (window as any).dqRoot = dqRoot;
 (window as any).getSnapshot = getSnapshot;
+
 
 const nodeTypes = {
   quantityNode: QuantityNode,
@@ -188,7 +192,16 @@ export const _Diagram = () => {
           onDragOver={onDragOver}>
           <MiniMap/>
           <Controls />
-          { selectedNode && <NodeForm node={selectedNode}/> }
+          { selectedNode && 
+            <>
+              <NodeForm node={selectedNode}/>
+              { showNestedSet &&
+                <div style={{zIndex: 4, position: "absolute", left: "300px"}}>
+                  <NestedSet node={selectedNode} final={true} />
+                </div>
+              }
+            </> 
+          }
           <ToolBar dqRoot={dqRoot}/>
         </ReactFlow>
       </ReactFlowProvider>
