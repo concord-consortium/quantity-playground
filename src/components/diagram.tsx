@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
-  OnEdgeUpdateFunc, MiniMap, Controls, isNode, ReactFlowProvider } from "react-flow-renderer/nocss";
-import { DQRoot } from "../models/dq-models";
+  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider } from "react-flow-renderer/nocss";
+import { DQRoot } from "../models/dq-root";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
@@ -73,24 +73,6 @@ const dqRoot = DQRoot.create(loadInitialState());
 
 const nodeTypes = {
   quantityNode: QuantityNode,
-};
-
-const exportDiagramState = () => {
-  const currentSnapshot = getSnapshot(dqRoot);
-  const currentModel = JSON.parse(JSON.stringify(currentSnapshot));
-  const currentDiagram = dqRoot.rfInstance?.toObject();
-  if (!currentDiagram) {
-    return;
-  }
-  for(const node of currentDiagram.elements) {
-    if (isNode(node)) {
-      const modelNode = currentModel.nodes[node.id];
-      modelNode.x = node.position.x;
-      modelNode.y = node.position.y;
-    }
-  }
-  console.log("Exported Diagram", currentModel);
-  return currentModel;
 };
 
 export const _Diagram = () => {
@@ -207,7 +189,7 @@ export const _Diagram = () => {
           <MiniMap/>
           <Controls />
           { selectedNode && <NodeForm node={selectedNode}/> }
-          <ToolBar exportDiagramState={exportDiagramState}/>
+          <ToolBar dqRoot={dqRoot}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

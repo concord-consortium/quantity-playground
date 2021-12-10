@@ -1,18 +1,20 @@
 
+import { Instance } from "mobx-state-tree";
 import React from "react";
+import { DQRoot } from "../models/dq-root";
 
 interface IProps {
-    exportDiagramState: any;
+    dqRoot: Instance<typeof DQRoot>;
 }
 
-export const ToolBar: React.FC<IProps> = ({exportDiagramState}) => {
+export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
     const onDragStart = (event: any) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
     };
     
     const copyDiagramURL = () => {
-        const exportedDiagram = exportDiagramState();
+        const exportedDiagram = dqRoot.getDiagramState();
         const url = new URL(window.location.href);
         url.searchParams.set("diagram", JSON.stringify(exportedDiagram));
         console.log(url.href);
