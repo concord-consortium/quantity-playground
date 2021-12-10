@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
-const os = require('os');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
+const os = require("os");
 
 // DEPLOY_PATH is set by the s3-deploy-action its value will be:
 // `branch/[branch-name]/` or `version/[tag-name]/`
@@ -18,70 +18,70 @@ const DEPLOY_PATH = process.env.DEPLOY_PATH;
 // This approach probably might not be good for production usage
 // but it is good enough for this prototype. 
 // It will look like `version/v1.2.3` or `branch/something-cool`
-const version = DEPLOY_PATH ?? 'unknown version';
+const version = DEPLOY_PATH ?? "unknown version";
 
 module.exports = (env, argv) => {
-  const devMode = argv.mode !== 'production';
+  const devMode = argv.mode !== "production";
 
   return {
     context: __dirname, // to automatically find tsconfig.json
     devServer: {
-      static: 'dist',
+      static: "dist",
       hot: true,
       https: {
-        key: path.resolve(os.homedir(), '.localhost-ssl/localhost.key'),
-        cert: path.resolve(os.homedir(), '.localhost-ssl/localhost.pem'),
+        key: path.resolve(os.homedir(), ".localhost-ssl/localhost.key"),
+        cert: path.resolve(os.homedir(), ".localhost-ssl/localhost.pem"),
       },
     },
-    devtool: devMode ? 'eval-cheap-module-source-map' : 'source-map',
-    entry: './src/index.tsx',
-    mode: 'development',
+    devtool: devMode ? "eval-cheap-module-source-map" : "source-map",
+    entry: "./src/index.tsx",
+    mode: "development",
     output: {
-      path: path.resolve(__dirname, 'dist'),
-      filename: 'assets/index.[contenthash].js',
+      path: path.resolve(__dirname, "dist"),
+      filename: "assets/index.[contenthash].js",
     },
     performance: { hints: false },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
-          loader: 'ts-loader'
+          loader: "ts-loader"
         },
         // This code coverage instrumentation should only be added when needed. It makes
         // the code larger and slower
         process.env.CODE_COVERAGE ? {
           test: /\.[tj]sx?$/,
-          loader: 'istanbul-instrumenter-loader',
+          loader: "istanbul-instrumenter-loader",
           options: { esModules: true },
-          enforce: 'post',
-          exclude: path.join(__dirname, 'node_modules'),
+          enforce: "post",
+          exclude: path.join(__dirname, "node_modules"),
         } : {},
         {
           test: /\.(sa|sc|le|c)ss$/i,
           use: [
-            devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+            devMode ? "style-loader" : MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 esModule: false,
                 modules: {
                   // required for :import from scss files
                   // cf. https://github.com/webpack-contrib/css-loader#separating-interoperable-css-only-and-css-module-features
-                  mode: 'icss'
+                  mode: "icss"
                 }
               }
             },
-            'postcss-loader',
-            'sass-loader'
+            "postcss-loader",
+            "sass-loader"
           ]
         },
         {
           test: /\.(png|woff|woff2|eot|ttf)$/,
-          type: 'asset'
+          type: "asset"
         },
         { // disable svgo optimization for files ending in .nosvgo.svg
           test: /\.nosvgo\.svg$/i,
-          loader: '@svgr/webpack',
+          loader: "@svgr/webpack",
           options: {
             svgo: false
           }
@@ -93,11 +93,11 @@ module.exports = (env, argv) => {
             {
               // Do not apply SVGR import in CSS files.
               issuer: /\.(css|scss|less)$/,
-              type: 'asset'
+              type: "asset"
             },
             {
               issuer: /\.tsx?$/,
-              loader: '@svgr/webpack',
+              loader: "@svgr/webpack",
               options: {
                 svgoConfig: {
                   plugins: [
@@ -119,7 +119,7 @@ module.exports = (env, argv) => {
       ]
     },
     resolve: {
-      extensions: [ '.ts', '.tsx', '.js' ]
+      extensions: [ ".ts", ".tsx", ".js" ]
     },
     stats: {
       // suppress "export not found" warnings about re-exported types
@@ -127,24 +127,24 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new ESLintPlugin({
-        extensions: ['ts', 'tsx', 'js', 'jsx'],
+        extensions: ["ts", "tsx", "js", "jsx"],
       }),
       new MiniCssExtractPlugin({
         filename: devMode ? "assets/[name].css" : "assets/[name].[contenthash].css"
       }),
       new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: 'src/index.html',
-        favicon: 'src/public/favicon.ico',
-        publicPath: '.',
+        filename: "index.html",
+        template: "src/index.html",
+        favicon: "src/public/favicon.ico",
+        publicPath: ".",
         templateParameters: {
           version
         }
       }),
       ...(DEPLOY_PATH ? [new HtmlWebpackPlugin({
-        filename: 'index-top.html',
-        template: 'src/index.html',
-        favicon: 'src/public/favicon.ico',
+        filename: "index-top.html",
+        template: "src/index.html",
+        favicon: "src/public/favicon.ico",
         publicPath: DEPLOY_PATH,
         templateParameters: {
           version
