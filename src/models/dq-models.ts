@@ -1,5 +1,5 @@
 import { Instance, types, destroy } from "mobx-state-tree";
-import { Elements, OnLoadParams } from "react-flow-renderer";
+import { Elements, OnLoadParams } from "react-flow-renderer/nocss";
 import { DQNode } from "./dq-node";
 
 export const DQRoot = types.model("DQRoot", {

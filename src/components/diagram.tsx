@@ -2,12 +2,23 @@ import { observer } from "mobx-react-lite";
 import { getSnapshot, Instance } from "mobx-state-tree";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
-  OnEdgeUpdateFunc, MiniMap, Controls, isNode } from "react-flow-renderer";
+  OnEdgeUpdateFunc, MiniMap, Controls, isNode, ReactFlowProvider } from "react-flow-renderer/nocss";
 import { DQRoot } from "../models/dq-models";
 import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
+
+// We use the nocss version of RF so we can manually load
+// the CSS. This way we can override it.
+// Otherwise RF injects its CSS after our CSS, so we can't
+// override it. 
+import "react-flow-renderer/dist/style.css";
+import "react-flow-renderer/dist/theme-default.css";
+
+// The order matters the diagram css overrides some styles
+// from the react-flow css.
+import "./diagram.scss";
 
 let nextId = 0;
 const loadInitialState = () => {
@@ -183,6 +194,7 @@ export const _Diagram = () => {
 
   return (
     <div className="diagram" ref={reactFlowWrapper}>
+      <ReactFlowProvider>
         <ReactFlow elements={dqRoot.reactFlowElements} 
           nodeTypes={nodeTypes} 
           onEdgeUpdate={onEdgeUpdate}
@@ -197,6 +209,7 @@ export const _Diagram = () => {
           { selectedNode && <NodeForm node={selectedNode}/> }
           <ToolBar exportDiagramState={exportDiagramState}/>
         </ReactFlow>
+      </ReactFlowProvider>
     </div>
   );
 };

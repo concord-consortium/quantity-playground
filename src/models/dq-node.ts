@@ -1,6 +1,6 @@
 import { simplify } from "mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
-import { ArrowHeadType, Elements } from "react-flow-renderer";
+import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
 import { getUnitConversion } from "./unit-conversion";
 
 export enum Operation {

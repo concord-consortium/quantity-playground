@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import React from "react";
 
-import { Handle, Position } from "react-flow-renderer";
+import { Handle, Position } from "react-flow-renderer/nocss";
 
 interface IProps {
   data: any;
