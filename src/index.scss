@@ -12,6 +12,16 @@ body {
   border-radius: 5px;
 }
 
+// The stroke-width affects the marker
+// Color settings on the path do not affect the marker
+// Because colors don't affect this means the arrows do not
+// change colors when the path is selected
+// A general SVG workground for this is described here:
+// https://stackoverflow.com/questions/16664584/changing-an-svg-markers-color-css/50189360
+.react-flow__edge-path {
+  stroke-width: 2.5;
+}
+
 #version {
   position: fixed;
   right: 0;

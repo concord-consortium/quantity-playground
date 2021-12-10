@@ -89,7 +89,7 @@ export const DQNode = types.model("BasicNode", {
                     source: inputA.id,
                     target: id,
                     targetHandle: "a",
-                    arrowHeadType: ArrowHeadType.Arrow
+                    arrowHeadType: ArrowHeadType.ArrowClosed
                 });
             }
             if (inputB) {
@@ -98,7 +98,7 @@ export const DQNode = types.model("BasicNode", {
                     source: inputB.id,
                     target: id,
                     targetHandle: "b",
-                    arrowHeadType: ArrowHeadType.Arrow
+                    arrowHeadType: ArrowHeadType.ArrowClosed
                 });
             }
 
