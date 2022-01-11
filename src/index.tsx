@@ -4,9 +4,7 @@ import { App } from "./components/app";
 
 import "./index.scss";
 
-setTimeout( () => {
-        ReactDOM.render(
-            <App/>,
-            document.getElementById("app")
-        );
-    }, 2000);
+ReactDOM.render(
+    <App/>,
+    document.getElementById("app")
+);

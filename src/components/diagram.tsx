@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { getSnapshot, onSnapshot, Instance } from "mobx-state-tree";
+import { getSnapshot, applySnapshot, onSnapshot, Instance } from "mobx-state-tree";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider } from "react-flow-renderer/nocss";
@@ -26,7 +26,6 @@ const url = new URL(window.location.href);
 const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 let nextId = 0;
-let dqRoot: any;
 
 const initializeCodapConnection = () => {
   const codapConfig = {
@@ -36,14 +35,36 @@ const initializeCodapConnection = () => {
   };
 
   codapInterface.on("get", "interactiveState", "",
-      () => {
-        return {success: true, values: dqRoot.getDiagramState()};
-      });
+      () => {return {success: true, values: dqRoot.getDiagramState()};});
 
-  return codapInterface.init(codapConfig);
+  codapInterface.init(codapConfig).then(
+    (initialState) => {
+      if (initialState?.nodes) {
+        applySnapshot(dqRoot, initialState);
+        // when the model changes, notify CODAP that the plugin is 'dirty'
+        onSnapshot(dqRoot,() => {
+          codapInterface.sendRequest({
+            "action": "notify",
+            "resource": "interactiveFrame",
+            "values": {"dirty": true}
+          });
+        });
+      }
+      else {
+        codapInterface.sendRequest({
+          action: "update",
+          resource: "interactiveFrame",
+          values: {dimensions: {height: 600, width: 800}}
+        });
+      }
+    },
+    (msg: string) => {
+      console.warn("No CODAP: " + msg);
+    }
+  );
 };
 
-const loadInitialState = (initialState: any) => {
+const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
 
   // Default diagram
@@ -75,9 +96,6 @@ const loadInitialState = (initialState: any) => {
   if (urlDiagram) {
     diagram = JSON.parse(urlDiagram);
   }
-  else if (initialState?.nodes) {
-    diagram = initialState;
-  }
 
   // Figure out the nextId
   let maxId = 0;
@@ -89,25 +107,9 @@ const loadInitialState = (initialState: any) => {
   return diagram;
 };
 
-initializeCodapConnection().then(
-    (initialState) => {
-      dqRoot = DQRoot.create(loadInitialState(initialState));
-      // when the model changes, notify CODAP that the plugin is 'dirty'
-      onSnapshot(dqRoot,() => {
-        codapInterface.sendRequest({
-          "action": "notify",
-          "resource": "interactiveFrame",
-          "values": {
-            "dirty": true
-          }
-        });
-      });
-    },
-    (msg: string) => {
-      console.warn("No CODAP: " + msg);
-      dqRoot = DQRoot.create(loadInitialState(null));
-    }
-);
+const dqRoot = DQRoot.create(loadInitialState());
+
+initializeCodapConnection();
 
 // For debugging
 (window as any).dqRoot = dqRoot;
