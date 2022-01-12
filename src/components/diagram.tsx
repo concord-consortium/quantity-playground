@@ -40,6 +40,10 @@ const initializeCodapConnection = () => {
   codapInterface.init(codapConfig).then(
     (initialState) => {
       if (initialState?.nodes) {
+        // update nextId as it is not saved with the state
+        const nodeIds = Object.keys(initialState.nodes);
+        const maxId = nodeIds.reduce((m: number, nodeID: string) => Math.max(m, Number(nodeID)), 0);
+        nextId = maxId + 1;
         applySnapshot(dqRoot, initialState);
         // when the model changes, notify CODAP that the plugin is 'dirty'
         onSnapshot(dqRoot,() => {
