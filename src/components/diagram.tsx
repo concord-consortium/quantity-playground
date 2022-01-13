@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { getSnapshot, Instance } from "mobx-state-tree";
+import { getSnapshot, applySnapshot, onSnapshot, Instance } from "mobx-state-tree";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, 
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider } from "react-flow-renderer/nocss";
@@ -8,6 +8,7 @@ import { DQNode, Operation } from "../models/dq-node";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
+import codapInterface from "../lib/CodapInterface";
 
 // We use the nocss version of RF so we can manually load
 // the CSS. This way we can override it.
@@ -25,9 +26,51 @@ const url = new URL(window.location.href);
 const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 let nextId = 0;
+
+const initializeCodapConnection = () => {
+  const codapConfig = {
+    customInteractiveStateHandler: true,
+    name: "Quantitative Playground",
+    version: "1.0"
+  };
+
+  codapInterface.on("get", "interactiveState", "",
+      () => {return {success: true, values: dqRoot.getDiagramState()};});
+
+  codapInterface.init(codapConfig).then(
+    (initialState) => {
+      if (initialState?.nodes) {
+        // update nextId as it is not saved with the state
+        const nodeIds = Object.keys(initialState.nodes);
+        const maxId = nodeIds.reduce((m: number, nodeID: string) => Math.max(m, Number(nodeID)), 0);
+        nextId = maxId + 1;
+        applySnapshot(dqRoot, initialState);
+        // when the model changes, notify CODAP that the plugin is 'dirty'
+        onSnapshot(dqRoot,() => {
+          codapInterface.sendRequest({
+            "action": "notify",
+            "resource": "interactiveFrame",
+            "values": {"dirty": true}
+          });
+        });
+      }
+      else {
+        codapInterface.sendRequest({
+          action: "update",
+          resource: "interactiveFrame",
+          values: {dimensions: {height: 600, width: 800}}
+        });
+      }
+    },
+    (msg: string) => {
+      console.warn("No CODAP: " + msg);
+    }
+  );
+};
+
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
-  
+
   // Default diagram
   let diagram = {
     nodes: {
@@ -53,7 +96,7 @@ const loadInitialState = () => {
     }
   };
 
-  // Override default diagram with URL param
+  // Override default diagram with URL param or prior state
   if (urlDiagram) {
     diagram = JSON.parse(urlDiagram);
   }
@@ -69,6 +112,8 @@ const loadInitialState = () => {
 };
 
 const dqRoot = DQRoot.create(loadInitialState());
+
+initializeCodapConnection();
 
 // For debugging
 (window as any).dqRoot = dqRoot;
