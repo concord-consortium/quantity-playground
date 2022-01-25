@@ -45,13 +45,13 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.tsx?$/,
-          loader: "ts-loader"
+          loader: "ts-loader",
         },
         // This code coverage instrumentation should only be added when needed. It makes
         // the code larger and slower
         process.env.CODE_COVERAGE ? {
           test: /\.[tj]sx?$/,
-          loader: "istanbul-instrumenter-loader",
+          loader: "@jsdevtools/coverage-istanbul-loader",
           options: { esModules: true },
           enforce: "post",
           exclude: path.join(__dirname, "node_modules"),
@@ -67,23 +67,23 @@ module.exports = (env, argv) => {
                 modules: {
                   // required for :import from scss files
                   // cf. https://github.com/webpack-contrib/css-loader#separating-interoperable-css-only-and-css-module-features
-                  mode: "icss"
+                  mode: "icss",
                 }
               }
             },
             "postcss-loader",
-            "sass-loader"
+            "sass-loader",
           ]
         },
         {
           test: /\.(png|woff|woff2|eot|ttf)$/,
-          type: "asset"
+          type: "asset",
         },
         { // disable svgo optimization for files ending in .nosvgo.svg
           test: /\.nosvgo\.svg$/i,
           loader: "@svgr/webpack",
           options: {
-            svgo: false
+            svgo: false,
           }
         },
         {
@@ -93,7 +93,7 @@ module.exports = (env, argv) => {
             {
               // Do not apply SVGR import in CSS files.
               issuer: /\.(css|scss|less)$/,
-              type: "asset"
+              type: "asset",
             },
             {
               issuer: /\.tsx?$/,
@@ -101,15 +101,26 @@ module.exports = (env, argv) => {
               options: {
                 svgoConfig: {
                   plugins: [
-                    // leave <line>s, <rect>s and <circle>s alone
-                    // https://github.com/svg/svgo/blob/master/plugins/convertShapeToPath.js
-                    { convertShapeToPath: false },
-                    // leave "class"es and "id"s alone
-                    // https://github.com/svg/svgo/blob/master/plugins/prefixIds.js
-                    { prefixIds: false },
-                    // leave "stroke"s and "fill"s alone
-                    // https://github.com/svg/svgo/blob/master/plugins/removeUnknownsAndDefaults.js
-                    { removeUnknownsAndDefaults: { defaultAttrs: false } }
+                    {
+                      // cf. https://github.com/svg/svgo/releases/tag/v2.4.0
+                      name: 'preset-default',
+                      params: {
+                        overrides: {
+                          // don't minify "id"s (i.e. turn randomly-generated unique ids into "a", "b", ...)
+                          // https://github.com/svg/svgo/blob/master/plugins/cleanupIDs.js
+                          cleanupIDs: { minify: false },
+                          // leave <line>s, <rect>s and <circle>s alone
+                          // https://github.com/svg/svgo/blob/master/plugins/convertShapeToPath.js
+                          convertShapeToPath: false,
+                          // leave "class"es and "id"s alone
+                          // https://github.com/svg/svgo/blob/master/plugins/prefixIds.js
+                          prefixIds: false,
+                          // leave "stroke"s and "fill"s alone
+                          // https://github.com/svg/svgo/blob/master/plugins/removeUnknownsAndDefaults.js
+                          removeUnknownsAndDefaults: { defaultAttrs: false },
+                        }
+                      }
+                    }
                   ]
                 }
               }
