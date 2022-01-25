@@ -35,7 +35,7 @@ const initializeCodapConnection = () => {
   };
 
   codapInterface.on("get", "interactiveState", "",
-      () => {return {success: true, values: dqRoot.getDiagramState()};});
+      () => {return {success: true, values: getSnapshot(dqRoot)};});
 
   codapInterface.init(codapConfig).then(
     (initialState) => {
@@ -127,6 +127,7 @@ const nodeTypes = {
 export const _Diagram = () => {
   const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
+  const [rfInstance, setRfInstance] = useState<any>();
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
@@ -204,12 +205,12 @@ export const _Diagram = () => {
   const onDrop = (event: any) => {
     event.preventDefault();
 
-    if (!reactFlowWrapper.current || !dqRoot.rfInstance) {
+    if (!reactFlowWrapper.current || !rfInstance) {
       return;
     }
 
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const position = dqRoot.rfInstance.project({
+    const position = rfInstance.project({
       x: event.clientX - reactFlowBounds.left,
       y: event.clientY - reactFlowBounds.top,
     });
@@ -223,6 +224,12 @@ export const _Diagram = () => {
     nextId++;
   };
 
+  // Keep the MST node model in sync with the diagram
+  const onNodeDragStop = (event: any, node: any) => {
+    const mstNode = dqRoot.nodes.get(node.id);
+    mstNode?.updatePosition(node.position.x, node.position.y);
+  };
+
   return (
     <div className="diagram" ref={reactFlowWrapper}>
       <ReactFlowProvider>
@@ -232,9 +239,10 @@ export const _Diagram = () => {
           onConnect={onConnect}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
-          onLoad={(rfInstance) => dqRoot.setRfInstance(rfInstance)}
+          onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
           onDrop={onDrop}
-          onDragOver={onDragOver}>
+          onDragOver={onDragOver}
+          onNodeDragStop={onNodeDragStop}>
           <MiniMap/>
           <Controls />
           { selectedNode && 

@@ -1,5 +1,5 @@
 
-import { Instance } from "mobx-state-tree";
+import { Instance, getSnapshot } from "mobx-state-tree";
 import React from "react";
 import { DQRoot } from "../models/dq-root";
 
@@ -14,7 +14,8 @@ export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
     };
     
     const copyDiagramURL = () => {
-        const exportedDiagram = dqRoot.getDiagramState();
+        const exportedDiagram = getSnapshot(dqRoot);
+        console.log("Exported Diagram", exportedDiagram);
         const url = new URL(window.location.href);
         url.searchParams.set("diagram", JSON.stringify(exportedDiagram));
         console.log(url.href);
