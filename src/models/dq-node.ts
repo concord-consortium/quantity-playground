@@ -258,5 +258,12 @@ export const DQNode = types.model("BasicNode", {
         },
         setOperation(newOperation?: Operation) {
             self.operation = newOperation;
+        },
+        // Note: as far as I know React Flow will ignore this change
+        // it only pays attention to the position of the node when the
+        // diagram is first initialized
+        updatePosition(x: number, y: number) {
+            self.x = x;
+            self.y = y;
         }
     }));
