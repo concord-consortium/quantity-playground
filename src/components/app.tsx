@@ -1,7 +1,7 @@
 import React from "react";
-import { Diagram } from "./diagram";
-import { Operation } from "../models/dq-node";
-import { DQRoot } from "../models/dq-root";
+import { Diagram } from "../diagram/components/diagram";
+import { Operation } from "../diagram/models/dq-node";
+import { DQRoot } from "../diagram/models/dq-root";
 
 import "./app.scss";
 
