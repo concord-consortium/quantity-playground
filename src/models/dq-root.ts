@@ -1,9 +1,10 @@
 import { Instance, types, destroy } from "mobx-state-tree";
-import { Elements } from "react-flow-renderer/nocss";
+import { Elements, FlowTransform } from "react-flow-renderer/nocss";
 import { DQNode } from "./dq-node";
 
 export const DQRoot = types.model("DQRoot", {
-    nodes: types.map(DQNode)
+    nodes: types.map(DQNode),
+    flowTransform: types.maybe(types.frozen<FlowTransform>())
 })
 .views(self => ({
     get reactFlowElements() {
@@ -22,6 +23,9 @@ export const DQRoot = types.model("DQRoot", {
         const nodeToRemove = self.nodes.get(nodeId);
         // self.nodes.delete(nodeId);
         destroy(nodeToRemove);
+    },
+    setTransform(transform: FlowTransform) {
+        self.flowTransform = transform;
     }
 }));
 export interface DQRootType extends Instance<typeof DQRoot> {}

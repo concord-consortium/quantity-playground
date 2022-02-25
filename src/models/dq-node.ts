@@ -1,5 +1,6 @@
 import { simplify } from "mathjs";
 import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
+import { nanoid } from "nanoid";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
 import { getUnitConversion } from "./unit-conversion";
 
@@ -12,7 +13,7 @@ export enum Operation {
 
 (window as any).simplify = simplify;
 
-// This custom rule makes sure that we end up with 
+// This custom rule makes sure that we end up with
 // `m/s^2` instead of `(1/s)^2*m`
 const updatedRules = [...simplify.rules, "(1/n1)^c2*n3 -> n3/n1^c2"];
 
@@ -44,7 +45,7 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
             break;
     }
 
-    try {    
+    try {
       const result = simplify(newUnit, updatedRules).toString();
       if (result === "1") {
         return {message: "units cancel"};
@@ -56,14 +57,14 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
 }
 
 const BaseDQNode = types.model("BasicNode", {
-    id: types.identifier,
+    id: types.optional(types.identifier, () => nanoid(16)),
     name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
     inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
     inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
     operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
-    
+
     // The x and y values are required when initializing the react flow
     // component. However the react flow component ignores them after this.
     // To serialize the state the positions need to be extracted from the react flow
@@ -79,9 +80,9 @@ const BaseDQNode = types.model("BasicNode", {
             const inputB = self.inputB as typeof self | undefined;
             elements.push({
                 id,
-                type: "quantityNode", 
+                type: "quantityNode",
                 data: { node:  self },
-                position: { x: self.x, y: self.y },                
+                position: { x: self.x, y: self.y },
             });
             if (inputA) {
                 elements.push({
@@ -191,7 +192,7 @@ const BaseDQNode = types.model("BasicNode", {
                             return {unit: inputAUnit};
                         default:
                             break;
-                    }    
+                    }
                 } else {
                     // We have 2 inputs (with or without units), but no operation
                     // The computedValue code above is already going to provide a warning about
@@ -222,7 +223,7 @@ const BaseDQNode = types.model("BasicNode", {
         },
         get computedValueWithSignificantDigits() {
             // Currently this just uses a fixed set of fractional digits instead of keeping track of
-            // significant digits 
+            // significant digits
             const value = self.computedValueIncludingError.value;
 
             // In practice Chrome's format returns "NaN" for undefined values, but typescript
@@ -254,7 +255,7 @@ const BaseDQNode = types.model("BasicNode", {
         setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
             self.inputB = newInputB;
         },
-        setValue(newValue?: number) { 
+        setValue(newValue?: number) {
             self.value = newValue;
         },
         setUnit(newUnit?: string) {

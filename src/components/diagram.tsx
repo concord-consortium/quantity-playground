@@ -1,6 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { Instance } from "mobx-state-tree";
-import { nanoid } from "nanoid";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
@@ -22,24 +21,22 @@ import "react-flow-renderer/dist/theme-default.css";
 // from the react-flow css.
 import "./diagram.scss";
 
-const url = new URL(window.location.href);
-const showNestedSet = !(url.searchParams.get("nestedSet") == null);
-
-const uniqueId = () => nanoid(16);
-
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
 
 interface IProps {
   dqRoot: DQRootType;
-  initialFlowTransform?: FlowTransform;
-  onChangeFlowTransform?: (transform?: FlowTransform) => void;
+  showNestedSet?: boolean;
 }
-export const _Diagram = ({ dqRoot, initialFlowTransform, onChangeFlowTransform }: IProps) => {
+export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
+
+  const handleChangeFlowTransform = (transform?: FlowTransform) => {
+    transform && dqRoot.setTransform(transform);
+  };
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
@@ -128,7 +125,6 @@ export const _Diagram = ({ dqRoot, initialFlowTransform, onChangeFlowTransform }
     });
 
     const dqNode = DQNode.create({
-      id: uniqueId(),
       x: position.x,
       y: position.y
     });
@@ -146,7 +142,7 @@ export const _Diagram = ({ dqRoot, initialFlowTransform, onChangeFlowTransform }
     event.stopPropagation();
   };
 
-  const { zoom: defaultZoom, x, y } = initialFlowTransform || {};
+  const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
   return (
@@ -165,7 +161,7 @@ export const _Diagram = ({ dqRoot, initialFlowTransform, onChangeFlowTransform }
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
-          onMoveEnd={onChangeFlowTransform}>
+          onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
           { selectedNode &&

@@ -6,7 +6,7 @@ import { DQRoot } from "../models/dq-root";
 import "./app.scss";
 
 const url = new URL(window.location.href);
-// const showNestedSet = !(url.searchParams.get("nestedSet") == null);
+const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
@@ -49,7 +49,7 @@ const dqRoot = DQRoot.create(loadInitialState());
 export const App = () => {
   return (
     <div className="app">
-      <Diagram dqRoot={dqRoot} />
+      <Diagram dqRoot={dqRoot} showNestedSet={showNestedSet} />
     </div>
   );
 };
