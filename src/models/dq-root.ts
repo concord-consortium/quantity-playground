@@ -24,3 +24,4 @@ export const DQRoot = types.model("DQRoot", {
         destroy(nodeToRemove);
     }
 }));
+export interface DQRootType extends Instance<typeof DQRoot> {}

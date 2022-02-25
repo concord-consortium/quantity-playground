@@ -1,5 +1,5 @@
 import { simplify } from "mathjs";
-import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
 import { getUnitConversion } from "./unit-conversion";
 
@@ -55,21 +55,21 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
     }
 }
 
-export const DQNode = types.model("BasicNode", {
+const BaseDQNode = types.model("BasicNode", {
     id: types.identifier,
     name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
-    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
-    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
+    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
+    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
     operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
     
     // The x and y values are required when initializing the react flow
     // component. However the react flow component ignores them after this.
     // To serialize the state the positions need to be extracted from the react flow
     // and then applied to the models.
-    x: types.integer,
-    y: types.integer
+    x: types.number,
+    y: types.number
 })
     .views(self => ({
         get reactFlowElements() {
@@ -124,10 +124,10 @@ export const DQNode = types.model("BasicNode", {
             if ((self.numberOfInputs === 1)) {
                 // We have to cast the input to any because we are calling the functions
                 // computedUnit and computedValue
-                // Those functions are what we are defining here so TS doesn't know they are exist on 
-                // DQNode yet.
+                // Those functions are what we are defining here so TS doesn't know they exist on DQNode yet.
                 const input = self.firstValidInput as any;
 
+                // @ts-expect-error THIS
                 const convertValue = getUnitConversion((input).computedUnit, this.computedUnit);
                 if (convertValue) {
                     // It'd be nice to record this error but doing it here would be
@@ -142,15 +142,19 @@ export const DQNode = types.model("BasicNode", {
                 let value;
                 switch (self.operation) {
                     case "÷":
+                        // @ts-expect-error THIS
                         value = this.inputA.computedValue / this.inputB.computedValue;
                         break;
                     case "×":
+                        // @ts-expect-error THIS
                         value = this.inputA.computedValue * this.inputB.computedValue;
                         break;
                     case "+":
+                        // @ts-expect-error THIS
                         value = this.inputA.computedValue + this.inputB.computedValue;
                         break;
                     case "-":
+                        // @ts-expect-error THIS
                         value = this.inputA.computedValue - this.inputB.computedValue;
                         break;
                     default:
@@ -169,9 +173,11 @@ export const DQNode = types.model("BasicNode", {
         get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
             if (self.inputA && self.inputB) {
                 if (self.operation) {
-                    // If there is no unit, then use "1", that way the simplication of multiplication 
+                    // If there is no unit, then use "1", that way the simplification of multiplication
                     // and division will work properly
+                    // @ts-expect-error THIS
                     const inputAUnit = this.inputA.computedUnit;
+                    // @ts-expect-error THIS
                     const inputBUnit = this.inputB.computedUnit;
                     switch (self.operation) {
                         case "÷":
@@ -197,6 +203,7 @@ export const DQNode = types.model("BasicNode", {
                 return {unit: self.unit};
             }
             if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
+                // @ts-expect-error THIS
                 const input = this.inputA || this.inputB;
                 return {unit: input.computedUnit};
             }
@@ -267,3 +274,32 @@ export const DQNode = types.model("BasicNode", {
             self.y = y;
         }
     }));
+interface BaseDQNodeSnapshot extends SnapshotIn<typeof BaseDQNode> {}
+
+// importable nodes have more flexible snapshots
+const ImportableDQNode = types.model("ImportableNode", {
+    id: types.identifier,
+    name: types.maybe(types.string),
+    unit: types.maybe(types.string),
+    value: types.maybe(types.maybeNull(types.number)),  // nulls have been encountered in the field
+    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
+    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
+    operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
+    x: types.number,
+    y: types.number
+});
+interface ImportableDQNodeSnapshot extends SnapshotIn<typeof ImportableDQNode> {}
+
+const isBaseDQNodeSnapshot = (sn: BaseDQNodeSnapshot | ImportableDQNodeSnapshot): sn is BaseDQNodeSnapshot =>
+        sn.value !== null;
+
+// client-visible DQNode handles import of null values
+export const DQNode = types.snapshotProcessor(BaseDQNode, {
+  preProcessor(sn: BaseDQNodeSnapshot | ImportableDQNodeSnapshot) {
+    if (isBaseDQNodeSnapshot(sn)) return sn;
+
+    const { value, ...others } = sn;
+    return { ...others };
+  }
+});
+export interface DQNodeType extends Instance<typeof DQNode> {}

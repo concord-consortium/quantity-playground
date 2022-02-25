@@ -16,7 +16,7 @@ const DEPLOY_PATH = process.env.DEPLOY_PATH;
 // Use the DEPLOY_PATH as the version
 // This way the version will indicate if it is a branch or tag.
 // This approach probably might not be good for production usage
-// but it is good enough for this prototype. 
+// but it is good enough for this prototype.
 // It will look like `version/v1.2.3` or `branch/something-cool`
 const version = DEPLOY_PATH ?? "unknown version";
 
@@ -132,10 +132,10 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: [ ".ts", ".tsx", ".js" ]
     },
-    stats: {
-      // suppress "export not found" warnings about re-exported types
-      warningsFilter: /export .* was not found in/
-    },
+    // stats: {
+    //   // suppress "export not found" warnings about re-exported types
+    //   warningsFilter: /export .* was not found in/
+    // },
     plugins: [
       new ESLintPlugin({
         extensions: ["ts", "tsx", "js", "jsx"],

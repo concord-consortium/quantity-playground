@@ -1,130 +1,42 @@
 import { observer } from "mobx-react-lite";
-import { getSnapshot, applySnapshot, onSnapshot, Instance } from "mobx-state-tree";
+import { Instance } from "mobx-state-tree";
+import { nanoid } from "nanoid";
 import React, { useRef, useState } from "react";
-import ReactFlow, { Edge, Elements, OnConnectFunc, 
-  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider } from "react-flow-renderer/nocss";
-import { DQRoot } from "../models/dq-root";
-import { DQNode, Operation } from "../models/dq-node";
+import ReactFlow, { Edge, Elements, OnConnectFunc,
+  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
+import { DQRootType } from "../models/dq-root";
+import { DQNode } from "../models/dq-node";
+import { NestedSet } from "./nested-set";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
-import codapInterface from "../lib/CodapInterface";
 
 // We use the nocss version of RF so we can manually load
 // the CSS. This way we can override it.
 // Otherwise RF injects its CSS after our CSS, so we can't
-// override it. 
+// override it.
 import "react-flow-renderer/dist/style.css";
 import "react-flow-renderer/dist/theme-default.css";
 
 // The order matters the diagram css overrides some styles
 // from the react-flow css.
 import "./diagram.scss";
-import { NestedSet } from "./nested-set";
 
 const url = new URL(window.location.href);
 const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
-let nextId = 0;
-
-const initializeCodapConnection = () => {
-  const codapConfig = {
-    customInteractiveStateHandler: true,
-    name: "Quantitative Playground",
-    version: "1.0"
-  };
-
-  codapInterface.on("get", "interactiveState", "",
-      () => {return {success: true, values: getSnapshot(dqRoot)};});
-
-  codapInterface.init(codapConfig).then(
-    (initialState) => {
-      if (initialState?.nodes) {
-        // update nextId as it is not saved with the state
-        const nodeIds = Object.keys(initialState.nodes);
-        const maxId = nodeIds.reduce((m: number, nodeID: string) => Math.max(m, Number(nodeID)), 0);
-        nextId = maxId + 1;
-        applySnapshot(dqRoot, initialState);
-        // when the model changes, notify CODAP that the plugin is 'dirty'
-        onSnapshot(dqRoot,() => {
-          codapInterface.sendRequest({
-            "action": "notify",
-            "resource": "interactiveFrame",
-            "values": {"dirty": true}
-          });
-        });
-      }
-      else {
-        codapInterface.sendRequest({
-          action: "update",
-          resource: "interactiveFrame",
-          values: {dimensions: {height: 600, width: 800}}
-        });
-      }
-    },
-    (msg: string) => {
-      console.warn("No CODAP: " + msg);
-    }
-  );
-};
-
-const loadInitialState = () => {
-  const urlDiagram = url.searchParams.get("diagram");
-
-  // Default diagram
-  let diagram = {
-    nodes: {
-        "1": {
-            id: "1",
-            value: 124,
-            x: 100,
-            y: 100       
-        },
-        "2": {
-            id: "2",
-            x: 100,
-            y: 200
-        },
-        "3": {
-            id: "3",
-            inputA: "1",
-            inputB: "2",
-            operation: Operation.Divide,
-            x: 250,
-            y: 150
-        }
-    }
-  };
-
-  // Override default diagram with URL param or prior state
-  if (urlDiagram) {
-    diagram = JSON.parse(urlDiagram);
-  }
-
-  // Figure out the nextId
-  let maxId = 0;
-  for (const idString of Object.keys(diagram.nodes)) {
-    const id = parseInt(idString, 10);
-    if (id > maxId) maxId = id;
-  }
-  nextId = maxId + 1;
-  return diagram;
-};
-
-const dqRoot = DQRoot.create(loadInitialState());
-
-initializeCodapConnection();
-
-// For debugging
-(window as any).dqRoot = dqRoot;
-(window as any).getSnapshot = getSnapshot;
-
+const uniqueId = () => nanoid(16);
 
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
 
-export const _Diagram = () => {
+interface IProps {
+  dqRoot: DQRootType;
+  initialFlowTransform?: FlowTransform;
+  onChangeFlowTransform?: (transform?: FlowTransform) => void;
+}
+export const _Diagram = ({ dqRoot, initialFlowTransform, onChangeFlowTransform }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
@@ -133,7 +45,7 @@ export const _Diagram = () => {
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
 
     // We could try to be smart about this, and only update things that
-    // changed but it is easier to just break the old connection 
+    // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.nodes.get(oldEdge.target);
     const oldTargetHandle = oldEdge.targetHandle;
@@ -142,7 +54,7 @@ export const _Diagram = () => {
     } else if (oldTargetHandle === "b") {
       oldTargetNode?.setInputB(undefined);
     }
-    
+
     const { source, target, targetHandle: newTargetHandle } = newConnection;
     const newSourceNode = source ? dqRoot.nodes.get(source) : undefined;
     const newTargetNode = target ? dqRoot.nodes.get(target) : undefined;
@@ -162,7 +74,7 @@ export const _Diagram = () => {
       if (targetHandle === "a") {
         targetModel?.setInputA(sourceModel);
       } else if (targetHandle === "b") {
-        targetModel?.setInputB(sourceModel);        
+        targetModel?.setInputB(sourceModel);
       }
     }
   };
@@ -178,7 +90,7 @@ export const _Diagram = () => {
         if (targetHandle === "a") {
           targetModel?.setInputA(undefined);
         } else if (targetHandle === "b") {
-          targetModel?.setInputB(undefined);        
+          targetModel?.setInputB(undefined);
         }
       } else {
         // If this is the selected node we need to remove it from the state too
@@ -216,36 +128,47 @@ export const _Diagram = () => {
     });
 
     const dqNode = DQNode.create({
-      id: nextId.toString(),
+      id: uniqueId(),
       x: position.x,
-      y: position.y   
+      y: position.y
     });
     dqRoot.addNode(dqNode);
-    nextId++;
+  };
+
+  const onNodeDrag = (event: React.MouseEvent<Element, MouseEvent>, node: any) => {
+    event.stopPropagation();
   };
 
   // Keep the MST node model in sync with the diagram
   const onNodeDragStop = (event: any, node: any) => {
     const mstNode = dqRoot.nodes.get(node.id);
     mstNode?.updatePosition(node.position.x, node.position.y);
+    event.stopPropagation();
   };
+
+  const { zoom: defaultZoom, x, y } = initialFlowTransform || {};
+  const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
   return (
     <div className="diagram" ref={reactFlowWrapper}>
       <ReactFlowProvider>
-        <ReactFlow elements={dqRoot.reactFlowElements} 
-          nodeTypes={nodeTypes} 
+        <ReactFlow elements={dqRoot.reactFlowElements}
+          defaultPosition={defaultPosition}
+          defaultZoom={defaultZoom}
+          nodeTypes={nodeTypes}
           onEdgeUpdate={onEdgeUpdate}
-          onConnect={onConnect}
+          onConnect={onConnect as any}  // TODO: fix types
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
           onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          onNodeDragStop={onNodeDragStop}>
+          onNodeDrag={onNodeDrag}
+          onNodeDragStop={onNodeDragStop}
+          onMoveEnd={onChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          { selectedNode && 
+          { selectedNode &&
             <>
               <NodeForm node={selectedNode}/>
               { showNestedSet &&
@@ -253,7 +176,7 @@ export const _Diagram = () => {
                   <NestedSet node={selectedNode} final={true} />
                 </div>
               }
-            </> 
+            </>
           }
           <ToolBar dqRoot={dqRoot}/>
         </ReactFlow>
