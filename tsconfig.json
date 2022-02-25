@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
-    "strictNullChecks": true,
+    "strict": true,
     "types": ["jest"],
     "jsx": "react",
     "lib": [
