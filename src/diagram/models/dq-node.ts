@@ -11,8 +11,6 @@ export enum Operation {
     Subtract = "-"
 }
 
-(window as any).simplify = simplify;
-
 // This custom rule makes sure that we end up with
 // `m/s^2` instead of `(1/s)^2*m`
 const updatedRules = [...simplify.rules, "(1/n1)^c2*n3 -> n3/n1^c2"];
@@ -56,13 +54,13 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
     }
 }
 
-const BaseDQNode = types.model("BasicNode", {
+export const DQNode = types.model("DQNode", {
     id: types.optional(types.identifier, () => nanoid(16)),
     name: types.maybe(types.string),
     unit: types.maybe(types.string),
     value: types.maybe(types.number),
-    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
-    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
+    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
+    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => DQNode))),
     operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
 
     // The x and y values are required when initializing the react flow
@@ -72,6 +70,15 @@ const BaseDQNode = types.model("BasicNode", {
     x: types.number,
     y: types.number
 })
+    // deprecated, but serves our purposes better than the alternatives (e.g. snapshotProcessor)
+    .preProcessSnapshot(sn => {
+        // null values have been encountered in the field
+        if (sn.value == null) {
+            const { value, ...others } = sn;
+            return others;
+        }
+        return sn;
+    })
     .views(self => ({
         get reactFlowElements() {
             const elements: Elements = [];
@@ -275,32 +282,5 @@ const BaseDQNode = types.model("BasicNode", {
             self.y = y;
         }
     }));
-interface BaseDQNodeSnapshot extends SnapshotIn<typeof BaseDQNode> {}
-
-// importable nodes have more flexible snapshots
-const ImportableDQNode = types.model("ImportableNode", {
-    id: types.identifier,
-    name: types.maybe(types.string),
-    unit: types.maybe(types.string),
-    value: types.maybe(types.maybeNull(types.number)),  // nulls have been encountered in the field
-    inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
-    inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => BaseDQNode))),
-    operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
-    x: types.number,
-    y: types.number
-});
-interface ImportableDQNodeSnapshot extends SnapshotIn<typeof ImportableDQNode> {}
-
-const isBaseDQNodeSnapshot = (sn: BaseDQNodeSnapshot | ImportableDQNodeSnapshot): sn is BaseDQNodeSnapshot =>
-        sn.value !== null;
-
-// client-visible DQNode handles import of null values
-export const DQNode = types.snapshotProcessor(BaseDQNode, {
-  preProcessor(sn: BaseDQNodeSnapshot | ImportableDQNodeSnapshot) {
-    if (isBaseDQNodeSnapshot(sn)) return sn;
-
-    const { value, ...others } = sn;
-    return { ...others };
-  }
-});
 export interface DQNodeType extends Instance<typeof DQNode> {}
+export interface DQNodeSnapshot extends SnapshotIn<typeof DQNode> {}
