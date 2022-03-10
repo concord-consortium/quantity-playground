@@ -11,7 +11,7 @@ import postcss from "rollup-plugin-postcss";
 import packageJson from "./package.json";
 
 export default [{
-  input: "../src/diagram/index.tsx",
+  input: "../src/diagram/index.ts",
   output: [
     {
       file: packageJson.main,
