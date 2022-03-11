@@ -1,4 +1,4 @@
-import { simplify } from "mathjs";
+import { simplify } from "../custom-mathjs";
 import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";

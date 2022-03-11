@@ -3,9 +3,10 @@ coverage-cypress
 dist
 node_modules
 npm-error.log
+stats.html
 .DS_Store
 .nyc_output
-
+.yalc
+yalc.lock
 # Editors
 .idea
-

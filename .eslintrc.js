@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   ignorePatterns: [
-    "dist/", "node_modules/"
+    "CodapInterface.ts", "dist/", "node_modules/"
   ],
   extends: [
     "eslint:recommended",

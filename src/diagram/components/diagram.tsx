@@ -1,10 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { Instance } from "mobx-state-tree";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
-import { DQNode } from "../models/dq-node";
+import { DQNode, DQNodeType } from "../models/dq-node";
 import { NestedSet } from "./nested-set";
 import { NodeForm } from "./node-form";
 import { QuantityNode } from "./quantity-node";
@@ -31,7 +30,7 @@ interface IProps {
 }
 export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [selectedNode, setSelectedNode] = useState<Instance<typeof DQNode> | undefined>();
+  const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
