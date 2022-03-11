@@ -8,11 +8,12 @@ interface IProps {
 }
 
 export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
-    const onDragStart = (event: any) => {
+    const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
+        event.stopPropagation();
     };
-    
+
     const copyDiagramURL = () => {
         const exportedDiagram = getSnapshot(dqRoot);
         console.log("Exported Diagram", exportedDiagram);
@@ -21,7 +22,7 @@ export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
         console.log(url.href);
         navigator.clipboard.writeText(url.href);
     };
-        
+
     return (
       <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
         <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button>

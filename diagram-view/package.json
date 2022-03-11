@@ -31,7 +31,7 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "unlink:react": "npm unlink -g react",
-    "yalc:publish": "npx yalc publish",
+    "yalc:publish": "npx yalc publish --push",
     "yalc:unpublish": "npx yalc installations clean @concord-consortium/diagram-view"
   },
   "author": "Concord Consortium",
