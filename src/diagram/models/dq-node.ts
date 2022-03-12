@@ -11,11 +11,7 @@ export enum Operation {
     Subtract = "-"
 }
 
-// This custom rule makes sure that we end up with
-// `m/s^2` instead of `(1/s)^2*m`
-const updatedRules = [...simplify.rules, "(1/n1)^c2*n3 -> n3/n1^c2"];
-
-function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: string) {
+export function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: string) {
     if (!inputAUnit && !inputBUnit) {
         // If there is no unit on both inputs then return no unit
         // and don't show the "units cancel" message
@@ -28,12 +24,6 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
     let newUnit = "";
     switch (operation) {
         case "÷":
-            // The math.js simplify function doesn't handle cases like
-            // (m/s)/(m/s) well. We can probably work on the rules to improve this
-            // but that is a complex process, so instead just shortcut it
-            if (aUnit === bUnit) {
-                return {message: "units cancel"};
-            }
             newUnit = `(${aUnit})/(${bUnit})`;
             break;
         case "×":
@@ -44,7 +34,7 @@ function tryToSimplify(operation: "÷"|"×", inputAUnit?:string, inputBUnit?: st
     }
 
     try {
-      const result = simplify(newUnit, updatedRules).toString();
+      const result = simplify(newUnit).toString();
       if (result === "1") {
         return {message: "units cancel"};
       }
