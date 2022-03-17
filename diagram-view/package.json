@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "Concord Consortium Diagram View",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -8,6 +8,10 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
