@@ -3,9 +3,10 @@ import { isAlive } from "mobx-state-tree";
 import React from "react";
 
 import { Handle, Position } from "react-flow-renderer/nocss";
+import { DQNodeType } from "../models/dq-node";
 
 interface IProps {
-  data: any;
+  data: {node: DQNodeType};
   isConnectable: boolean;
 }
   

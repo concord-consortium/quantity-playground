@@ -1,8 +1,8 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React from "react";
 import { Diagram } from "../diagram/components/diagram";
-import { Operation } from "../diagram/models/dq-node";
-import { DQRoot } from "../diagram/models/dq-root";
+import { AppStore } from "../diagram/models/app-store";
+import { Operation } from "../diagram/models/variables";
 import codapInterface from "../lib/CodapInterface";
 
 import "./app.scss";
@@ -15,26 +15,46 @@ const loadInitialState = () => {
 
   // Default diagram
   let diagram = {
-    nodes: {
-        "1": {
-            id: "1",
-            value: 124,
-            x: 100,
-            y: 100
+    diagram: {
+      variables: "variables-root",
+      nodes: {
+          "1": {
+              id: "1",
+              variable: "a",
+              x: 100,
+              y: 100
+          },
+          "2": {
+              id: "2",
+              variable: "b",
+              x: 100,
+              y: 200
+          },
+          "3": {
+              id: "3",
+              variable: "c",
+              x: 250,
+              y: 150
+          }
+      }
+    },
+    variables: {
+      id: "variables-root",
+      variables: {
+        "a": {
+          id: "a",
+          value: 124,
         },
-        "2": {
-            id: "2",
-            x: 100,
-            y: 200
+        "b": {
+            id: "b",
         },
-        "3": {
-            id: "3",
-            inputA: "1",
-            inputB: "2",
+        "c": {
+            id: "c",
+            inputA: "a",
+            inputB: "b",
             operation: Operation.Divide,
-            x: 250,
-            y: 150
         }
+      }
     }
   };
 
@@ -46,10 +66,10 @@ const loadInitialState = () => {
   return diagram;
 };
 
-const dqRoot = DQRoot.create(loadInitialState());
+const appStore = AppStore.create(loadInitialState());
 
 // For debugging
-(window as any).dqRoot = dqRoot;
+(window as any).appStore = appStore;
 (window as any).getSnapshot = getSnapshot;
 
 // TODO: rewrite this as a reusable custom hook (useCodapConnection)
@@ -61,14 +81,14 @@ const initializeCodapConnection = () => {
   };
 
   codapInterface.on("get", "interactiveState", "",
-      () => {return {success: true, values: getSnapshot(dqRoot)};});
+      () => {return {success: true, values: getSnapshot(appStore)};});
 
   codapInterface.init(codapConfig).then(
     (initialState) => {
-      if (initialState?.nodes) {
-        applySnapshot(dqRoot, initialState);
+      if (initialState?.diagram) {
+        applySnapshot(appStore, initialState);
         // when the model changes, notify CODAP that the plugin is 'dirty'
-        onSnapshot(dqRoot,() => {
+        onSnapshot(appStore, () => {
           codapInterface.sendRequest({
             "action": "notify",
             "resource": "interactiveFrame",
@@ -95,7 +115,7 @@ initializeCodapConnection();
 export const App = () => {
   return (
     <div className="app">
-      <Diagram dqRoot={dqRoot} showNestedSet={showNestedSet} />
+      <Diagram dqRoot={appStore.diagram} showNestedSet={showNestedSet} />
     </div>
   );
 };
