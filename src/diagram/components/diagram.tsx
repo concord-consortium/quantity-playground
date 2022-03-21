@@ -93,7 +93,7 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
         setSelectedNode((currentNode) => nodeToRemove === currentNode ? undefined : currentNode);
-        dqRoot.removeNodeById(element.id);
+        dqRoot.removeNode(nodeToRemove);
       }
     }
   };

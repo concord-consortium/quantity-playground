@@ -2,7 +2,7 @@ import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React from "react";
 import { Diagram } from "../diagram/components/diagram";
 import { AppStore } from "./app-store";
-import { Operation } from "../diagram/models/variables";
+import { Operation } from "../diagram/models/variable";
 import codapInterface from "../lib/CodapInterface";
 
 import "./app.scss";
@@ -16,7 +16,6 @@ const loadInitialState = () => {
   // Default diagram
   let diagram = {
     diagram: {
-      variables: "variables-root",
       nodes: {
           "1": {
               id: "1",
@@ -39,21 +38,18 @@ const loadInitialState = () => {
       }
     },
     variables: {
-      id: "variables-root",
-      variables: {
-        "a": {
-          id: "a",
-          value: 124,
-        },
-        "b": {
-            id: "b",
-        },
-        "c": {
-            id: "c",
-            inputA: "a",
-            inputB: "b",
-            operation: Operation.Divide,
-        }
+      "a": {
+        id: "a",
+        value: 124,
+      },
+      "b": {
+        id: "b",
+      },
+      "c": {
+        id: "c",
+        inputA: "a",
+        inputB: "b",
+        operation: Operation.Divide,
       }
     }
   };

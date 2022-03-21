@@ -1,7 +1,7 @@
-import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
+import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
-import { Operation, Variable, VariableType } from "./variables";
+import { Operation, Variable, VariableType } from "./variable";
 
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),
@@ -15,73 +15,91 @@ export const DQNode = types.model("DQNode", {
   y: types.number
 })
 .views(self => ({
+  get tryVariable() {
+    return tryReference(() => self.variable);
+  },
+  get variableId() {
+    // This seems to be the only way to get the variable id in a way that works
+    // even when the reference is invalid (because the variable was deleted).
+    //
+    // For some reason MST types this snapshot.variable to be a number even
+    // though the id is a string. Casting it to string seems to work fine.
+    const snapshot = getSnapshot(self);
+    return snapshot.variable as string;
+  },
+}))
+.views(self => ({
   get reactFlowElements() {
     const elements: Elements = [];
-    const {id} = self.variable;
-    const inputA = self.variable.inputA as VariableType | undefined;
-    const inputB = self.variable.inputB as VariableType | undefined;
+    const id = self.variableId;
     elements.push({
-        id,
-        type: "quantityNode",
-        data: { node:  self },
-        position: { x: self.x, y: self.y },
+      id,
+      type: "quantityNode",
+      data: { node:  self },
+      position: { x: self.x, y: self.y },
     });
-    if (inputA) {
+
+    const variable = self.tryVariable;
+    if (variable) {
+      const inputA = self.variable.inputA as VariableType | undefined;
+      const inputB = self.variable.inputB as VariableType | undefined;
+      if (inputA) {
         elements.push({
-            id: `e${inputA.id}-${id}-a`,
-            source: inputA.id,
-            target: id,
-            targetHandle: "a",
-            arrowHeadType: ArrowHeadType.ArrowClosed
+          id: `e${inputA.id}-${id}-a`,
+          source: inputA.id,
+          target: id,
+          targetHandle: "a",
+          arrowHeadType: ArrowHeadType.ArrowClosed
         });
-    }
-    if (inputB) {
+      }
+      if (inputB) {
         elements.push({
-            id: `e${inputB.id}-${id}-b`,
-            source: inputB.id,
-            target: id,
-            targetHandle: "b",
-            arrowHeadType: ArrowHeadType.ArrowClosed
+          id: `e${inputB.id}-${id}-b`,
+          source: inputB.id,
+          target: id,
+          targetHandle: "b",
+          arrowHeadType: ArrowHeadType.ArrowClosed
         });
-    }
+      }  
+    } 
 
     return elements;
   },
 
   get value() {
-    return self.variable.value;
+    return self.tryVariable?.value;
   },
 
   get name() {
-    return self.variable.name;
+    return self.tryVariable?.name;
   },
 
   get unit() {
-    return self.variable.unit;
+    return self.tryVariable?.unit;
   },
 
   get operation() {
-    return self.variable.operation;
+    return self.tryVariable?.operation;
   },
 
   get computedValueWithSignificantDigits() {
-    return self.variable.computedValueWithSignificantDigits;
+    return self.tryVariable?.computedValueWithSignificantDigits;
   },
 
   get computedUnit() {
-    return self.variable.computedUnit;
+    return self.tryVariable?.computedUnit;
   },
 
   get computedValueError() {
-    return self.variable.computedValueError;
+    return self.tryVariable?.computedValueError;
   },
 
   get computedUnitError() {
-    return self.variable.computedUnitError;
+    return self.tryVariable?.computedUnitError;
   },
 
   get computedUnitMessage() {
-    return self.variable.computedUnitMessage;
+    return self.tryVariable?.computedUnitMessage;
   }
 }))
 .actions(self => ({
@@ -95,27 +113,27 @@ export const DQNode = types.model("DQNode", {
   },
 
   setInputA(newInputA: Instance<IAnyComplexType> | undefined) {    
-    self.variable.setInputA((newInputA as any)?.variable);
+    self.tryVariable?.setInputA((newInputA as any)?.variable);
   },
 
   setInputB(newInputB: Instance<IAnyComplexType> | undefined) {    
-    self.variable.setInputB((newInputB as any)?.variable);
+    self.tryVariable?.setInputB((newInputB as any)?.variable);
   },
 
   setValue(value?: number) {
-    self.variable.setValue(value);
+    self.tryVariable?.setValue(value);
   },
 
   setUnit(unit?: string) {
-    self.variable.setUnit(unit);
+    self.tryVariable?.setUnit(unit);
   },
 
   setName(name?: string) {
-    self.variable.setName(name);
+    self.tryVariable?.setName(name);
   },
 
   setOperation(operation?: Operation) {
-    self.variable.setOperation(operation);
+    self.tryVariable?.setOperation(operation);
   }
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}

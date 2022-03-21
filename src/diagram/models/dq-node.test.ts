@@ -1,5 +1,5 @@
 import { DQNode } from "./dq-node";
-import { Variable } from "./variables";
+import { Variable } from "./variable";
 
 describe("DQNode", () => {
   it("can be instantiated with undefined value", () => {

@@ -198,21 +198,3 @@ export const Variable = types.model("Variable", {
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}
-
-
-export const Variables = types.model("Variables", {
-  variables: types.map(Variable),
-})
-.actions(self => ({
-  addVariable(variable: VariableType) {
-    self.variables.put(variable);
-  },
-}))
-.actions(self => ({
-  createVariable() {
-    const variable = Variable.create();
-    self.addVariable(variable);
-    return variable;
-  }
-}));
-

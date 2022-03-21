@@ -1,7 +1,7 @@
 import { Instance, types } from "mobx-state-tree";
 import { Elements, FlowTransform } from "react-flow-renderer/nocss";
 import { DQNode, DQNodeType } from "./dq-node";
-import { VariableType } from "./variables";
+import { VariableType } from "./variable";
 
 export interface VariablesAPI {
   createVariable: () => VariableType;
@@ -26,7 +26,7 @@ export const DQRoot = types.model("DQRoot", {
   get nodeFromVariableMap() {
     const map: Record<string, DQNodeType> = {};
     self.nodes.forEach((node) => {
-      map[node.variable.id] = node;
+      map[node.variableId] = node;
     });
     return map;
   }
@@ -40,14 +40,13 @@ export const DQRoot = types.model("DQRoot", {
   addNode(newNode: Instance<typeof DQNode>) {
     self.nodes.put(newNode);
   },
-  removeNodeById(nodeId: string) {
-    const nodeToRemove = self.nodes.get(nodeId);
+  removeNode(node: Instance<typeof DQNode>) {
     const variables = self.variablesAPI;
     if (!variables) {
       throw new Error("Need variables before deleting nodes");
     }
 
-    variables.removeVariable(nodeToRemove?.variable);
+    variables.removeVariable(node.variable);
   },
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
