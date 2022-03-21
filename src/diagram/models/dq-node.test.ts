@@ -1,5 +1,4 @@
 import { types } from "mobx-state-tree";
-import { AppStore } from "../../components/app-store";
 import { DQNode } from "./dq-node";
 import { Variable } from "./variable";
 
@@ -24,6 +23,7 @@ describe("DQNode", () => {
     expect(node.variable.value).toBeUndefined();
   });
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   // it("can't be instantiated with null value but can import null values", () => {
   //   // @ts-expect-error null value on create results in TypeScript error
   //   const node = DQNode.create({ value: null, x: 0, y: 0 });
