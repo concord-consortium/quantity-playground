@@ -1,7 +1,7 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React from "react";
 import { Diagram } from "../diagram/components/diagram";
-import { AppStore } from "../diagram/models/app-store";
+import { AppStore } from "./app-store";
 import { Operation } from "../diagram/models/variables";
 import codapInterface from "../lib/CodapInterface";
 
@@ -112,10 +112,14 @@ const initializeCodapConnection = () => {
 
 initializeCodapConnection();
 
+const getDiagramExport = () => {
+  return getSnapshot(appStore);
+};
+
 export const App = () => {
   return (
     <div className="app">
-      <Diagram dqRoot={appStore.diagram} showNestedSet={showNestedSet} />
+      <Diagram dqRoot={appStore.diagram} {...{showNestedSet, getDiagramExport}} />
     </div>
   );
 };

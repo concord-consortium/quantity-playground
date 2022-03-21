@@ -1,4 +1,4 @@
-import { destroy, IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
 import { getUnitConversion } from "./unit-conversion";
@@ -205,11 +205,7 @@ export const Variables = types.model("Variables", {
 })
 .actions(self => ({
   addVariable(variable: VariableType) {
-      self.variables.put(variable);
-  },
-  removeVariable(variable: VariableType) {
-      // self.nodes.delete(nodeId);
-      destroy(variable);
+    self.variables.put(variable);
   },
 }))
 .actions(self => ({

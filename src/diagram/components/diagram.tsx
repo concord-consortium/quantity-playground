@@ -27,8 +27,9 @@ const nodeTypes = {
 interface IProps {
   dqRoot: DQRootType;
   showNestedSet?: boolean;
+  getDiagramExport?: () => any;
 }
-export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
+export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
@@ -172,7 +173,7 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
               }
             </>
           }
-          <ToolBar dqRoot={dqRoot}/>
+          <ToolBar {...{getDiagramExport}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

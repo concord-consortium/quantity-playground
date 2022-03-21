@@ -1,13 +1,20 @@
-import { Instance, types, destroy } from "mobx-state-tree";
+import { Instance, types } from "mobx-state-tree";
 import { Elements, FlowTransform } from "react-flow-renderer/nocss";
 import { DQNode, DQNodeType } from "./dq-node";
-import { Variables } from "./variables";
+import { VariableType } from "./variables";
+
+export interface VariablesAPI {
+  createVariable: () => VariableType;
+  removeVariable: (variable?: VariableType) => void;
+}
 
 export const DQRoot = types.model("DQRoot", {
   nodes: types.map(DQNode),
-  variables: types.reference(Variables),
   flowTransform: types.maybe(types.frozen<FlowTransform>())
 })
+.volatile(self => ({
+  variablesAPI: undefined as VariablesAPI | undefined
+}))
 .views(self => ({
   get reactFlowElements() {
     const elements: Elements = [];
@@ -35,8 +42,12 @@ export const DQRoot = types.model("DQRoot", {
   },
   removeNodeById(nodeId: string) {
     const nodeToRemove = self.nodes.get(nodeId);
-    // self.nodes.delete(nodeId);
-    destroy(nodeToRemove);
+    const variables = self.variablesAPI;
+    if (!variables) {
+      throw new Error("Need variables before deleting nodes");
+    }
+
+    variables.removeVariable(nodeToRemove?.variable);
   },
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
@@ -44,9 +55,17 @@ export const DQRoot = types.model("DQRoot", {
 }))
 .actions(self => ({
   createNode({x,y}: {x:number, y:number}) {
-    const variable = self.variables.createVariable();
+    const variables = self.variablesAPI;
+    if (!variables) {
+      throw new Error("Need variables before creating nodes");
+    }
+    const variable = variables.createVariable();
     const node = DQNode.create({variable: variable.id, x, y});
     self.addNode(node);
+  },
+
+  setVariablesAPI(variablesAPI: VariablesAPI) {
+    self.variablesAPI = variablesAPI;
   }
 }));
 export interface DQRootType extends Instance<typeof DQRoot> {}
