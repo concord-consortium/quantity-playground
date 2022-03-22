@@ -26,6 +26,14 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     }
   };
 
+  const onExpressionChange = (evt: any) => {
+    if (!evt.target.value) {
+      node.setExpression(undefined);
+    } else {
+      node.setExpression(evt.target.value);
+    }
+  };
+
   const onNameChange = (evt: any) => {
     if (!evt.target.value) {
       node.setName(undefined);
@@ -68,6 +76,11 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
           )}
         </select>
       </div>
+      <div>
+        <label>expression:</label>
+        <input value={node.expression || ""} onChange={onExpressionChange}/>
+      </div>
+
     </div>
   );
 };

@@ -1,6 +1,10 @@
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
+// FIXME: this will bring in all of mathjs which we might not want to do
+import { create, all } from "mathjs";
+const math = create(all);
+
 import { getUnitConversion } from "./unit-conversion";
 import { tryToSimplify } from "./unit-simplify";
 
@@ -30,6 +34,7 @@ export const Variable = types.model("Variable", {
   inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
+  expression: types.maybe(types.string)
 })
 .views(self => ({
   get numberOfInputs() {
@@ -49,6 +54,41 @@ export const Variable = types.model("Variable", {
 .views(self => ({
   // previous node values override current node values
   get computedValueIncludingError(): {value?:number, error?:string} {
+    if (self.expression) {
+      const scope: Record<string, number | undefined> = {};
+      const errors = [];
+      if (self.inputA) {
+        const {name, computedValue} = self.inputA as VariableType;
+        if (name) {
+          if (name.indexOf(" ") > 0) {
+            errors.push("space not allowed in inputA name");
+          }
+          scope[name] = computedValue;
+        }
+      }
+      if (self.inputB) {
+        const {name, computedValue} = self.inputB as VariableType;
+        if (name) {
+          if (name.indexOf(" ") > 0) {
+            errors.push("space not allowed in inputB name");
+          }
+          scope[name] = computedValue;
+        }
+      }
+
+      if (errors.length > 0) {
+        return {error: errors.join(", ")};
+      }
+
+      try {        
+        const value = math.evaluate(self.expression, scope);
+        // FIXME: value can be an array
+        return {value};
+      } catch (e) {
+        return {error: (e as Error).toString()};
+      }
+    }
+
     if ((self.numberOfInputs === 1)) {
       // We have to cast the input to any because we are calling the functions
       // computedUnit and computedValue
@@ -196,5 +236,8 @@ export const Variable = types.model("Variable", {
   setOperation(newOperation?: Operation) {
     self.operation = newOperation;
   },
+  setExpression(expression?: string) {
+    self.expression = expression;
+  }
 }));
 export interface VariableType extends Instance<typeof Variable> {}

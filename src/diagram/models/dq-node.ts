@@ -82,6 +82,10 @@ export const DQNode = types.model("DQNode", {
     return self.tryVariable?.operation;
   },
 
+  get expression() {
+    return self.tryVariable?.expression;
+  },
+
   get computedValueWithSignificantDigits() {
     return self.tryVariable?.computedValueWithSignificantDigits;
   },
@@ -134,6 +138,10 @@ export const DQNode = types.model("DQNode", {
 
   setOperation(operation?: Operation) {
     self.tryVariable?.setOperation(operation);
+  },
+
+  setExpression(expression?: string) {
+    self.tryVariable?.setExpression(expression);
   }
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}
