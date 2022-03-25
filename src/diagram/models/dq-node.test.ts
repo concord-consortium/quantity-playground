@@ -1,5 +1,6 @@
-import { types } from "mobx-state-tree";
+import { castToSnapshot, types } from "mobx-state-tree";
 import { DQNode } from "./dq-node";
+import { GenericContainer } from "./test-utils";
 import { Variable } from "./variable";
 
 describe("DQNode", () => {
@@ -8,17 +9,9 @@ describe("DQNode", () => {
     const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
 
     // references have to be within the same tree so we need some container 
-    const ContainerModel = types.model("ContainerModel", {
-      items: types.array(types.union(DQNode, Variable))
-    })
-    .actions(self => ({
-      add(item: any) {
-        self.items.push(item);
-      }
-    }));
-    const container = ContainerModel.create();
-    container.add(variable);
-    container.add(node);
+    const container = GenericContainer.create(
+      {items: [castToSnapshot(variable), node]}
+    );
 
     expect(node.variable.value).toBeUndefined();
   });
