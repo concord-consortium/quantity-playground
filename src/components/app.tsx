@@ -2,8 +2,8 @@ import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React from "react";
 import { Diagram } from "../diagram/components/diagram";
 import { AppStore } from "./app-store";
-import { Operation } from "../diagram/models/variable";
 import codapInterface from "../lib/CodapInterface";
+import defaultDiagram from "./default-diagram";
 
 import "./app.scss";
 
@@ -12,57 +12,21 @@ const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
-
-  // Default diagram
-  let diagram = {
-    diagram: {
-      nodes: {
-          "1": {
-              id: "1",
-              variable: "a",
-              x: 100,
-              y: 100
-          },
-          "2": {
-              id: "2",
-              variable: "b",
-              x: 100,
-              y: 200
-          },
-          "3": {
-              id: "3",
-              variable: "c",
-              x: 250,
-              y: 150
-          }
-      }
-    },
-    variables: {
-      "a": {
-        id: "a",
-        value: 124,
-      },
-      "b": {
-        id: "b",
-      },
-      "c": {
-        id: "c",
-        inputA: "a",
-        inputB: "b",
-        operation: Operation.Divide,
-      }
-    }
-  };
-
-  // Override default diagram with URL param or prior state
   if (urlDiagram) {
-    diagram = JSON.parse(urlDiagram);
-  }
+    const diagram = JSON.parse(urlDiagram);
+    try {
+      return AppStore.create(diagram);
+    } catch (error) {
+      // If there is an error in the diagram from the URL
+      // fall back to the default diagram
+      console.error("Diagram in the URL is an old version or invalid", error);
+    }
+  } 
 
-  return diagram;
+  return AppStore.create(defaultDiagram);
 };
 
-const appStore = AppStore.create(loadInitialState());
+const appStore = loadInitialState();
 
 // For debugging
 (window as any).appStore = appStore;
@@ -82,7 +46,13 @@ const initializeCodapConnection = () => {
   codapInterface.init(codapConfig).then(
     (initialState) => {
       if (initialState?.diagram) {
-        applySnapshot(appStore, initialState);
+        try {
+          applySnapshot(appStore, initialState);
+        } catch (error) {
+          // If there is an error in the diagram from CODAP don't completely
+          // blow up just fall back to the default diagram
+          console.error("Diagram in CODAP is an old version or invalid", error);
+        }
         // when the model changes, notify CODAP that the plugin is 'dirty'
         onSnapshot(appStore, () => {
           codapInterface.sendRequest({

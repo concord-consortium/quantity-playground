@@ -5,7 +5,7 @@ import ReactFlow, { Edge, Elements, OnConnectFunc,
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { NestedSet } from "./nested-set";
-import { NodeForm } from "./node-form";
+import { VariableForm } from "./variable-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
 
@@ -144,6 +144,8 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
   const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
+  const selectedVariable = selectedNode?.tryVariable;
+
   return (
     <div className="diagram" ref={reactFlowWrapper}>
       <ReactFlowProvider>
@@ -163,12 +165,12 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          { selectedNode &&
+          { selectedVariable &&
             <>
-              <NodeForm node={selectedNode}/>
+              <VariableForm variable={selectedVariable}/>
               { showNestedSet &&
                 <div style={{zIndex: 4, position: "absolute", left: "300px"}}>
-                  <NestedSet node={selectedNode} final={true} />
+                  <NestedSet variable={selectedVariable} final={true} />
                 </div>
               }
             </>

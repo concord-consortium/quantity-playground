@@ -3,6 +3,7 @@ import { DQRoot } from "../diagram";
 import { Variable, VariableType } from "../diagram/models/variable";
 
 export const AppStore = types.model("AppStore", {
+  version: types.literal("1"),
   diagram: DQRoot,
   variables: types.map(Variable),
 })
@@ -10,10 +11,10 @@ export const AppStore = types.model("AppStore", {
   const removeVariable = flow(function* removeVariable(variable?: VariableType) {
     if (variable) {
       // Inside of CLUE the middleware and update function will take care of
-      // deleting the DQNode. But outside of clue we need to do it
-      // ourselves.
-      // In order to more quickly find issues that can occur in CLUE this is
-      // done using flow
+      // deleting the DQNode. But outside of CLUE we need to do it ourselves.
+      //
+      // In order to emulate what happens in CLUE and more quickly find issues,
+      // this is done asynchronously.
       const node = self.diagram.getNodeFromVariableId(variable.id);
 
       destroy(variable);

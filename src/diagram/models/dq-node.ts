@@ -1,7 +1,7 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
-import { Operation, Variable, VariableType } from "./variable";
+import { Variable, VariableType } from "./variable";
 
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),
@@ -66,41 +66,6 @@ export const DQNode = types.model("DQNode", {
     return elements;
   },
 
-  get value() {
-    return self.tryVariable?.value;
-  },
-
-  get name() {
-    return self.tryVariable?.name;
-  },
-
-  get unit() {
-    return self.tryVariable?.unit;
-  },
-
-  get operation() {
-    return self.tryVariable?.operation;
-  },
-
-  get computedValueWithSignificantDigits() {
-    return self.tryVariable?.computedValueWithSignificantDigits;
-  },
-
-  get computedUnit() {
-    return self.tryVariable?.computedUnit;
-  },
-
-  get computedValueError() {
-    return self.tryVariable?.computedValueError;
-  },
-
-  get computedUnitError() {
-    return self.tryVariable?.computedUnitError;
-  },
-
-  get computedUnitMessage() {
-    return self.tryVariable?.computedUnitMessage;
-  }
 }))
 .actions(self => ({
 
@@ -120,21 +85,6 @@ export const DQNode = types.model("DQNode", {
     self.tryVariable?.setInputB((newInputB as any)?.variable);
   },
 
-  setValue(value?: number) {
-    self.tryVariable?.setValue(value);
-  },
-
-  setUnit(unit?: string) {
-    self.tryVariable?.setUnit(unit);
-  },
-
-  setName(name?: string) {
-    self.tryVariable?.setName(name);
-  },
-
-  setOperation(operation?: Operation) {
-    self.tryVariable?.setOperation(operation);
-  }
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}
 export interface DQNodeSnapshot extends SnapshotIn<typeof DQNode> {}
