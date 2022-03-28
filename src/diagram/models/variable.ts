@@ -58,9 +58,6 @@ export const Variable = types.model("Variable", {
       // @ts-expect-error THIS
       const convertValue = getUnitConversion((input).computedUnit, this.computedUnit);
       if (convertValue) {
-          // It'd be nice to record this error but doing it here would be
-          // a side effect which probably shouldn't happen in a computed value
-          // self.error = undefined;
           return {value: convertValue(input.computedValue)};
       }
       return {error: "Error in unit conversion"};

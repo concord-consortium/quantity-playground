@@ -1,15 +1,26 @@
 // `allMeasures` includes all the measures packaged with this library
-import configureMeasurements, { allMeasures, AllMeasuresUnits } from "convert-units";
-
-const convert = configureMeasurements(allMeasures);
+import { SymbolNode } from "mathjs";
+import { unit, parse, createUnit, Unit } from "../custom-mathjs";
 
 type ConversionFunction = (input: number) => number;
 
-export const getDimension = (unit:string) => {
-    const foundUnit = convert().getUnit(unit as AllMeasuresUnits);
-    return foundUnit?.measure;
+const getMathUnit = (unitString: string) => {
+  try {
+    // Look for unknown units in the unit string
+    const unitNode = parse(unitString);
+    const symbols = unitNode.filter(node => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
+    for(const symbol of symbols) {
+      if (Unit.isValuelessUnit(symbol.name)) {
+        // this unit already exists
+      } else {
+        createUnit(symbol.name);
+      }
+    }
+    return unit(1, unitString);
+  } catch (e: any) {
+    return null;
+  }
 };
-
 
 export const getUnitConversion = (inputUnit:string, outputUnit:string): ConversionFunction | null => {
   
@@ -17,18 +28,19 @@ export const getUnitConversion = (inputUnit:string, outputUnit:string): Conversi
       return value => value;
   }
 
-  // First check if we can actual do this conversion
-  // the "convert-units" only handles this by throwing an exception 
-  // so instead we get the dimension of each unit to see if they are compatible.
-  const inputDimension = getDimension(inputUnit);
-  const outputDimension = getDimension(outputUnit);
-  if (!inputDimension || !outputDimension) {
+  // First check if we can actual do this conversion by checking the bases of
+  // the two units.  I'm not sure if this will handle compound units.
+  
+  const inputMathUnit = getMathUnit(inputUnit);
+  const outputMathUnit = getMathUnit(outputUnit);
+
+  if (!inputMathUnit || !outputMathUnit) {
       return null;
   }
 
-  if (inputDimension !== outputDimension) {
-      return null;
+  if (!inputMathUnit.equalBase(outputMathUnit)) {
+    return null;
   }
- 
-  return value => convert(value).from(inputUnit as AllMeasuresUnits).to(outputUnit as AllMeasuresUnits);
+
+  return value => unit(value, inputUnit).toNumber(outputUnit);
 };

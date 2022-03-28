@@ -167,6 +167,33 @@ describe("Variable", () => {
 
   });
 
+  it("with a compound custom unit input and a compatible compound custom unit it does the conversion", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", value: 9, unit: "m/things"},
+        {id: "variable", inputA: "input", unit: "cm/things"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({value: 900});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm/things"});
+  });
+
+  it("with a invalid unit it returns without crashing", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", value: 9, unit: "m/"},
+        {id: "variable", inputA: "input", unit: "cm"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({error: "Error in unit conversion"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm"});
+
+  });
+
   it("with 2 inputs with units and operation multiply it returns result", () => {
     const container = GenericContainer.create({
       items: [
@@ -289,6 +316,65 @@ describe("Variable", () => {
     expect(variable.computedUnit).toBe("m ^ 2");
   });
 
+  it("handles a custom unit being added to the same custom unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 98, unit: "things"},
+        {id: "inputB", value: 2, unit: "things"},
+        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Add}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({value: 100});
+    expect(variable.computedUnit).toBe("things");
+  });
+
+  it("handles a custom unit being subtracted from the same custom unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 98, unit: "things"},
+        {id: "inputB", value: 2, unit: "things"},
+        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Subtract}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({value: 96});
+    expect(variable.computedUnit).toBe("things");
+  });
+
+  it("handles a custom unit divided by the same custom unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 98, unit: "things"},
+        {id: "inputB", value: 2, unit: "things"},
+        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Divide}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({value: 49});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+  });
+
+  it("handles a compound unit that includes a custom unit multiplying by the custom unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 50, unit: "m/things"},
+        {id: "inputB", value: 2, unit: "things"},
+        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Multiply}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingError).toEqual({value: 100});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
+  });
   it("can be modified after being created", () => {
     const inputA = Variable.create();
     const inputB = Variable.create();
