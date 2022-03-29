@@ -14,7 +14,7 @@ describe("Variable", () => {
 
   it("with no inputs, its own value, and no unit", () => {
     const variable = Variable.create({value: 123.5});
-    expect(variable.computedValueIncludingError).toEqual({value: 123.5});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 123.5});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
     expect(variable.computedValue).toBe(123.5);
     expect(variable.computedValueWithSignificantDigits).toBe("123.5");
@@ -36,7 +36,7 @@ describe("Variable", () => {
 
     expect(variable.inputA).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({value: 999.9});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedValue).toBe(999.9);
 
   });
@@ -53,7 +53,7 @@ describe("Variable", () => {
 
     expect(variable.inputB).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({value: 999.9});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedValue).toBe(999.9);
 
   });
@@ -69,7 +69,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({error: "no operation"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no operation"});
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
   });
@@ -86,7 +86,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 110_889});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 110_889});
     expect(variable.computedValue).toBe(110_889);
   });
 
@@ -102,7 +102,7 @@ describe("Variable", () => {
 
     expect(variable.inputA).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({value: 999.9});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
     expect(variable.computedValue).toBe(999.9);
     expect(variable.computedValueWithSignificantDigits).toBe("999.9");
@@ -124,7 +124,7 @@ describe("Variable", () => {
 
     expect(variable.inputB).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({value: 999.9});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
   });
 
@@ -140,7 +140,7 @@ describe("Variable", () => {
 
     expect(variable.inputA).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({value: 99.99});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 99.99});
     expect(variable.computedValue).toBe(99.99);
   });
 
@@ -156,7 +156,7 @@ describe("Variable", () => {
 
     expect(variable.inputA).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingError).toEqual({error: "Error in unit conversion"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "Error in unit conversion"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "N"});
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
@@ -176,7 +176,7 @@ describe("Variable", () => {
     });
     const variable = container.items[1] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({value: 900});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 900});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm/things"});
   });
 
@@ -189,7 +189,7 @@ describe("Variable", () => {
     });
     const variable = container.items[1] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({error: "Error in unit conversion"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "Error in unit conversion"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm"});
 
   });
@@ -206,9 +206,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 110_889});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 110_889});
     expect(variable.computedValue).toBe(110_889);
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m ^ 2"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m^2"});
   });
 
   it("with 2 inputs with units and operation divide it returns result", () => {
@@ -223,7 +223,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 2});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 2});
     expect(variable.computedValue).toBe(2);
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m / s"});
   });
@@ -240,7 +240,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 30});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 30});
     expect(variable.computedValue).toBe(30);
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m"});
   });
@@ -257,8 +257,8 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 30});
-    expect(variable.computedValue).toBe(30);
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValue).toBeUndefined();
     expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
   });
 
@@ -274,7 +274,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 15});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 15});
     expect(variable.computedValue).toBe(15);
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m"});
   });
@@ -291,13 +291,14 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 15});
-    expect(variable.computedValue).toBe(15);
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValue).toBeUndefined();
     expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
   });
 
-  // FIXME: we should switch to using math.js units and then this case could be
-  // handled
+  // FIXME: we are now using math.js so we should be able to support this now.
+  // This should also fall out when we unify single input calculations with 2
+  // input calculations.
   it("with 2 inputs with units, operation Multiply, " + 
       "and different compatible output unit it ignores the unit", () => {
     const container = GenericContainer.create({
@@ -311,9 +312,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingError).toEqual({value: 110_889});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 110_889});
     expect(variable.computedValue).toBe(110_889);
-    expect(variable.computedUnit).toBe("m ^ 2");
+    expect(variable.computedUnit).toBe("m^2");
   });
 
   it("handles a custom unit being added to the same custom unit", () => {
@@ -327,7 +328,7 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({value: 100});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 100});
     expect(variable.computedUnit).toBe("things");
   });
 
@@ -342,7 +343,7 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({value: 96});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 96});
     expect(variable.computedUnit).toBe("things");
   });
 
@@ -357,7 +358,7 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({value: 49});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 49});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
   });
 
@@ -372,9 +373,86 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingError).toEqual({value: 100});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 100});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
   });
+
+  it("handles adding compatible units", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 1, unit: "m"},
+        {id: "inputB", value: 100, unit: "cm"},
+        {id: "variable", inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Add}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 200});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+  });
+
+  it("handles subtracting compatible units", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 2, unit: "m"},
+        {id: "inputB", value: 100, unit: "cm"},
+        {id: "variable", inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Subtract}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 100});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+  });
+
+  it("handles dividing compatible units", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 1, unit: "m"},
+        {id: "inputB", value: 100, unit: "cm"},
+        {id: "variable", inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Divide}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+  });
+
+  it("handles dividing custom units", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 1, unit: "widgets"},
+        {id: "inputB", value: 100, unit: "widgets"},
+        {id: "variable", inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Divide}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0.01});
+  });
+
+  it("handles invalid units", () => {
+    // This can happen when a user is typing a unit
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 1, unit: "m/"},
+        {id: "inputB", value: 100, unit: "s"},
+        {id: "variable", inputA: "inputA", inputB: "inputB", 
+          operation: Operation.Multiply}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "invalid input units"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({message: "cannot compute value from inputs"});
+  });
+
   it("can be modified after being created", () => {
     const inputA = Variable.create();
     const inputB = Variable.create();
@@ -401,4 +479,11 @@ describe("Variable", () => {
       operation: "+"
     });
   });
+
+  // TODO: need tests about partially created units. When the user is typing a
+  // unit the code will run as they type. This will trigger the creation of a
+  // custom unit for this partially typed unit. And then this unit will not be
+  // removed afterwards. So now these partially typed units might hard to
+  // understand error messages when expressions are typed by users. The
+  // evaluator might interpret a missing variable as a partial unit. 
 });

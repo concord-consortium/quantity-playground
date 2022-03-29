@@ -1,8 +1,9 @@
+import { evaluate } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getUnitConversion } from "./unit-conversion";
-import { tryToSimplify } from "./unit-simplify";
+import { getMathUnit, getUnitConversion } from "./unit-conversion";
+import { Unit } from "mathjs";
 
 export enum Operation {
   Divide = "÷",
@@ -43,12 +44,51 @@ export const Variable = types.model("Variable", {
     return count;
   },
   get firstValidInput() {
-      return self.inputA || self.inputB;
+    return self.inputA || self.inputB;
+  },
+  get expression() {
+    switch (self.operation) {
+      case "÷":
+        return "a / b";
+      case "×":
+        return "a * b";
+      case "+":
+        return "a + b";
+      case "-":
+        return "a - b";
+    }
   }
 }))
 .views(self => ({
-  // previous node values override current node values
-  get computedValueIncludingError(): {value?:number, error?:string} {
+  get mathValue() {
+    const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;
+    const selfComputedValue = this.computedValueIncludingMessageAndError.value;
+    if (selfComputedValue) {
+      if (selfComputedUnit) {
+        // This will add any custom units
+        return getMathUnit(selfComputedValue, selfComputedUnit);
+      } else {
+        return selfComputedValue;
+      }
+    }
+  },
+
+  // We use the value if it is set otherwise we use 1. This is used when
+  // computing the unit. And the the unit code automatically converts the
+  // prefixes when the values are large or small. So to make sure the unit
+  // matches the computed value we need to use the actual value
+  get mathValueWithValueOr1() {
+    const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;
+    const value = this.computedValueIncludingMessageAndError.value ?? 1;
+    if (selfComputedUnit) {
+      // This will add any custom units 
+      return getMathUnit(value, selfComputedUnit);
+    } else {
+      return value;
+    }
+  },
+
+  get computedValueIncludingMessageAndError(): {value?:number, error?:string, message?: string} {
     if ((self.numberOfInputs === 1)) {
       // We have to cast the input to any because we are calling the functions
       // computedUnit and computedValue
@@ -65,29 +105,55 @@ export const Variable = types.model("Variable", {
 
     if (self.inputA && self.inputB) {
       // We currently ignore units in this case
-      let value;
-      switch (self.operation) {
-        case "÷":
-          // @ts-expect-error THIS
-          value = this.inputA.computedValue / this.inputB.computedValue;
-          break;
-        case "×":
-          // @ts-expect-error THIS
-          value = this.inputA.computedValue * this.inputB.computedValue;
-          break;
-        case "+":
-          // @ts-expect-error THIS
-          value = this.inputA.computedValue + this.inputB.computedValue;
-          break;
-        case "-":
-          // @ts-expect-error THIS
-          value = this.inputA.computedValue - this.inputB.computedValue;
-          break;
-        default:
-          break;
-      }
-      if (self.operation) {
-        return {value};
+      const expression = self.expression;
+      if (expression) {
+        // @ts-expect-error THIS
+        const inputAMathValue = this.inputA.mathValue;
+        // @ts-expect-error THIS
+        const inputBMathValue = this.inputB.mathValue;
+
+        if (!inputAMathValue || !inputBMathValue) {
+          // TODO: we should provide a better message here. This message can
+          // overlap with the message from the computedValueIncludingError.
+          // So we need to look at the cases when this happens find a better way
+          // to handle it.
+          return {message: "cannot compute value from inputs"};
+        }
+
+        try {
+          const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+          const resultType = typeof result;
+          if (resultType === "object" && "isUnit" in result) {
+            // FIXME we sometimes use the `Unit` symbol as a type and sometimes as a
+            // object in order to access static class methods. We need to be
+            // consistent.
+            const unitResult = result as Unit;
+            // We need to use simplify here so we are consistent with the unit
+            // calculation. The simplify function will convert the prefix of
+            // units based on the size of the value.
+            const simpl = unitResult.simplify();
+            return {value: simpl.toNumber()};
+          } else if (resultType === "number") {
+            return {value: result};
+          } else {
+            // In theory math.js can return other kinds of results arrays, big
+            // numbers, ...  With the current code that shouldn't be possible
+            // but when we allow expressions it will be more likely to happen
+            return {error: `unknown result type: ${resultType}`};
+          }
+        } catch (e: any) {
+          // TODO: we should find a way to handle this without throwing an
+          // exception, but I think that will mean changes to MathJS
+          //
+          // We should update MathJS to provide more information here. For other
+          // errors MathJS provides a data property on the error that includes
+          // the character location and more info about the error.
+          if (e.message?.startsWith("Units do not match")) {
+            return {error: "incompatible units"};
+          } else {
+            return {error: `unknown error: ${e.message}`};
+          }
+        }
       } else {
         return {error: "no operation"};
       }
@@ -99,25 +165,57 @@ export const Variable = types.model("Variable", {
   // otherwise current node units override previous node units
   get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
     if (self.inputA && self.inputB) {
-      if (self.operation) {
-        // If there is no unit, then use "1", that way the simplification of multiplication
-        // and division will work properly
+      const expression = self.expression;
+      if (expression) {
         // @ts-expect-error THIS
-        const inputAUnit = this.inputA.computedUnit;
+        const inputAMathValue = this.inputA.mathValueWithValueOr1;
         // @ts-expect-error THIS
-        const inputBUnit = this.inputB.computedUnit;
-        switch (self.operation) {
-          case "÷":
-          case "×":
-            return tryToSimplify(self.operation, inputAUnit, inputBUnit);
-          case "+":
-          case "-":
-            if (inputAUnit !== inputBUnit) {
-              return {error: "incompatible units"};
+        const inputBMathValue = this.inputB.mathValueWithValueOr1;
+        
+        if (!inputAMathValue || !inputBMathValue) {
+          // The unit must be invalid
+          return {error: "invalid input units"};
+        }
+
+        try {
+          const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+          if (typeof result == "object" && "isUnit" in result) {
+            // FIXME we sometimes use the `Unit` symbol as a type and sometimes as a
+            // object in order to access static class methods. We need to be
+            // consistent.
+            const unitResult = result as Unit;
+            const unitString = unitResult.simplify().formatUnits();
+            if (unitString === "") {
+              return {message: "units cancel"};
+            } else {
+              return {unit: unitString};
             }
-            return {unit: inputAUnit};
-          default:
-            break;
+          } else {
+            // @ts-expect-error THIS
+            if (this.inputA.computedUnit || this.inputB.computedUnit) {
+              // If one of the inputs has units and the result is not a Unit
+              // that should mean the units have canceled
+              return {message: "units cancel"};
+            } else {
+              // TODO: should we return something else here? It seems reasonable to
+              // do an operation on to unitless values. So for now don't show
+              // any warning.
+              return {};
+            }
+          }
+        } catch (e: any) {
+          // TODO: we should find a way to handle this without throwing an
+          // exception, but I think that will mean changes to MathJS
+          //
+          // If we have to throw an exception we should update MathJS to provide
+          // more information here. For other errors, MathJS provides a data
+          // property on the error that includes the character location and more
+          // info about the error.
+          if (e.message?.startsWith("Units do not match")) {
+            return {error: "incompatible units"};
+          } else {
+            return {error: `unknown error: ${e.message}`};
+          }
         }
       } else {
         // We have 2 inputs (with or without units), but no operation
@@ -127,6 +225,7 @@ export const Variable = types.model("Variable", {
       }
     }
     if (self.unit) {
+      // FIXME: we should see if this is valid instead of blindly returning it
       return {unit: self.unit};
     }
     if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
@@ -145,12 +244,12 @@ export const Variable = types.model("Variable", {
 }))
 .views(self => ({
   get computedValue() {
-    return self.computedValueIncludingError.value;
+    return self.computedValueIncludingMessageAndError.value;
   },
   get computedValueWithSignificantDigits() {
     // Currently this just uses a fixed set of fractional digits instead of keeping track of
     // significant digits
-    const value = self.computedValueIncludingError.value;
+    const value = self.computedValueIncludingMessageAndError.value;
 
     // In practice Chrome's format returns "NaN" for undefined values, but typescript
     // isn't happy with passing undefined
@@ -162,7 +261,10 @@ export const Variable = types.model("Variable", {
     return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(value);
   },
   get computedValueError() {
-    return self.computedValueIncludingError.error;
+    return self.computedValueIncludingMessageAndError.error;
+  },
+  get computedValueMessage() {
+    return self.computedValueIncludingMessageAndError.message;
   },
   get computedUnit() {
     return self.computedUnitIncludingMessageAndError.unit;

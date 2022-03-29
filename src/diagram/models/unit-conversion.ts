@@ -4,7 +4,7 @@ import { unit, parse, createUnit, Unit } from "../custom-mathjs";
 
 type ConversionFunction = (input: number) => number;
 
-const getMathUnit = (unitString: string) => {
+export const getMathUnit = (value: number, unitString: string) => {
   try {
     // Look for unknown units in the unit string
     const unitNode = parse(unitString);
@@ -16,9 +16,9 @@ const getMathUnit = (unitString: string) => {
         createUnit(symbol.name);
       }
     }
-    return unit(1, unitString);
+    return unit(value, unitString);
   } catch (e: any) {
-    return null;
+    // Do nothing just return undefined
   }
 };
 
@@ -31,8 +31,8 @@ export const getUnitConversion = (inputUnit:string, outputUnit:string): Conversi
   // First check if we can actual do this conversion by checking the bases of
   // the two units.  I'm not sure if this will handle compound units.
   
-  const inputMathUnit = getMathUnit(inputUnit);
-  const outputMathUnit = getMathUnit(outputUnit);
+  const inputMathUnit = getMathUnit(1, inputUnit);
+  const outputMathUnit = getMathUnit(1, outputUnit);
 
   if (!inputMathUnit || !outputMathUnit) {
       return null;

@@ -27,14 +27,19 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <div>
         Value: <strong>{variable.computedValueWithSignificantDigits}</strong>
       </div>
-      <div>
-        Unit: <strong>{variable.computedUnit}</strong>
-      </div>
       { variable.computedValueError && 
         <div>
             ⚠️ {variable.computedValueError}
         </div>
       }
+      { variable.computedValueMessage && 
+        <div>
+            ⓘ {variable.computedValueMessage}
+        </div>
+      }
+      <div>
+        Unit: <strong>{variable.computedUnit}</strong>
+      </div>
       { variable.computedUnitError && 
         <div>
             ⚠️ {variable.computedUnitError}
