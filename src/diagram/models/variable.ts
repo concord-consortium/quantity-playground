@@ -225,7 +225,8 @@ export const Variable = types.model("Variable", {
       }
     }
     if (self.unit) {
-      // FIXME: we should see if this is valid instead of blindly returning it
+      // FIXME: we should see if this is valid instead of blindly returning it,
+      // this should fall out of the refactoring to unify single and multiple inputs
       return {unit: self.unit};
     }
     if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
