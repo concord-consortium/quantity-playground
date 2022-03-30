@@ -2,7 +2,7 @@
 import React from "react";
 
 interface IProps {
-    getDiagramExport?: () => any;
+    getDiagramExport?: () => unknown;
 }
 
 export const ToolBar: React.FC<IProps> = ({getDiagramExport}) => {

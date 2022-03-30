@@ -27,7 +27,7 @@ const nodeTypes = {
 interface IProps {
   dqRoot: DQRootType;
   showNestedSet?: boolean;
-  getDiagramExport?: () => any;
+  getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);

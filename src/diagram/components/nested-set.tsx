@@ -59,8 +59,6 @@ const NestedSetVariable = observer(_NestedSetVariable);
 NestedSetVariable.displayName = "NestedSetVariable";
 
 interface IProps {
-    // this caused an error for some reason
-    // node?: Instance<typeof DQNode>;
     variable?: VariableType;
     final?: boolean;
     symbolic?: boolean;
