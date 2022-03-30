@@ -37,10 +37,10 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .actions(self => ({
-  addNode(newNode: Instance<typeof DQNode>) {
+  addNode(newNode: DQNodeType) {
     self.nodes.put(newNode);
   },
-  removeNode(node: Instance<typeof DQNode>) {
+  removeNode(node: DQNodeType) {
     const variables = self.variablesAPI;
     if (!variables) {
       throw new Error("Need variables before deleting nodes");
