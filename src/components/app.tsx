@@ -1,9 +1,9 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React from "react";
 import { Diagram } from "../diagram/components/diagram";
-import { Operation } from "../diagram/models/dq-node";
-import { DQRoot } from "../diagram/models/dq-root";
+import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
+import defaultDiagram from "./default-diagram";
 
 import "./app.scss";
 
@@ -12,44 +12,24 @@ const showNestedSet = !(url.searchParams.get("nestedSet") == null);
 
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
-
-  // Default diagram
-  let diagram = {
-    nodes: {
-        "1": {
-            id: "1",
-            value: 124,
-            x: 100,
-            y: 100
-        },
-        "2": {
-            id: "2",
-            x: 100,
-            y: 200
-        },
-        "3": {
-            id: "3",
-            inputA: "1",
-            inputB: "2",
-            operation: Operation.Divide,
-            x: 250,
-            y: 150
-        }
-    }
-  };
-
-  // Override default diagram with URL param or prior state
   if (urlDiagram) {
-    diagram = JSON.parse(urlDiagram);
-  }
+    const diagram = JSON.parse(urlDiagram);
+    try {
+      return AppStore.create(diagram);
+    } catch (error) {
+      // If there is an error in the diagram from the URL
+      // fall back to the default diagram
+      console.error("Diagram in the URL is an old version or invalid", error);
+    }
+  } 
 
-  return diagram;
+  return AppStore.create(defaultDiagram);
 };
 
-const dqRoot = DQRoot.create(loadInitialState());
+const appStore = loadInitialState();
 
 // For debugging
-(window as any).dqRoot = dqRoot;
+(window as any).appStore = appStore;
 (window as any).getSnapshot = getSnapshot;
 
 // TODO: rewrite this as a reusable custom hook (useCodapConnection)
@@ -61,14 +41,20 @@ const initializeCodapConnection = () => {
   };
 
   codapInterface.on("get", "interactiveState", "",
-      () => {return {success: true, values: getSnapshot(dqRoot)};});
+      () => {return {success: true, values: getSnapshot(appStore)};});
 
   codapInterface.init(codapConfig).then(
     (initialState) => {
-      if (initialState?.nodes) {
-        applySnapshot(dqRoot, initialState);
+      if (initialState?.diagram) {
+        try {
+          applySnapshot(appStore, initialState);
+        } catch (error) {
+          // If there is an error in the diagram from CODAP don't completely
+          // blow up just fall back to the default diagram
+          console.error("Diagram in CODAP is an old version or invalid", error);
+        }
         // when the model changes, notify CODAP that the plugin is 'dirty'
-        onSnapshot(dqRoot,() => {
+        onSnapshot(appStore, () => {
           codapInterface.sendRequest({
             "action": "notify",
             "resource": "interactiveFrame",
@@ -92,10 +78,14 @@ const initializeCodapConnection = () => {
 
 initializeCodapConnection();
 
+const getDiagramExport = () => {
+  return getSnapshot(appStore);
+};
+
 export const App = () => {
   return (
     <div className="app">
-      <Diagram dqRoot={dqRoot} showNestedSet={showNestedSet} />
+      <Diagram dqRoot={appStore.diagram} {...{showNestedSet, getDiagramExport}} />
     </div>
   );
 };

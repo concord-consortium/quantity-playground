@@ -3,9 +3,10 @@ import { isAlive } from "mobx-state-tree";
 import React from "react";
 
 import { Handle, Position } from "react-flow-renderer/nocss";
+import { DQNodeType } from "../models/dq-node";
 
 interface IProps {
-  data: any;
+  data: {node: DQNodeType};
   isConnectable: boolean;
 }
   
@@ -16,6 +17,42 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   if (!isAlive(data.node)) {
       return null;
   }
+
+  const variable = data.node.tryVariable;
+  const nodeInside = variable ?
+    <>
+      <div>
+        Name: <strong>{variable.name}</strong>
+      </div>
+      <div>
+        Value: <strong>{variable.computedValueWithSignificantDigits}</strong>
+      </div>
+      <div>
+        Unit: <strong>{variable.computedUnit}</strong>
+      </div>
+      { variable.computedValueError && 
+        <div>
+            ⚠️ {variable.computedValueError}
+        </div>
+      }
+      { variable.computedUnitError && 
+        <div>
+            ⚠️ {variable.computedUnitError}
+        </div>
+      }
+      { variable.computedUnitMessage && 
+        <div>
+            ⓘ {variable.computedUnitMessage}
+        </div>
+      }
+      <div style={{position: "absolute", left: "-20px", top: "50%", transform: "translateY(-50%)", fontSize: "x-large"}}>
+        {variable.operation}
+      </div>
+    </>
+    :
+    <>
+      Invalid Reference: {data.node.variableId}
+    </>;
 
   return (
     <>
@@ -36,33 +73,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         id="b"
       />
       <div style={{padding: "10px"}}>
-        <div>
-          Name: <strong>{data.node.name}</strong>
-        </div>
-        <div>
-          Value: <strong>{data.node.computedValueWithSignificantDigits}</strong>
-        </div>
-        <div>
-          Unit: <strong>{data.node.computedUnit}</strong>
-        </div>
-        { data.node.computedValueError && 
-          <div>
-              ⚠️ {data.node.computedValueError}
-          </div>
-        }
-        { data.node.computedUnitError && 
-          <div>
-              ⚠️ {data.node.computedUnitError}
-          </div>
-        }
-        { data.node.computedUnitMessage && 
-          <div>
-              ⓘ {data.node.computedUnitMessage}
-          </div>
-        }
-        <div style={{position: "absolute", left: "-20px", top: "50%", transform: "translateY(-50%)", fontSize: "x-large"}}>
-          {data.node.operation}
-        </div>
+        {nodeInside}
       </div>
       <Handle
         type="source"

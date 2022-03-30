@@ -1,13 +1,11 @@
 
-import { Instance, getSnapshot } from "mobx-state-tree";
 import React from "react";
-import { DQRoot } from "../models/dq-root";
 
 interface IProps {
-    dqRoot: Instance<typeof DQRoot>;
+    getDiagramExport?: () => unknown;
 }
 
-export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
+export const ToolBar: React.FC<IProps> = ({getDiagramExport}) => {
     const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
@@ -15,7 +13,7 @@ export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
     };
 
     const copyDiagramURL = () => {
-        const exportedDiagram = getSnapshot(dqRoot);
+        const exportedDiagram = getDiagramExport?.();
         console.log("Exported Diagram", exportedDiagram);
         const url = new URL(window.location.href);
         url.searchParams.set("diagram", JSON.stringify(exportedDiagram));
@@ -25,7 +23,7 @@ export const ToolBar: React.FC<IProps> = ({dqRoot}) => {
 
     return (
       <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
-        <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button>
+        { getDiagramExport && <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button> }
         <div style={{border: "1px", borderStyle: "solid", textAlign: "center"}} onDragStart={(event) => onDragStart(event)} draggable>
            Drag to Add
         </div>

@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DQRoot can generate react flow elements 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "node": Object {
+        "id": "1",
+        "variable": "a",
+        "x": 100,
+        "y": 100,
+      },
+    },
+    "id": "a",
+    "position": Object {
+      "x": 100,
+      "y": 100,
+    },
+    "type": "quantityNode",
+  },
+  Object {
+    "data": Object {
+      "node": Object {
+        "id": "2",
+        "variable": "b",
+        "x": 100,
+        "y": 200,
+      },
+    },
+    "id": "b",
+    "position": Object {
+      "x": 100,
+      "y": 200,
+    },
+    "type": "quantityNode",
+  },
+  Object {
+    "data": Object {
+      "node": Object {
+        "id": "3",
+        "variable": "c",
+        "x": 250,
+        "y": 150,
+      },
+    },
+    "id": "c",
+    "position": Object {
+      "x": 250,
+      "y": 150,
+    },
+    "type": "quantityNode",
+  },
+  Object {
+    "arrowHeadType": "arrowclosed",
+    "id": "ea-c-a",
+    "source": "a",
+    "target": "c",
+    "targetHandle": "a",
+  },
+  Object {
+    "arrowHeadType": "arrowclosed",
+    "id": "eb-c-b",
+    "source": "b",
+    "target": "c",
+    "targetHandle": "b",
+  },
+]
+`;

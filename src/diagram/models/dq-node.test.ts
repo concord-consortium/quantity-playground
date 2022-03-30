@@ -1,34 +1,57 @@
-import { DQNode, tryToSimplify } from "./dq-node";
+import { castToSnapshot, createActionTrackingMiddleware, types } from "mobx-state-tree";
+import { DQNode } from "./dq-node";
+import { GenericContainer } from "./test-utils";
+import { Variable } from "./variable";
 
 describe("DQNode", () => {
   it("can be instantiated with undefined value", () => {
-    const node = DQNode.create({ x: 0, y: 0 });
-    // but null is converted to undefined automatically via import
-    expect(node.value).toBeUndefined();
-  });
-  it("can't be instantiated with null value but can import null values", () => {
-    // @ts-expect-error null value on create results in TypeScript error
-    const node = DQNode.create({ value: null, x: 0, y: 0 });
-    // but null is converted to undefined automatically via import
-    expect(node.value).toBeUndefined();
-  });
-});
+    const variable = Variable.create({});
+    const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
 
-describe("tryToSimplify", () => {
-  // "÷"|"×"
-  it("cancels 'm/s' / 'm/s'", () => {
-    const result = tryToSimplify("÷", "m/s", "m/s");
-    expect(result.message).toBe("units cancel");
+    // references have to be within the same tree so we need some container 
+    const container = GenericContainer.create();
+    container.add(variable);
+    container.add(node);
+
+    expect(node.variable.value).toBeUndefined();
   });
 
-  // `m/s^2` instead of `(1/s)^2*m`
-  it("simplifies '(1/s)^2*m' to 'm/s^2'", () => {
-    const result = tryToSimplify("×", "(1/s)^2", "m");
-    expect(result.unit).toBe("m / s ^ 2");
-  });
+  // eslint-disable-next-line jest/no-commented-out-tests
+  // it("can't be instantiated with null value but can import null values", () => {
+  //   // @ts-expect-error null value on create results in TypeScript error
+  //   const node = DQNode.create({ value: null, x: 0, y: 0 });
+  //   // but null is converted to undefined automatically via import
+  //   expect(node.value).toBeUndefined();
+  // });
 
-  it("simplifies '$/piece / peice/day/worker' to '$/day/worker'", () => {
-    const result = tryToSimplify("×", "$/piece", "piece/day/worker");
-    expect(result.unit).toBe("$ / day / worker");
+  it("can be updated after being created", () => {
+    const variable = Variable.create({});
+    const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
+    const inputAVariable = Variable.create({});
+    const inputANode = DQNode.create({ variable: inputAVariable.id, x: 0, y: 0 });
+    const inputBVariable = Variable.create({});
+    const inputBNode = DQNode.create({ variable: inputBVariable.id, x: 0, y: 0 });
+
+    // references have to be within the same tree so we need some container 
+    const container = GenericContainer.create();
+    container.add(variable);
+    container.add(node);
+    container.add(inputAVariable);
+    container.add(inputANode);
+    container.add(inputBVariable);
+    container.add(inputBNode);
+    
+    expect(node.variable).toBeDefined();
+    expect(node.variable.inputA).toBeUndefined();
+    expect(node.variable.inputB).toBeUndefined();
+
+    node.setInputA(inputANode);
+    node.setInputB(inputBNode);
+    expect(node.variable.inputA).toBe(inputAVariable);
+    expect(node.variable.inputB).toBe(inputBVariable);
+
+    node.updatePosition(100,50);
+    expect(node.x).toBe(100);
+    expect(node.y).toBe(50);
   });
 });

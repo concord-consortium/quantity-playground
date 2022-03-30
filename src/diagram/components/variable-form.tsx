@@ -1,43 +1,42 @@
 import { observer } from "mobx-react-lite";
-import { Instance } from "mobx-state-tree";
 import React from "react";
-import { DQNode, Operation } from "../models/dq-node";
+import { Operation, VariableType } from "../models/variable";
 
 interface IProps {
-    node: Instance<typeof DQNode>;
-  }
+    variable: VariableType;
+}
   
-const _NodeForm: React.FC<IProps> = ({ node }) => {
+const _VariableForm: React.FC<IProps> = ({ variable }) => {
   const onValueChange = (evt: any) => {
     // if the value is null or undefined just store undefined
     if (evt.target.value == null) {
-      node.setValue(undefined);
+      variable.setValue(undefined);
     } else {
-      node.setValue(parseFloat(evt.target.value));
+      variable.setValue(parseFloat(evt.target.value));
     }
   };
 
   const onUnitChange = (evt: any) => {
     if (!evt.target.value) {
-      node.setUnit(undefined);
+      variable.setUnit(undefined);
     } else {
-      node.setUnit(evt.target.value);
+      variable.setUnit(evt.target.value);
     }
   };
 
   const onNameChange = (evt: any) => {
     if (!evt.target.value) {
-      node.setName(undefined);
+      variable.setName(undefined);
     } else {
-      node.setName(evt.target.value);
+      variable.setName(evt.target.value);
     }
   };
 
   const onOperationChange = (evt: any) => {
     if (!evt.target.value) {
-      node.setOperation(undefined);
+      variable.setOperation(undefined);
     } else {
-      node.setOperation(evt.target.value);
+      variable.setOperation(evt.target.value);
     }
   };
 
@@ -45,19 +44,19 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
     <div style={{zIndex: 4, position: "absolute"}}>
       <div>
         <label>name:</label>
-        <input value={node.name || ""} onChange={onNameChange}/>
+        <input value={variable.name || ""} onChange={onNameChange}/>
       </div>
       <div>
         <label>value:</label>
-        <input type="number" value={node.value ?? ""} onChange={onValueChange}/>
+        <input type="number" value={variable.value ?? ""} onChange={onValueChange}/>
       </div>
       <div>
         <label>unit:</label>
-        <input value={node.unit || ""} onChange={onUnitChange}/>
+        <input value={variable.unit || ""} onChange={onUnitChange}/>
       </div>
       <div>
         <label>operation:</label>
-        <select value={node.operation || ""} onChange={onOperationChange}>
+        <select value={variable.operation || ""} onChange={onOperationChange}>
           { // in an enumeration the keys are the names and the values are string or 
             // numeric identifier
           }
@@ -71,5 +70,5 @@ const _NodeForm: React.FC<IProps> = ({ node }) => {
   );
 };
 
-export const NodeForm = observer(_NodeForm);
-NodeForm.displayName = "NodeForm";
+export const VariableForm = observer(_VariableForm);
+VariableForm.displayName = "VariableForm";

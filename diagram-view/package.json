@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "0.0.9",
+  "version": "0.0.10-beta.1",
   "description": "Concord Consortium Diagram View",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -28,9 +28,9 @@
     "lint:fix": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx}\"",
     "prepublish": "npm run build",
     "preversion": "npm-run-all lint test build",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test": "jest --config ../package.json",
+    "test:coverage": "jest --coverage --config ../package.json",
+    "test:watch": "jest --watch --config ../package.json",
     "yalc:publish": "npx yalc publish --push",
     "yalc:unpublish": "npx yalc installations clean @concord-consortium/diagram-view"
   },

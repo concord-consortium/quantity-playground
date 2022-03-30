@@ -3,9 +3,9 @@ import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
-import { DQNode, DQNodeType } from "../models/dq-node";
+import { DQNodeType } from "../models/dq-node";
 import { NestedSet } from "./nested-set";
-import { NodeForm } from "./node-form";
+import { VariableForm } from "./variable-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
 
@@ -27,8 +27,9 @@ const nodeTypes = {
 interface IProps {
   dqRoot: DQRootType;
   showNestedSet?: boolean;
+  getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
+export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
@@ -43,7 +44,7 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
     // We could try to be smart about this, and only update things that
     // changed but it is easier to just break the old connection
     // and make a new one
-    const oldTargetNode = dqRoot.nodes.get(oldEdge.target);
+    const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
     const oldTargetHandle = oldEdge.targetHandle;
     if (oldTargetHandle === "a") {
       oldTargetNode?.setInputA(undefined);
@@ -52,8 +53,8 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
     }
 
     const { source, target, targetHandle: newTargetHandle } = newConnection;
-    const newSourceNode = source ? dqRoot.nodes.get(source) : undefined;
-    const newTargetNode = target ? dqRoot.nodes.get(target) : undefined;
+    const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
+    const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
     if (newTargetHandle === "a") {
       newTargetNode?.setInputA(newSourceNode);
     } else if (newTargetHandle === "b") {
@@ -65,8 +66,8 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
     const { source, target, targetHandle } = params;
     console.log(`connection source: ${source} to target: ${target} on handle: ${targetHandle}`);
     if ( source && target ) {
-      const targetModel = dqRoot.nodes.get(target);
-      const sourceModel = dqRoot.nodes.get(source);
+      const targetModel = dqRoot.getNodeFromVariableId(target);
+      const sourceModel = dqRoot.getNodeFromVariableId(source);
       if (targetHandle === "a") {
         targetModel?.setInputA(sourceModel);
       } else if (targetHandle === "b") {
@@ -82,7 +83,7 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
         // This is a edge (I think)
         const edge = element as Edge;
         const { target, targetHandle } = edge;
-        const targetModel = dqRoot.nodes.get(target);
+        const targetModel = dqRoot.getNodeFromVariableId(target);
         if (targetHandle === "a") {
           targetModel?.setInputA(undefined);
         } else if (targetHandle === "b") {
@@ -90,16 +91,16 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
         }
       } else {
         // If this is the selected node we need to remove it from the state too
-        const nodeToRemove = dqRoot.nodes.get(element.id);
+        const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
         setSelectedNode((currentNode) => nodeToRemove === currentNode ? undefined : currentNode);
-        dqRoot.removeNodeById(element.id);
+        dqRoot.removeNode(nodeToRemove);
       }
     }
   };
 
   const onSelectionChange = (selectedElements: Elements | null) => {
     if (selectedElements?.[0]?.type === "quantityNode" ) {
-      setSelectedNode(dqRoot.nodes.get(selectedElements[0].id));
+      setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
     } else {
       setSelectedNode(undefined);
     }
@@ -123,11 +124,10 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
       y: event.clientY - reactFlowBounds.top,
     });
 
-    const dqNode = DQNode.create({
+    dqRoot.createNode({
       x: position.x,
       y: position.y
     });
-    dqRoot.addNode(dqNode);
   };
 
   const onNodeDrag = (event: React.MouseEvent<Element, MouseEvent>, node: any) => {
@@ -136,13 +136,15 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
 
   // Keep the MST node model in sync with the diagram
   const onNodeDragStop = (event: any, node: any) => {
-    const mstNode = dqRoot.nodes.get(node.id);
+    const mstNode = dqRoot.getNodeFromVariableId(node.id);
     mstNode?.updatePosition(node.position.x, node.position.y);
     event.stopPropagation();
   };
 
   const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
+
+  const selectedVariable = selectedNode?.tryVariable;
 
   return (
     <div className="diagram" ref={reactFlowWrapper}>
@@ -163,17 +165,17 @@ export const _Diagram = ({ dqRoot, showNestedSet }: IProps) => {
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          { selectedNode &&
+          { selectedVariable &&
             <>
-              <NodeForm node={selectedNode}/>
+              <VariableForm variable={selectedVariable}/>
               { showNestedSet &&
                 <div style={{zIndex: 4, position: "absolute", left: "300px"}}>
-                  <NestedSet node={selectedNode} final={true} />
+                  <NestedSet variable={selectedVariable} final={true} />
                 </div>
               }
             </>
           }
-          <ToolBar dqRoot={dqRoot}/>
+          <ToolBar {...{getDiagramExport}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
