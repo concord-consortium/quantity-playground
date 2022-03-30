@@ -1,9 +1,8 @@
-import { evaluate } from "../custom-mathjs";
+import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getMathUnit, getUnitConversion } from "./unit-conversion";
-import { Unit } from "mathjs";
+import { getMathUnit } from "./unit-conversion";
 
 export enum Operation {
   Divide = "÷",
@@ -46,24 +45,48 @@ export const Variable = types.model("Variable", {
   get firstValidInput() {
     return self.inputA || self.inputB;
   },
-  get expression() {
-    switch (self.operation) {
-      case "÷":
-        return "a / b";
-      case "×":
-        return "a * b";
-      case "+":
-        return "a + b";
-      case "-":
-        return "a - b";
-    }
-  }
 }))
+.views(self => {
+  const getBaseExpression = () => {
+    if (self.numberOfInputs === 2) {
+      switch (self.operation) {
+        case "÷":
+          return "a / b";
+        case "×":
+          return "a * b";
+        case "+":
+          return "a + b";
+        case "-":
+          return "a - b";
+      }  
+    } else if (self.inputA) {
+      return "a";
+    } else if (self.inputB) {
+      return "b";
+    }
+  };
+
+  return {
+    get expression() {
+      const baseExpression = getBaseExpression();
+      if (!baseExpression) {
+        return;
+      }
+
+      if (self.unit) {
+        return `(${baseExpression}) to ${self.unit}`;
+      } else {
+        return baseExpression;
+      }
+    }
+  };
+})
 .views(self => ({
   get mathValue() {
     const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;
     const selfComputedValue = this.computedValueIncludingMessageAndError.value;
-    if (selfComputedValue) {
+    // The value can be 0
+    if (selfComputedValue !== undefined) {
       if (selfComputedUnit) {
         // This will add any custom units
         return getMathUnit(selfComputedValue, selfComputedUnit);
@@ -89,158 +112,186 @@ export const Variable = types.model("Variable", {
   },
 
   get computedValueIncludingMessageAndError(): {value?:number, error?:string, message?: string} {
-    if ((self.numberOfInputs === 1)) {
-      // We have to cast the input to any because we are calling the functions
-      // computedUnit and computedValue
-      // Those functions are what we are defining here so TS doesn't know they exist on DQNode yet.
-      const input = self.firstValidInput as any;
+    if (self.numberOfInputs === 0) {
+      return {value: self.value};
+    }
 
+    const expression = self.expression;
+    if (!expression) {
+      // If there is just one input the expression will be the label of the
+      // input. So we should never get here. If the there are 2 inputs then the
+      // expression will only be available if the operation is set.
+      return {error: "no operation"};
+    }
+
+    // @ts-expect-error THIS
+    const inputAMathValue = this.inputA?.mathValue;
+
+    // The input value could be a number so it could be 0 which would be
+    // valid
+    if (self.inputA && inputAMathValue === undefined) {
       // @ts-expect-error THIS
-      const convertValue = getUnitConversion((input).computedUnit, this.computedUnit);
-      if (convertValue) {
-          return {value: convertValue(input.computedValue)};
-      }
-      return {error: "Error in unit conversion"};
-    }
-
-    if (self.inputA && self.inputB) {
-      // We currently ignore units in this case
-      const expression = self.expression;
-      if (expression) {
-        // @ts-expect-error THIS
-        const inputAMathValue = this.inputA.mathValue;
-        // @ts-expect-error THIS
-        const inputBMathValue = this.inputB.mathValue;
-
-        if (!inputAMathValue || !inputBMathValue) {
-          // TODO: we should provide a better message here. This message can
-          // overlap with the message from the computedValueIncludingError.
-          // So we need to look at the cases when this happens find a better way
-          // to handle it.
-          return {message: "cannot compute value from inputs"};
-        }
-
-        try {
-          const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
-          const resultType = typeof result;
-          if (resultType === "object" && "isUnit" in result) {
-            // FIXME we sometimes use the `Unit` symbol as a type and sometimes as a
-            // object in order to access static class methods. We need to be
-            // consistent.
-            const unitResult = result as Unit;
-            // We need to use simplify here so we are consistent with the unit
-            // calculation. The simplify function will convert the prefix of
-            // units based on the size of the value.
-            const simpl = unitResult.simplify();
-            return {value: simpl.toNumber()};
-          } else if (resultType === "number") {
-            return {value: result};
-          } else {
-            // In theory math.js can return other kinds of results arrays, big
-            // numbers, ...  With the current code that shouldn't be possible
-            // but when we allow expressions it will be more likely to happen
-            return {error: `unknown result type: ${resultType}`};
-          }
-        } catch (e: any) {
-          // TODO: we should find a way to handle this without throwing an
-          // exception, but I think that will mean changes to MathJS
-          //
-          // We should update MathJS to provide more information here. For other
-          // errors MathJS provides a data property on the error that includes
-          // the character location and more info about the error.
-          if (e.message?.startsWith("Units do not match")) {
-            return {error: "incompatible units"};
-          } else {
-            return {error: `unknown error: ${e.message}`};
-          }
-        }
+      if (this.inputA.computedValue !== undefined) {
+        // If there is an input value and the math value is not valid that
+        // should mean there is an error in the units
+        return {message: "cannot compute value from inputs"};
       } else {
-        return {error: "no operation"};
+        // If there is no value for this input we cannot compute the output
+        // value. There might be a unit.
+        //
+        // We don't show an explicit error here: The current UI shows NaN for
+        // the value, so this seems like enough of a error message.
+        return {};
       }
     }
-    return {value: self.value};
+
+    // @ts-expect-error THIS
+    const inputBMathValue = this.inputB?.mathValue;
+
+    // The input value could be a number so it could be 0 which would be
+    // valid
+    if (self.inputB && inputBMathValue === undefined) {
+      // @ts-expect-error THIS
+      if (this.inputB.computedValue !== undefined) {
+        // If there is an input value and the math value is not valid that
+        // should mean there is an error in the units
+        return {message: "cannot compute value from inputs"};
+      } else {
+        // If there is no value for this input we cannot compute the output
+        // value. There might be a unit.
+        //
+        // We don't show an explicit error here: The current UI shows NaN for
+        // the value, so this seems like enough of a error message.
+        return {};
+      }
+    }
+
+    try {
+      const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+      const resultType = typeof result;
+      if (isUnit(result)) {
+        // We need to use simplify here so we are consistent with the unit
+        // calculation. The simplify function will convert the prefix of
+        // units based on the size of the value.
+        const simpl = result.simplify();
+        return {value: simpl.toNumber()};
+      } else if (resultType === "number") {
+        return {value: result};
+      } else {
+        // In theory math.js can return other kinds of results arrays, big
+        // numbers, ...  With the current code that shouldn't be possible
+        // but when we allow expressions it will be more likely to happen
+        return {error: `unknown result type: ${resultType}`};
+      }
+    } catch (e: any) {
+      // TODO: we should find a way to handle this without throwing an
+      // exception, but I think that will mean changes to MathJS
+      //
+      // We should update MathJS to provide more information here. For other
+      // errors MathJS provides a data property on the error that includes
+      // the character location and more info about the error.
+      if (e.message?.startsWith("Units do not match")) {
+        return {error: "incompatible units"};
+      } else if (e.message?.startsWith("Unexpected type of argument")) {
+        // This can happen when a unit-less value is added or subtracted from a
+        // value with a unit. We could provide more information about this if we
+        // want to. When supporting generic expressions we probably will want to.
+        return {error: "incompatible units"};
+      } else {
+        return {error: `unknown error: ${e.message}`};
+      }
+    }
   },
   
   // If there are two inputs then units can't be changed
   // otherwise current node units override previous node units
   get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
-    if (self.inputA && self.inputB) {
-      const expression = self.expression;
-      if (expression) {
-        // @ts-expect-error THIS
-        const inputAMathValue = this.inputA.mathValueWithValueOr1;
-        // @ts-expect-error THIS
-        const inputBMathValue = this.inputB.mathValueWithValueOr1;
-        
-        if (!inputAMathValue || !inputBMathValue) {
-          // The unit must be invalid
-          return {error: "invalid input units"};
-        }
-
-        try {
-          const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
-          if (typeof result == "object" && "isUnit" in result) {
-            // FIXME we sometimes use the `Unit` symbol as a type and sometimes as a
-            // object in order to access static class methods. We need to be
-            // consistent.
-            const unitResult = result as Unit;
-            const unitString = unitResult.simplify().formatUnits();
-            if (unitString === "") {
-              return {message: "units cancel"};
-            } else {
-              return {unit: unitString};
-            }
-          } else {
-            // @ts-expect-error THIS
-            if (this.inputA.computedUnit || this.inputB.computedUnit) {
-              // If one of the inputs has units and the result is not a Unit
-              // that should mean the units have canceled
-              return {message: "units cancel"};
-            } else {
-              // TODO: should we return something else here? It seems reasonable to
-              // do an operation on to unitless values. So for now don't show
-              // any warning.
-              return {};
-            }
-          }
-        } catch (e: any) {
-          // TODO: we should find a way to handle this without throwing an
-          // exception, but I think that will mean changes to MathJS
-          //
-          // If we have to throw an exception we should update MathJS to provide
-          // more information here. For other errors, MathJS provides a data
-          // property on the error that includes the character location and more
-          // info about the error.
-          if (e.message?.startsWith("Units do not match")) {
-            return {error: "incompatible units"};
-          } else {
-            return {error: `unknown error: ${e.message}`};
-          }
-        }
-      } else {
-        // We have 2 inputs (with or without units), but no operation
-        // The computedValue code above is already going to provide a warning about
-        // this
-        return {};
-      }
-    }
-    if (self.unit) {
-      // FIXME: we should see if this is valid instead of blindly returning it,
-      // this should fall out of the refactoring to unify single and multiple inputs
+    if (self.numberOfInputs === 0) {
+      // Just return the current unit. 
+      // The current unit might be undefined
       return {unit: self.unit};
     }
-    if ((self.inputA && !self.inputB) || (self.inputB && !self.inputA)) {
-      // @ts-expect-error THIS
-      const input = this.inputA || this.inputB;
-      return {unit: input.computedUnit};
-    }
-    if (!self.inputA && !self.inputB && !self.unit) {
-      // There is no unit specified and no input unit
-      // this might be on purpose for a unit-less operation
+
+    const expression = self.expression;
+    if (!expression) {
+      // We should only have a empty expression if there are two inputs and the
+      // operation is not set. 
+      // With a single input the expression should always be set.
+      // The computedValue above will already include a message above so it is
+      // not reported here too.
       return {};
     }
-    // We really shouldn't reach here
-    return {error: "unknown unit state"};
+
+    // @ts-expect-error THIS
+    const inputAMathValue = this.inputA?.mathValueWithValueOr1;
+
+    // The input value could be a number so it could be 0 which would be
+    // valid
+    if (self.inputA && inputAMathValue === undefined) {
+      // Because we are using `1` if there is no input value, and we just
+      // return the value if there is no unit, the only reason the
+      // inputAMathValue should be undefined is if there is an error with the
+      // input unit.
+      return {error: "invalid input units"};
+    }
+
+    // @ts-expect-error THIS
+    const inputBMathValue = this.inputB?.mathValueWithValueOr1;
+
+    // The input value could be a number so it could be 0 which would be
+    // valid
+    if (self.inputB && inputBMathValue === undefined) {
+      // Because we are using `1` if there is no input value, and we just
+      // return the value if there is no unit, the only reason the
+      // inputAMathValue should be undefined is if there is an error with the
+      // input unit.
+      return {error: "invalid input units"};
+    }
+
+    try {
+      const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+      if (isUnit(result)) {
+        const unitString = result.simplify().formatUnits();
+        if (unitString === "") {
+          // This seems to be unreachable currently, but it is possible for
+          // MathJS to return the empty string in some cases. See the test 
+          // "...units cancel on manually created unit"
+          return {message: "units cancel"};
+        } else {
+          return {unit: unitString};
+        }
+      } else {
+        // @ts-expect-error THIS
+        if (this.inputA?.computedUnit || this.inputB?.computedUnit) {
+          // If one of the inputs has units and the result is not a Unit
+          // that should mean the units have canceled
+          return {message: "units cancel"};
+        } else {
+          // If neither input has a unit then this is unit-less math so it has
+          // not unit and it isn't an error.
+          return {};
+        }
+      }
+    } catch (e: any) {
+      // TODO: we should find a way to handle this without throwing an
+      // exception, but I think that will mean changes to MathJS
+      //
+      // If we have to throw an exception we should update MathJS to provide
+      // more information here. For other errors, MathJS provides a data
+      // property on the error that includes the character location and more
+      // info about the error.
+      if (e.message?.startsWith("Units do not match")) {
+        return {unit: self.unit, error: "incompatible units"};
+      } else if (e.message?.startsWith("Unexpected type of argument")) {
+        // This can happen when a unit-less value is added or subtracted from a
+        // value with a unit. We could provide more information about this if we
+        // want to. When supporting generic expressions we probably will want to.
+        // We return the unit for consistency with the error above.
+        return {unit: self.unit, error: "incompatible units"};
+      } else {
+        return {error: `unknown error: ${e.message}`};
+      }
+    }
   }
 }))
 .views(self => ({

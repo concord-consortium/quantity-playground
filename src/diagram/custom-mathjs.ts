@@ -6,8 +6,8 @@ import { create, all } from "mathjs";
 // const math = create({ simplifyDependencies, unitDependencies,
 // parseDependencies });
 const math = create({ all });
-const { simplify, unit, parse, createUnit, evaluate, number } = math;
+const { simplify, unit, parse, createUnit, evaluate, number, isUnit } = math;
 
 // The types don't give access to the Unit class object, but I think it is there.
 const { Unit } = math as any;
-export { simplify, unit, parse, createUnit, evaluate, number, Unit };
+export { simplify, unit, parse, createUnit, evaluate, number, isUnit, Unit };

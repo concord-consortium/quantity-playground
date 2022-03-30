@@ -21,12 +21,30 @@ describe("MathJS", () => {
     expect(result.toString()).toEqual("200 cm");
   });
 
-  it("can't handle unit conversion with evaluate and valueless units", () => {
+  it("can't handle unit addition with evaluate and valueless units", () => {
     const scope = {
       a: unit("m"),
       b: unit("cm")
     };
     expect(() => evaluate("a+b", scope)).toThrowError();
+  });
+
+  it("sort of handles simple unit conversion with evaluate and a valueless unit", () => {
+    // This isn't really useful to us because it adds a value. 
+    // If we allow the user to use `to` method in an expression and the input
+    // has no value then it won't be obvious if the result should have a value
+    // or not. So instead we will probably need to assign a value to a if it
+    // doesn't have one in order to find the unit. And assume if a doesn't have
+    // a value then result also doesn't have a value.
+    const scope = {
+      a: unit("m"),
+    };
+    const result = evaluate("a to cm", scope);
+    expect(result.toJSON()).toEqual({
+      mathjs: "Unit",
+      fixPrefix: true,
+      unit: "cm",
+      value: 100});
   });
 
   it("automatically simplifies units with some functions and not with others", () => {
@@ -77,6 +95,52 @@ describe("MathJS", () => {
     };
     const result = evaluate("a/b", scope);
     expect(result).toEqual(1);
+  });
+
+  it("handles unit conversions mixed into the expression, but doesn't simplify automatically", () => {
+    const scope = {
+      a: unit(1, "mi/hr")
+    };
+    const result = evaluate("(a to m/s) * 2 s", scope);
+    expect(result.toJSON()).toEqual({
+      fixPrefix: true,
+      mathjs: "Unit",
+      unit:"(m s) / s",
+      value: 0.89408
+    });
+    const simp = result.simplify();
+    expect(simp.toJSON()).toEqual({
+      fixPrefix: true,
+      mathjs: "Unit",
+      unit:"m",
+      value: 0.89408
+    });
+  });
+
+  it("handles unit conversions on the fly if simplify is used", () => {
+    const scope = {
+      a: unit(1, "mi/hr")
+    };
+    const result = evaluate("a * 2 s", scope);
+
+    // The un-simplified result is an unexpected behavior. 
+    // But it kind of makes since it isn't clear what should happen with 
+    // `s / hr`
+    expect(result.toJSON()).toEqual({
+      fixPrefix: false,
+      mathjs: "Unit",
+      unit: "(mi s) / hr",
+      value: 2
+    });
+    const simp = result.simplify();
+    expect(simp.toJSON()).toMatchObject({
+      fixPrefix: false,
+      mathjs: "Unit",
+      unit: "mi",
+      // This is supported in jest but the types don't allow it
+      // value: expect.closeTo(0.00055, 5)
+    });
+    expect(simp.toJSON().value).toBeCloseTo(0.000555, 5);
   });
 
   it("does not automatically adjusts unit prefix", () => {
