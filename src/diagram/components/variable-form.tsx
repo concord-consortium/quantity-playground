@@ -8,8 +8,8 @@ interface IProps {
   
 const _VariableForm: React.FC<IProps> = ({ variable }) => {
   const onValueChange = (evt: any) => {
-    // if the value is null or undefined just store undefined
-    if (evt.target.value == null) {
+    // if the value is null or undefined or empty just store undefined
+    if (evt.target.value == null || evt.target.value === "") {
       variable.setValue(undefined);
     } else {
       variable.setValue(parseFloat(evt.target.value));
