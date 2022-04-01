@@ -185,7 +185,9 @@ export const Variable = types.model("Variable", {
     self.inputB = newInputB;
   },
   setValue(newValue?: number) {
-    self.value = newValue;
+    // NaN and Infinity are not valid JSON, we can probably fix MST to handle this correctly
+    // but for now we just convert it to undefined to be safe.
+    self.value = newValue != null && isFinite(newValue) ? newValue : undefined;
   },
   setUnit(newUnit?: string) {
     self.unit = newUnit;
