@@ -812,10 +812,50 @@ describe("Variable", () => {
     });
   });
 
+  it("handles edge case values", () => {
+    const variable = Variable.create();
+
+    variable.setValue(NaN);
+
+    // NaN should be converted to undefined
+    expect(getSnapshot(variable)).toEqual({
+      id: expect.stringMatching(/^.{16}$/),
+    });
+
+    variable.setValue(Infinity);
+
+    // Infinity should be converted to undefined
+    expect(getSnapshot(variable)).toEqual({
+      id: expect.stringMatching(/^.{16}$/),
+    });
+
+    // If someone finds a way to pass in null
+    variable.setValue(null as any);
+
+    // null should be converted to undefined
+    expect(getSnapshot(variable)).toEqual({
+      id: expect.stringMatching(/^.{16}$/),
+    });
+
+    // regular numbers can be set back to undefined
+    variable.setValue(123.0);
+    expect(getSnapshot(variable)).toEqual({
+      id: expect.stringMatching(/^.{16}$/),
+      value: 123.0
+    });
+
+    variable.setValue(undefined);
+    expect(getSnapshot(variable)).toEqual({
+      id: expect.stringMatching(/^.{16}$/),
+    });
+
+  });
+
   // TODO: need tests about partially created units. When the user is typing a
   // unit the code will run as they type. This will trigger the creation of a
   // custom unit for this partially typed unit. And then this unit will not be
   // removed afterwards. So now these partially typed units might cause hard to
   // understand error messages when expressions are typed by users. The
   // evaluator might interpret a missing variable as a partial unit. 
+
 });
