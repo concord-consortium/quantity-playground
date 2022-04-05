@@ -1,6 +1,7 @@
 $node-width: 200px;
-$node-height: 115px;
-$node-inner-width: 180px;
+$node-height: 120px;
+$node-inner-width: 160px;
+$input-half-width: calc(($node-inner-width/2) - 8px);
 $color8:   #e98c42;
 $color8-1: #fefbf9;
 $color8-2: #f9e2d0;
@@ -25,7 +26,7 @@ $gray-mid: #bcbcbc;
   background-color: $color8;
   border: 2px solid $color8-4;
 
-  .close-node-button {
+  .remove-node-button {
     position: absolute;
     right: 5px;
     top: 5px;
@@ -39,30 +40,36 @@ $gray-mid: #bcbcbc;
       &:hover {
         fill: $color8-4;
       }
-
     }
   }
 
   .variable-info-container {
-    margin: 5px;
+    margin: 10px 20px;
     border-radius: 5px;
     position: absolute;
     top: 5px;
 
-      .variable-info-input {
+      .variable-info {
         min-width: 0;
-        width: 50px;
+        // width: 72px;
         height: 24px;
+        background-color: white;
         box-sizing: border-box;
-        // flex: 1;
         border-radius: 5px;
         align-items: center;
-        color: white;
-        margin-top: 3px;
-        margin-bottom: 3px;
+        margin: 3px;
         text-align-last: right;
         &.name {
           width: 150px;
+        }
+        &.unit {
+          width: $input-half-width;
+        }
+        &.value {
+          width: $input-half-width;
+        }
+        &.operation {
+          width: $input-half-width;
         }
       }
   }
