@@ -29,13 +29,14 @@ export const DQNode = types.model("DQNode", {
   },
 }))
 .views(self => ({
-  get reactFlowElements() {
+  // Circular reference with dqRoot and dqNode so typing as any
+  getReactFlowElements(dqRoot: any) {
     const elements: Elements = [];
     const id = self.variableId;
     elements.push({
       id,
       type: "quantityNode",
-      data: { node:  self },
+      data: { node:  self, dqRoot },
       position: { x: self.x, y: self.y },
     });
 
@@ -60,8 +61,8 @@ export const DQNode = types.model("DQNode", {
           targetHandle: "b",
           arrowHeadType: ArrowHeadType.ArrowClosed
         });
-      }  
-    } 
+      }
+    }
 
     return elements;
   },
@@ -77,11 +78,11 @@ export const DQNode = types.model("DQNode", {
     self.y = y;
   },
 
-  setInputA(newInputA: Instance<IAnyComplexType> | undefined) {    
+  setInputA(newInputA: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.setInputA((newInputA as any)?.variable);
   },
 
-  setInputB(newInputB: Instance<IAnyComplexType> | undefined) {    
+  setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.setInputB((newInputB as any)?.variable);
   },
 

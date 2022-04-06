@@ -1,27 +1,32 @@
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import React from "react";
+import { Handle, Position } from "react-flow-renderer/nocss";
 import { DQNodeType } from "../models/dq-node";
+import { DQRootType } from "../models/dq-root";
 import { Operation } from "../models/variable";
 
 import DeleteIcon from "../../assets/delete.svg";
-
-import { Handle, Position } from "react-flow-renderer/nocss";
 import "./quantity-node.scss";
 
 interface IProps {
-  data: {node: DQNodeType};
+  data: {node: DQNodeType, dqRoot: DQRootType};
   isConnectable: boolean;
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
-  const variable = data.node.variable;
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
-  if (!isAlive(data.node)) {
+  if (!isAlive(data.node) || !data.node.tryVariable) {
       return null;
   }
+  const variable = data.node.variable;
+
+  const handleRemoveNode = () => {
+    const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
+    data.dqRoot.removeNode(nodeToRemove);
+  };
 
   const onValueChange = (evt: any) => {
     // if the value is null or undefined just store undefined
@@ -54,14 +59,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setOperation(evt.target.value);
     }
   };
-
-  variable.setValue(variable.computedValue);
-  variable.setUnit(variable.computedUnit);
-
+  const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
+  const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   return (
     <div className={"node"}>
-      <div className="remove-node-button">
-        {/* onClick={handleClick(compProps.onClick)} title={"Delete Node"}> */}
+      <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"}>
         <DeleteIcon />
       </div>
       <div className="inputs-outputs">
@@ -87,9 +89,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             </div>
         </div>
         <div className={"variable-info-container"}>
-          <input className={"variable-info name"} placeholder="name" onChange={onNameChange} value={variable.name || ""}/>
-          <input className={"variable-info value"} type="text" placeholder="value" onChange={onValueChange} value={variable.value || ""} />
-          <input className={"variable-info unit"} type="text" placeholder="unit" onChange={onUnitChange} value={variable.unit || ""}/>
+          <input className={"variable-info name"} placeholder="name" onChange={onNameChange} value={variable.name || ""} onMouseDown={e => e.stopPropagation()}/>
+          <input className={"variable-info value"} type="number" placeholder="value" onChange={onValueChange}
+            value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()}/>
+          <input className={"variable-info unit"} type="text" placeholder="unit" onChange={onUnitChange} value={shownUnit|| ""} onMouseDown={e => e.stopPropagation()}/>
           <select className={"variable-info operation"} value={data.node.variable.operation || ""} onChange={onOperationChange}>
             { // in an enumeration the keys are the names and the values are string ornumeric identifier
             }
@@ -99,17 +102,17 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             )}
           </select>
           { variable.computedValueError &&
-           <div>
+           <div className="error-message">
                ⚠️ {variable.computedValueError}
            </div>
          }
          { variable.computedUnitError &&
-           <div>
+           <div className="error-message">
                ⚠️ {variable.computedUnitError}
            </div>
          }
          { variable.computedUnitMessage &&
-           <div>
+           <div className="error-message">
                ⓘ {variable.computedUnitMessage}
            </div>
          }

@@ -49,67 +49,42 @@ $gray-mid: #bcbcbc;
     position: absolute;
     top: 5px;
 
-      .variable-info {
-        min-width: 0;
-        // width: 72px;
-        height: 24px;
-        background-color: white;
-        box-sizing: border-box;
-        border-radius: 5px;
-        align-items: center;
-        margin: 3px;
-        text-align-last: right;
-        &.name {
-          width: 150px;
-        }
-        &.unit {
-          width: $input-half-width;
-        }
-        &.value {
-          width: $input-half-width;
-        }
-        &.operation {
-          width: $input-half-width;
-        }
+    .variable-info {
+      min-width: 0;
+      height: 24px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      align-items: center;
+      margin: 3px;
+      text-align-last: right;
+      &.name {
+        width: 150px;
       }
-  }
-
-  .node-output {
-    padding: 0;
-    margin: 0;
-    height: 20px;
-  }
-
-  .control {
-    padding: 0px;
-    max-width: $node-inner-width;
+      &.unit {
+        width: $input-half-width;
+      }
+      &.value {
+        width: $input-half-width;
+      }
+      &.operation {
+        width: $input-half-width;
+      }
+    }
+    .error-message {
+      display: inline-block;
+      overflow-wrap: normal;
+      width: calc($input-half-width + 7px);
+      vertical-align: top;
+      margin-top: 3px;
+      margin-left: 3px;
+    }
   }
 
   select, input {
-    font-family: 'Ubuntu', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
     background-color: white;
     padding: 2px 6px;
     border: 0px solid #999;
   }
-
-  .socket {
-    background: $gray-mid;
-  }
-  input {
-    min-width: 0;
-    width: 100%;
-    height: 24px;
-    box-sizing: border-box;
-    flex: 1;
-  }
-
-  // .hr {
-  //   border: 1px solid;
-  //   width: 70%;
-  //   margin: 8px 0;
-  // }
 
   .inputs-outputs {
     width: $node-width;
@@ -127,47 +102,5 @@ $gray-mid: #bcbcbc;
     .inputs {
       min-width: 9px;
     }
-
-    .socket {
-      width: 20px;
-      height: 20px;
-      margin-top: 1px;
-      margin-bottom: 1px;
-      margin-right: 1px;
-    }
-
-    .output-controls {
-      display: flex;
-      justify-content: space-evenly;
-      min-width: 151px;
-
-      .output-container {
-        margin: 0 3px 0 10px;
-        padding: 3px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: white;
-        border-radius: 3px 15px 15px 3px;
-        width: 140px;
-        height: 30px;
-        box-sizing: border-box;
-        border: solid 2px white;
-        &.math {
-          background-color: $color8-3;
-        }
-      }
-    }
-  }
-
-  .decorated-inputs {
-    width: $node-width;
-  }
-}
-
-svg {
-  path.main-path {
-    stroke: #cdcdcd;
-    stroke-dasharray: 5;
   }
 }

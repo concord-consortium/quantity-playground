@@ -4,8 +4,6 @@ import ReactFlow, { Edge, Elements, OnConnectFunc,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
-import { NestedSet } from "./nested-set";
-import { VariableForm } from "./variable-form";
 import { QuantityNode } from "./quantity-node";
 import { ToolBar } from "./toolbar";
 
@@ -31,7 +29,7 @@ interface IProps {
 }
 export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
+  const [ ,setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
@@ -144,8 +142,6 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
   const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
-  const selectedVariable = selectedNode?.tryVariable;
-
   return (
     <div className="diagram" ref={reactFlowWrapper}>
       <ReactFlowProvider>
@@ -165,16 +161,6 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          { selectedVariable &&
-            <>
-              <VariableForm variable={selectedVariable}/>
-              { showNestedSet &&
-                <div style={{zIndex: 4, position: "absolute", left: "300px"}}>
-                  <NestedSet variable={selectedVariable} final={true} />
-                </div>
-              }
-            </>
-          }
           <ToolBar {...{getDiagramExport}}/>
         </ReactFlow>
       </ReactFlowProvider>
