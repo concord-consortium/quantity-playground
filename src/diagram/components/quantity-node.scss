@@ -1,5 +1,5 @@
 $node-width: 200px;
-$node-height: 120px;
+$node-height: 130px;
 $node-inner-width: 160px;
 $input-half-width: calc(($node-inner-width/2) - 8px);
 $color8:   #e98c42;
@@ -13,10 +13,7 @@ $color8-selected: $color8-5;
 $gray-mid: #bcbcbc;
 
 .node {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: $node-width;
+  min-width: $node-width;
   height: $node-height;
   border-radius: 5px;
   font-size: 11px;
@@ -38,27 +35,41 @@ $gray-mid: #bcbcbc;
       z-index: 1;
       fill: $color8-1;
       &:hover {
-        fill: $color8-4;
+        fill: $color8-hover;
+      }
+      &:active {
+        fill: $color8-selected
       }
     }
   }
 
   .variable-info-container {
-    margin: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    margin: 15px 20px;
     border-radius: 5px;
     position: absolute;
     top: 5px;
 
     .variable-info {
-      min-width: 0;
       height: 24px;
       box-sizing: border-box;
       border-radius: 5px;
       align-items: center;
       margin: 3px;
       text-align-last: right;
+      white-space: nowrap;
       &.name {
-        width: 150px;
+        min-width: 150px;
+        background-color: white;
+        padding: 2px 6px;
+        border: 0px solid #999;
+        font-size: 14px;
+        cursor: text;;
+        &:empty:before {
+          content: attr(placeholder);
+          color: #555;
+        }
       }
       &.unit {
         width: $input-half-width;
@@ -67,13 +78,13 @@ $gray-mid: #bcbcbc;
         width: $input-half-width;
       }
       &.operation {
-        width: $input-half-width;
+        width: calc($input-half-width - 5px);
       }
     }
     .error-message {
       display: inline-block;
       overflow-wrap: normal;
-      width: calc($input-half-width + 7px);
+      width: calc($input-half-width + 8px);
       vertical-align: top;
       margin-top: 3px;
       margin-left: 3px;
@@ -84,23 +95,5 @@ $gray-mid: #bcbcbc;
     background-color: white;
     padding: 2px 6px;
     border: 0px solid #999;
-  }
-
-  .inputs-outputs {
-    width: $node-width;
-    max-height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .inputs,.outputs {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .inputs {
-      min-width: 9px;
-    }
   }
 }
