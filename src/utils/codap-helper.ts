@@ -153,7 +153,8 @@ function guaranteeAttributes (dataset: any, qpVariableList:QPVariable[]) {
 }
 
 function makeAttributeUpdate(attrDef:any, attrMap:any) {
-    if (attrDef.qpVar.operation) {
+    const qpVar = attrDef.qpVar;
+    if (qpVar.inputA || qpVar.inputB) {
         return makeFormulaAttributeUpdate(attrDef, attrMap);
     } else {
         return makeValueAttributeUpdate(attrDef);
@@ -161,7 +162,8 @@ function makeAttributeUpdate(attrDef:any, attrMap:any) {
 }
 
 function makeAttributeCreate(attrDef:any, attrMap: any) {
-    if (attrDef.qpVar.operation) {
+    const qpVar = attrDef.qpVar;
+    if (qpVar.inputA || qpVar.inputB) {
         return makeFormulaAttributeCreate(attrDef, attrMap);
     } else {
         return makeValueAttributeCreate(attrDef);
@@ -179,9 +181,11 @@ function makeValueAttributeCreate(attrDef:any): CodapRequest {
         }
     };
 }
+
 function same(a:any,b:any):boolean {
     return (a == null && b == null) || (a === b);
 }
+
 function makeValueAttributeUpdate(attrDef:any): CodapRequest|null{
     const qpVar = attrDef.qpVar;
     if (same(attrDef.existingAttr.name, qpVar.name) && same(attrDef.existingAttr.unit, qpVar.unit)) {
@@ -201,6 +205,12 @@ function makeFormula(inputA:string, inputB:string, qpOp:string):string {
     const codapOp = qpToCodapOpMap(qpOp);
     if (inputA && inputB && codapOp) {
         return `${inputA} ${codapOp} ${inputB}`;
+    }
+    else if (inputA) {
+        return inputA;
+    }
+    else if (inputB) {
+        return inputB;
     }
     else {
         return "";
