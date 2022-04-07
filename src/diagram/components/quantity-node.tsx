@@ -61,6 +61,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
+  const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
     <div className={"node"}>
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"}>
@@ -69,7 +70,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{top: "27%", left: "-12px", border: "1px solid white", borderRadius: " 12px", width: "24px", height: "24px", background: "#bcbcbc"}}
+        style={{top: "30%", left: "-6px", ...nodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="a"
@@ -77,24 +78,26 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ top: "73%", left: "-12px", border: "1px solid white", borderRadius: " 12px", width: "24px", height: "24px", background: "#bcbcbc"}}
+        style={{ top: "70%", left: "-6px", ...nodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="b"
       />
-      <div className={"variable-info-container"}>
-        <div contentEditable="true" className={"variable-info name"} placeholder="name"
-             onMouseDown={e => e.stopPropagation()} onChange={onNameChange}>
+      <div className="variable-info-container">
+        <div contentEditable="true" className="variable-info name" placeholder="name"
+            onMouseDown={e => e.stopPropagation()} onChange={onNameChange}>
           {variable.name || ""}
         </div>
-        <div>
-          <input className={"variable-info value"} type="number" placeholder="value" onChange={onValueChange}
-            value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()}/>
-          <input className={"variable-info unit"} type="text" placeholder="unit" value={shownUnit|| ""}
-            onChange={onUnitChange} onMouseDown={e => e.stopPropagation()}/>
+        <div className="variable-info-value-unit">
+          <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange}
+            value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
+          <div contentEditable="true" className="variable-info unit" placeholder="unit"
+            onChange={onUnitChange} onMouseDown={e => e.stopPropagation()}>
+            {shownUnit|| ""}
+          </div>
         </div>
         <div>
-          <select className={"variable-info operation"} value={data.node.variable.operation || ""} onChange={onOperationChange}>
+          <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
           { // in an enumeration the keys are the names and the values are string or numeric identifier
           }
           <option key="none" value="">none</option>
@@ -123,7 +126,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        style={{border: "1px solid white", borderRadius: " 12px", width: "24px", height: "24px", right: "-12px", background: "#bcbcbc"}}
+        style={nodeHandleStyle}
       />
     </div>
   );
