@@ -66,28 +66,9 @@ $gray-mid: #bcbcbc;
       white-space: nowrap;
       &.name {
         min-width: 150px;
-        background-color: white;
-        padding: 2px 6px;
-        border: 0px solid #999;
-        font-size: 14px;
-        cursor: text;;
-        &:empty:before {
-          content: attr(placeholder);
-          color: #555;
-        }
       }
       &.unit {
-        display: inline-block;
-        min-width: $input-half-width;
-        background-color: white;
-        padding: 2px 6px;
-        border: 0px solid #999;
-        font-size: 14px;
-        cursor: text;;
-        &:empty:before {
-          content: attr(placeholder);
-          color: #555;
-        }
+        width: $input-half-width;
       }
       &.value {
         width: $input-half-width;

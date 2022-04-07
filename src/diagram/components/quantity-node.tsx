@@ -84,17 +84,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         id="b"
       />
       <div className="variable-info-container">
-        <div contentEditable="true" className="variable-info name" placeholder="name"
-            onMouseDown={e => e.stopPropagation()} onChange={onNameChange}>
-          {variable.name || ""}
-        </div>
+        <input className="variable-info name" type="text" placeholder="name" value={variable.name || ""}
+            onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
         <div className="variable-info-value-unit">
           <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange}
             value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
-          <div contentEditable="true" className="variable-info unit" placeholder="unit"
-            onChange={onUnitChange} onMouseDown={e => e.stopPropagation()}>
-            {shownUnit|| ""}
-          </div>
+          <input className="variable-info unit" type="text" placeholder="unit" value={shownUnit|| ""}
+            onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
         </div>
         <div>
           <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
