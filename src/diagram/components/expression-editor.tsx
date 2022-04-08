@@ -59,6 +59,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
     <div className={"expression-editor-dialog"}>
       <div className="title">Expression Editor</div>
       <div className="expression-editor-container">
+        <div className="variable-name">{variable.name}=</div>
         <textarea className="expression-editor"
                   ref={expressionEditorRef}
                   rows={1}

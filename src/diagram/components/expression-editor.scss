@@ -1,5 +1,5 @@
 .expression-editor-dialog {
-  height: 115px;
+  height: 125px;
   width: 510px;
   position: absolute;
   top: 85px;
@@ -25,6 +25,11 @@
     width: 100%;
     padding: 5px;
     box-sizing: border-box;
+    .variable-name {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 2px 0;
+    }
     .expression-editor {
       width: 100%;
       box-sizing: border-box;
