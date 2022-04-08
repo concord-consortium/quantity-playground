@@ -1,12 +1,14 @@
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
-import React from "react";
+import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { Operation } from "../models/variable";
+import { FormulaEditor } from "./formula-editor";
 
 import DeleteIcon from "../../assets/delete.svg";
+import EditIcon from "../../assets/edit.svg";
 import "./quantity-node.scss";
 
 interface IProps {
@@ -15,6 +17,8 @@ interface IProps {
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
+  const [showFormulaEditor, setShowFormulaEditor] = useState(false);
+
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
@@ -26,6 +30,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const handleRemoveNode = () => {
     const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
     data.dqRoot.removeNode(nodeToRemove);
+  };
+
+  const handleEditFormula = (show: boolean) => {
+    setShowFormulaEditor(show);
   };
 
   const onValueChange = (evt: any) => {
@@ -59,6 +67,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setOperation(evt.target.value);
     }
   };
+
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
@@ -86,7 +95,15 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <div className="variable-info-container">
         <input className="variable-info name" type="text" placeholder="name" value={variable.name || ""}
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
-        <div className="variable-info-value-unit">
+        {variable.numberOfInputs > 1 &&
+          <div className="variable-info-row">
+            <div className="variable-info formula" placeholder="formula">{variable.formula || ""}</div>
+            <div className="edit-formula-button" onClick={()=>handleEditFormula(true)} title={"Edit Formula"}>
+              <EditIcon />
+            </div>
+          </div>
+        }
+        <div className="variable-info-row">
           <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange}
             value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
           <input className="variable-info unit" type="text" placeholder="unit" value={shownUnit|| ""}
@@ -124,6 +141,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         isConnectable={isConnectable}
         style={nodeHandleStyle}
       />
+      {showFormulaEditor && <FormulaEditor variable={variable} onShowFormulaEditor={handleEditFormula}/>}
     </div>
   );
 };

@@ -26,7 +26,8 @@ export const Variable = types.model("Variable", {
   //     }
   //     return sn;
   // })
-  value: types.maybe(types.number), 
+  value: types.maybe(types.number),
+  formula: types.maybe(types.string),
   inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
@@ -97,7 +98,7 @@ export const Variable = types.model("Variable", {
     }
     return {value: self.value};
   },
-  
+
   // If there are two inputs then units can't be changed
   // otherwise current node units override previous node units
   get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
@@ -197,6 +198,9 @@ export const Variable = types.model("Variable", {
   },
   setOperation(newOperation?: Operation) {
     self.operation = newOperation;
+  },
+  setFormula(newFormula?: string) {
+    self.formula = newFormula;
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}
