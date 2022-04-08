@@ -27,7 +27,7 @@ export const Variable = types.model("Variable", {
   //     return sn;
   // })
   value: types.maybe(types.number),
-  formula: types.maybe(types.string),
+  expression: types.maybe(types.string),
   inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
@@ -199,8 +199,8 @@ export const Variable = types.model("Variable", {
   setOperation(newOperation?: Operation) {
     self.operation = newOperation;
   },
-  setFormula(newFormula?: string) {
-    self.formula = newFormula;
+  setExpression(newExpression?: string) {
+    self.expression = newExpression;
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}

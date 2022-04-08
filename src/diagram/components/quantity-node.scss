@@ -57,7 +57,7 @@ $gray-mid: #bcbcbc;
       flex-direction: row;
       align-items: center;
       width: 100%;
-      .edit-formula-button {
+      .edit-expression-button {
         width: 18px;
         height: 18px;
         align-items: center;
@@ -89,7 +89,7 @@ $gray-mid: #bcbcbc;
       &.name {
         min-width: 150px;
       }
-      &.formula {
+      &.expression {
         background-color: white;
         height: 24px;
         border-radius: 5px;

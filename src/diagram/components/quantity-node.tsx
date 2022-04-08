@@ -5,7 +5,7 @@ import { Handle, Position } from "react-flow-renderer/nocss";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { Operation } from "../models/variable";
-import { FormulaEditor } from "./formula-editor";
+import { ExpressionEditor } from "./expression-editor";
 
 import DeleteIcon from "../../assets/delete.svg";
 import EditIcon from "../../assets/edit.svg";
@@ -17,7 +17,7 @@ interface IProps {
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
-  const [showFormulaEditor, setShowFormulaEditor] = useState(false);
+  const [showExpressionEditor, setShowExpressionEditor] = useState(false);
 
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
@@ -32,8 +32,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     data.dqRoot.removeNode(nodeToRemove);
   };
 
-  const handleEditFormula = (show: boolean) => {
-    setShowFormulaEditor(show);
+  const handleEditExpression = (show: boolean) => {
+    setShowExpressionEditor(show);
   };
 
   const onValueChange = (evt: any) => {
@@ -95,10 +95,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <div className="variable-info-container">
         <input className="variable-info name" type="text" placeholder="name" value={variable.name || ""}
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
-        {variable.numberOfInputs > 1 &&
+        {variable.numberOfInputs >= 1 &&
           <div className="variable-info-row">
-            <div className="variable-info formula" placeholder="formula">{variable.formula || ""}</div>
-            <div className="edit-formula-button" onClick={()=>handleEditFormula(true)} title={"Edit Formula"}>
+            <div className="variable-info expression" placeholder="expression">{variable.expression || ""}</div>
+            <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}>
               <EditIcon />
             </div>
           </div>
@@ -141,7 +141,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         isConnectable={isConnectable}
         style={nodeHandleStyle}
       />
-      {showFormulaEditor && <FormulaEditor variable={variable} onShowFormulaEditor={handleEditFormula}/>}
+      {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
     </div>
   );
 };
