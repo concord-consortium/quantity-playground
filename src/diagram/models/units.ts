@@ -1,4 +1,6 @@
-// `allMeasures` includes all the measures packaged with this library
+// This direct import of mathjs is just for the types. All the actual code is imported
+// view custom-math.js which reduces the amount of mathjs code that is imported. 
+// Importing the types like this doesn't seem to increase the size of the bundle.
 import math, { SymbolNode } from "mathjs";
 import { unit, parse, createUnit, Unit } from "../custom-mathjs";
 
