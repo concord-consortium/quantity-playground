@@ -2,7 +2,7 @@ import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getMathUnit } from "./unit-conversion";
+import { getMathUnit } from "./units";
 
 export enum Operation {
   Divide = "÷",
