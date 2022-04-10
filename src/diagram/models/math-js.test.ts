@@ -88,7 +88,7 @@ describe("MathJS", () => {
     expect(simp.formatUnits()).toEqual("");
   });
 
-  it("returns a number the units cancel in an expression", () => {
+  it("returns a number when the units cancel in an expression", () => {
     const scope = {
       a: unit(1, "s"),
       b: unit(1, "s")
@@ -137,7 +137,7 @@ describe("MathJS", () => {
       fixPrefix: false,
       mathjs: "Unit",
       unit: "mi",
-      // This is supported in jest but the types don't allow it
+      // This is supported in Jest but the types don't allow it
       // value: expect.closeTo(0.00055, 5)
     });
     expect(simp.toJSON().value).toBeCloseTo(0.000555, 5);
@@ -174,12 +174,24 @@ describe("MathJS", () => {
     expect(simpl.toString()).toEqual("200 cm");
   });
 
-  it("throws predictable exceptions with incompatible units", () => {
-    const scope = {
-      a: unit(1, "m"),
-      b: unit(1, "s")
-    };
-    expect(() => evaluate("a+b", scope)).toThrowError("Units do not match");
-    expect(() => evaluate("a-b", scope)).toThrowError("Units do not match");
+  describe("throws predictable exceptions", () => {
+    test("incompatible units", () => {
+      const scope = {
+        a: unit(1, "m"),
+        b: unit(1, "s")
+      };
+      expect(() => evaluate("a+b", scope)).toThrowError("Units do not match");
+      expect(() => evaluate("a-b", scope)).toThrowError("Units do not match");
+    });
+  
+    test("a unit-less value is added or subtracted from a value with a unit", () => {
+      const scope = {
+        a: 1,
+        b: unit(1, "s")
+      };
+      expect(() => evaluate("a+b", scope)).toThrowError("Unexpected type of argument");  
+      expect(() => evaluate("a-b", scope)).toThrowError("Unexpected type of argument");  
+      expect(() => evaluate("b-a", scope)).toThrowError("Unexpected type of argument");  
+    });  
   });
 });
