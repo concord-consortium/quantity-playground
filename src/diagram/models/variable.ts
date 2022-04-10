@@ -3,12 +3,22 @@ import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
 import { getMathUnit } from "./units";
+import math from "mathjs";
 
 export enum Operation {
   Divide = "÷",
   Multiply = "×",
   Add = "+",
   Subtract = "-"
+}
+
+// This is used to help with circular definition of Variable
+// Variable has inputs that are also Variables
+interface IVariable extends IAnyComplexType {
+  computedValue?: number;
+  computedUnit?: string;
+  mathValue?: number | math.Unit;
+  mathValueWithValueOr1?: number | math.Unit;
 }
 
 export const Variable = types.model("Variable", {
@@ -45,6 +55,13 @@ export const Variable = types.model("Variable", {
   get firstValidInput() {
     return self.inputA || self.inputB;
   },
+  get inputs() {
+    // IVariable is used here because of the circular references
+    return [
+      self.inputA as IVariable | undefined,
+      self.inputB as IVariable | undefined
+    ];
+  }
 }))
 .views(self => {
   const getBaseExpression = () => {
@@ -120,50 +137,45 @@ export const Variable = types.model("Variable", {
       return {error: "no operation"};
     }
 
-    // @ts-expect-error THIS
-    const inputAMathValue = this.inputA?.mathValue;
-
-    // The input value could be a number so it could be 0 which would be
-    // valid
-    if (self.inputA && inputAMathValue === undefined) {
-      // @ts-expect-error THIS
-      if (this.inputA.computedValue !== undefined) {
-        // If there is an input value and the math value is not valid that
-        // should mean there is an error in the units
-        return {message: "cannot compute value from inputs"};
-      } else {
-        // If there is no value for this input we cannot compute the output
-        // value. There might be a unit.
-        //
-        // We don't show an explicit error here: The current UI shows NaN for
-        // the value, so this seems like enough of an error message.
-        return {};
+    // Validate the inputs
+    for (const input of self.inputs) {
+      if (!input) {
+        // this input is not connected
+        continue;
       }
-    }
 
-    // @ts-expect-error THIS
-    const inputBMathValue = this.inputB?.mathValue;
+      // The mathValue could be a number so a falsy check can't be used
+      if (input.mathValue !== undefined) {
+        // this input should be fine
+        continue;
+      }
 
-    // The input value could be a number so it could be 0 which would be
-    // valid
-    if (self.inputB && inputBMathValue === undefined) {
-      // @ts-expect-error THIS
-      if (this.inputB.computedValue !== undefined) {
-        // If there is an input value and the math value is not valid that
-        // should mean there is an error in the units
+      // If the input mathValue is undefined then we can't compute the result.
+      // Instead we return some information
+
+      if (input.computedValue !== undefined) {
+        // If the mathValue is undefined but the computedValue is valid,
+        // that should mean there is an error in the units.
+        // Provide a generic error message for now
         return {message: "cannot compute value from inputs"};
       } else {
-        // If there is no value for this input we cannot compute the output
-        // value. There might be a unit.
+        // If mathValue and computedValue are undefined,
+        // the input node/card might be showing an error or message itself.
         //
-        // We don't show an explicit error here: The current UI shows NaN for
-        // the value, so this seems like enough of a error message.
+        // Or the input node might only have a unit and the user is just 
+        // doing unit algebra.
+        //
+        // In both cases it is best to not show an explicit error. By returning 
+        // an empty object the current UI will just show NaN for the value.
         return {};
       }
     }
 
     try {
-      const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+      const result = evaluate(expression, {
+        a: self.inputs[0]?.mathValue, 
+        b: self.inputs[1]?.mathValue
+      });
       const resultType = typeof result;
       if (isUnit(result)) {
         // We need to use simplify here so we are consistent with the unit
@@ -213,39 +225,33 @@ export const Variable = types.model("Variable", {
       // We should only have an empty expression if there are two inputs and the
       // operation is not set. 
       // With a single input the expression should always be set.
-      // The computedValue above will already include a message above so it is
+      // The computedValue above will already include a message about this, so it is
       // not reported here too.
       return {};
     }
 
-    // @ts-expect-error THIS
-    const inputAMathValue = this.inputA?.mathValueWithValueOr1;
+    // Validate the inputs
+    for (const input of self.inputs) {
+      if (!input) {
+        // this input is not connected
+        continue;
+      }
 
-    // The input value could be a number so it could be 0 which would be
-    // valid
-    if (self.inputA && inputAMathValue === undefined) {
-      // Because we are using `1` if there is no input value, and we just
-      // return the value if there is no unit, the only reason the
-      // inputAMathValue should be undefined is if there is an error with the
-      // input unit.
-      return {error: "invalid input units"};
+      // The input value could be a number so we can't use falsy here
+      if (input.mathValueWithValueOr1 === undefined) {
+        // Because we are using `1` if there is no input value, and we just
+        // return the value if there is no unit, the only reason the
+        // mathValueWithValueOr1 should be undefined is if there is an error with the
+        // input unit.
+        return {error: "invalid input units"};
+      }
     }
-
-    // @ts-expect-error THIS
-    const inputBMathValue = this.inputB?.mathValueWithValueOr1;
-
-    // The input value could be a number so it could be 0 which would be
-    // valid
-    if (self.inputB && inputBMathValue === undefined) {
-      // Because we are using `1` if there is no input value, and we just
-      // return the value if there is no unit, the only reason the
-      // inputAMathValue should be undefined is if there is an error with the
-      // input unit.
-      return {error: "invalid input units"};
-    }
-
+    
     try {
-      const result = evaluate(expression, {a: inputAMathValue, b: inputBMathValue});
+      const result = evaluate(expression, {
+        a: self.inputs[0]?.mathValueWithValueOr1,
+        b: self.inputs[1]?.mathValueWithValueOr1
+      });
       if (isUnit(result)) {
         const unitString = result.simplify().formatUnits();
         if (unitString === "") {
@@ -257,8 +263,7 @@ export const Variable = types.model("Variable", {
           return {unit: unitString};
         }
       } else {
-        // @ts-expect-error THIS
-        if (this.inputA?.computedUnit || this.inputB?.computedUnit) {
+        if (self.inputs[0]?.computedUnit || self.inputs[1]?.computedUnit) {
           // If one of the inputs has units and the result is not a Unit
           // that should mean the units have canceled
           return {message: "units cancel"};
