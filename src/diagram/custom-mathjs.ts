@@ -17,6 +17,6 @@ const math = create({ simplifyDependencies, unitDependencies, parseDependencies,
 
 const { simplify, unit, parse, createUnit, evaluate, number, isUnit } = math;
 
-// The types don't give access to the Unit class object, but I think it is there.
+// The types don't give access to the Unit class object, but it is there.
 const { Unit } = math as any;
 export { simplify, unit, parse, createUnit, evaluate, number, isUnit, Unit };

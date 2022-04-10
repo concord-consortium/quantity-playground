@@ -73,11 +73,7 @@ export const Variable = types.model("Variable", {
         return;
       }
 
-      if (self.unit) {
-        return `(${baseExpression}) to ${self.unit}`;
-      } else {
-        return baseExpression;
-      }
+      return (self.unit) ? `(${baseExpression}) to ${self.unit}` : baseExpression;
     }
   };
 })
@@ -140,7 +136,7 @@ export const Variable = types.model("Variable", {
         // value. There might be a unit.
         //
         // We don't show an explicit error here: The current UI shows NaN for
-        // the value, so this seems like enough of a error message.
+        // the value, so this seems like enough of an error message.
         return {};
       }
     }
@@ -214,7 +210,7 @@ export const Variable = types.model("Variable", {
 
     const expression = self.expression;
     if (!expression) {
-      // We should only have a empty expression if there are two inputs and the
+      // We should only have an empty expression if there are two inputs and the
       // operation is not set. 
       // With a single input the expression should always be set.
       // The computedValue above will already include a message above so it is
@@ -268,7 +264,7 @@ export const Variable = types.model("Variable", {
           return {message: "units cancel"};
         } else {
           // If neither input has a unit then this is unit-less math so it has
-          // not unit and it isn't an error.
+          // no unit and it isn't an error.
           return {};
         }
       }
