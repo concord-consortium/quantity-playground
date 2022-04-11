@@ -63,8 +63,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
-    <div className={"node"}>
-      <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"}>
+    <div className={"node"} data-testid="quantity-node">
+      <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon />
       </div>
       <Handle
@@ -85,11 +85,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       />
       <div className="variable-info-container">
         <input className="variable-info name" type="text" placeholder="name" value={variable.name || ""}
-            onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
+            onMouseDown={e => e.stopPropagation()} onChange={onNameChange} data-testid="variable-name"/>
         <div className="variable-info-value-unit">
-          <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange}
+          <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange} data-testid="variable-value"
             value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
-          <input className="variable-info unit" type="text" placeholder="unit" value={shownUnit|| ""}
+          <input className="variable-info unit" type="text" placeholder="unit" value={shownUnit|| ""} data-testid="variable-unit"
             onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
         </div>
         <div>
@@ -98,7 +98,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           }
           <option key="none" value="">none</option>
           {Object.entries(Operation).map(([name, symbol]) =>
-            <option key={name} value={symbol}>{symbol}</option>
+            <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
           )}
           </select>
           { variable.computedValueError &&

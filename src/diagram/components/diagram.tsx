@@ -143,7 +143,7 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
   return (
-    <div className="diagram" ref={reactFlowWrapper}>
+    <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
         <ReactFlow elements={dqRoot.reactFlowElements}
           defaultPosition={defaultPosition}
