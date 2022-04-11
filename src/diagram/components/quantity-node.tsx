@@ -24,6 +24,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <div>
         Name: <strong>{variable.name}</strong>
       </div>
+      { variable.expression &&
+          <div>
+            Expression: <strong>{variable.expression}</strong>
+          </div>
+      }
       <div>
         Value: <strong>{variable.computedValueWithSignificantDigits}</strong>
       </div>

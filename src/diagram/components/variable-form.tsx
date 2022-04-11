@@ -42,6 +42,14 @@ const _VariableForm: React.FC<IProps> = ({ variable }) => {
     }
   };
 
+  const onExpressionChange = (evt: any) => {
+    if (!evt.target.value) {
+      variable.setExpression(undefined);
+    } else {
+      variable.setExpression(evt.target.value);
+    }
+  };
+
   return (
     <div style={{zIndex: 4, position: "absolute"}}>
       <div>
@@ -72,6 +80,12 @@ const _VariableForm: React.FC<IProps> = ({ variable }) => {
           </select>
         </label>
       </div>
+      <div>
+        <label>expression:
+          <input value={variable.expression || ""} onChange={onExpressionChange}/>
+        </label>
+      </div>
+
     </div>
   );
 };
