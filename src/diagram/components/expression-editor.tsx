@@ -12,20 +12,6 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   const [appliedExpression, setAppliedExpression] = useState(variable.expression);
   const expressionEditorRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // from https://usehooks.com/usePrevious/
-  const usePrevious = (value: string | undefined) => {
-  // The ref object is a generic container whose current property is mutable ...
-  // ... and can hold any value, similar to an instance property on a class
-  const ref: any = useRef();
-  // Store current value in ref
-  useEffect(() => {
-      ref.current = value;
-    }, [value]); // Only re-run if value changes
-    // Return previous value (happens before update in useEffect above)
-    return ref.current;
-  };
-  const prevExpression = usePrevious(appliedExpression);
-
   useEffect(() => {
     if (expressionEditorRef?.current) {
       expressionEditorRef.current.style.height = "0px";
@@ -39,11 +25,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
     onShowExpressionEditor(false);
   };
   const handleCancelEditor = () => {
-    if (prevExpression !== undefined) {
-      variable.setExpression(prevExpression);
-    } else {
-      variable.setExpression(undefined);
-    }
+    variable.setExpression(appliedExpression);
     onShowExpressionEditor(false);
   };
 
