@@ -43,7 +43,7 @@ it("should render", async () => {
   // references have to be within the same tree so we need some container
   const container = GenericContainer.create();
   container.add(variable);
-  container.add(root);
+  container.setRoot(root);
   render(<Diagram dqRoot={root} />);
   expect(screen.getByTestId("diagram")).toBeInTheDocument();
 });
