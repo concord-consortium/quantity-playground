@@ -97,8 +97,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
         {variable.numberOfInputs >= 1 &&
           <div className="variable-info-row">
-            <div className="variable-info expression" placeholder="expression">{variable.expression || ""}</div>
-            <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}>
+            <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
+            <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
               <EditIcon />
             </div>
           </div>

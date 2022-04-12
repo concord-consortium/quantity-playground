@@ -44,7 +44,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   };
 
   return (
-    <div className={"expression-editor-dialog"}>
+    <div className={"expression-editor-dialog"} data-testid="expression-editor-dialog">
       <div className="title">Expression Editor</div>
       <div className="expression-editor-container">
         <div className="variable-name">{variable.name || "variable"}=</div>
@@ -53,6 +53,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
                   rows={1}
                   placeholder="expression"
                   value={variable.expression || ""}
+                  data-testid="expression-editor-input-field"
                   onMouseDown={e => e.stopPropagation()}
                   onChange={handleExpressionChange}
                   onKeyDown={handleEnter}
@@ -61,8 +62,8 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
         </textarea>
       </div>
       <div className="footer-buttons">
-        <button className="dialog-button" type="button" onClick={handleCancelEditor}>Cancel</button>
-        <button className="dialog-button" type="button" onClick={handleCloseEditor}>Apply</button>
+        <button className="dialog-button" data-testid="expression-editor-cancel-button" type="button" onClick={handleCancelEditor}>Cancel</button>
+        <button className="dialog-button" data-testid="expression-editor-apply-button" type="button" onClick={handleCloseEditor}>Apply</button>
       </div>
     </div>
   );
