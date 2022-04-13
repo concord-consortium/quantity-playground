@@ -93,8 +93,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         id="b"
       />
       <div className="variable-info-container">
-        <input className="variable-info name" type="text" placeholder="name" value={variable.name || ""} data-testid="variable-name"
+        <div className="variable-info-row">
+          <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
+        </div>
         {variable.numberOfInputs >= 1 &&
           <div className="variable-info-row">
             <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
@@ -104,9 +106,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         }
         <div className="variable-info-row">
-          <input className="variable-info value" type="number" placeholder="value" onChange={onValueChange} data-testid="variable-value"
+          <input className="variable-info value" type="number" placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
             value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
-          <input className="variable-info unit" type="text" placeholder="unit" value={shownUnit|| ""} data-testid="variable-unit"
+          <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
             onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
         </div>
         <div>
