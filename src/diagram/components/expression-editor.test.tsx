@@ -145,4 +145,50 @@ describe("Expression Editor", () => {
     userEvent.click(screen.getByTestId("expression-editor-apply-button"));
     expect(nodeExpressionVar.variable.expression).toBe("9+9");
   });
+  it("expression editor should save its value when user hits Enter", () => {
+    const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
+    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const root = DQRoot.create();
+    const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
+    const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 999, unit: "m"},
+        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+      ]
+    });
+    root.addNode(nodeA);
+    root.addNode(nodeExpressionVar);
+    container.setRoot(root);
+    render(<Diagram dqRoot={root} />);
+
+    expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
+    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    expect(screen.getByTestId("expression-editor-input-field")).toBeInTheDocument();
+    userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{enter}");
+    expect(nodeExpressionVar.variable.expression).toBe("9+9");
+  });
+  it("expression editor does not save its value when user hits Esc", () => {
+    const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
+    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const root = DQRoot.create();
+    const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
+    const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 999, unit: "m"},
+        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+      ]
+    });
+    root.addNode(nodeA);
+    root.addNode(nodeExpressionVar);
+    container.setRoot(root);
+    render(<Diagram dqRoot={root} />);
+
+    expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
+    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    expect(screen.getByTestId("expression-editor-input-field")).toBeInTheDocument();
+    userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{esc}");
+    expect(nodeExpressionVar.variable.expression).toBe(undefined);
+  });
 });
