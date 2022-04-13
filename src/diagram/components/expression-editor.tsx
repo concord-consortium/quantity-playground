@@ -33,7 +33,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
     if (!evt.target.value) {
       variable.setExpression(undefined);
     } else {
-      variable.setExpression(evt.target.value);
+      variable.setExpression(evt.target.value || undefined);
     }
   };
 

@@ -9,7 +9,7 @@ import { Diagram } from "./diagram";
 
 beforeAll(() => {
   // Setup ResizeObserver and offset* properties
-  // see: https://github.com/wbkd/react-flow/issues/716
+  // see: https://github.com/wbkd/react-flow/issues/716#issuecomment-915831149
   window.ResizeObserver =
     window.ResizeObserver ||
     jest.fn().mockImplementation(() => ({
@@ -35,7 +35,7 @@ beforeAll(() => {
 });
 
 describe("Expression Editor", () => {
-  it("Quantity node should have a expression field and edit icon when there are two inputs", async () => {
+  it("Quantity node should have expression field and edit icon when there are two inputs", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const inputB = Variable.create({id: "inputB", value: 111, unit: "m"});
     const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA", inputB: "inputB"});
