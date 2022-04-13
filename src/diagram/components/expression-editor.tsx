@@ -30,11 +30,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   };
 
   const handleExpressionChange = (evt: any) => {
-    if (!evt.target.value) {
-      variable.setExpression(undefined);
-    } else {
-      variable.setExpression(evt.target.value || undefined);
-    }
+    variable.setExpression(evt.target.value || undefined);
   };
 
   const handleEnter = (evt: any) => {
