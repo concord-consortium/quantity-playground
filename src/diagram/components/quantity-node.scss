@@ -1,0 +1,95 @@
+$node-width: 200px;
+$node-height: 130px;
+$node-inner-width: 160px;
+$input-half-width: calc(($node-inner-width/2) - 8px);
+$color8:   #e98c42;
+$color8-1: #fefbf9;
+$color8-2: #f9e2d0;
+$color8-3: #f4c5a0;
+$color8-4: #fccb84;
+$color8-5: #da5d1d;
+$color8-hover: $color8-4;
+$color8-selected: $color8-5;
+$gray-mid: #bcbcbc;
+
+.node {
+  min-width: $node-width;
+  height: $node-height;
+  border-radius: 5px;
+  font-size: 11px;
+  box-sizing: border-box;
+  color: #242424;
+  z-index: 4;
+  background-color: $color8;
+  border: 2px solid $color8-4;
+
+  .remove-node-button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 18px;
+    cursor: pointer;
+    svg {
+      width: 12px;
+      height: 12px;
+      z-index: 1;
+      fill: $color8-1;
+      &:hover {
+        fill: $color8-hover;
+      }
+      &:active {
+        fill: $color8-selected
+      }
+    }
+  }
+
+  .variable-info-container {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 20px;
+    border-radius: 5px;
+    position: absolute;
+    top: 5px;
+
+    .variable-info-value-unit {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .variable-info {
+      height: 24px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      align-items: center;
+      margin: 3px;
+      text-align-last: right;
+      white-space: nowrap;
+      &.name {
+        min-width: 150px;
+      }
+      &.unit {
+        width: $input-half-width;
+      }
+      &.value {
+        width: $input-half-width;
+      }
+      &.operation {
+        width: calc($input-half-width - 5px);
+      }
+    }
+    .error-message {
+      display: inline-block;
+      overflow-wrap: normal;
+      width: calc($input-half-width + 8px);
+      vertical-align: top;
+      margin-top: 3px;
+      margin-left: 3px;
+    }
+  }
+
+  select, input {
+    background-color: white;
+    padding: 2px 6px;
+    border: 0px solid #999;
+  }
+}
