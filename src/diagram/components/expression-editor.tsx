@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useClickAway } from "../../hooks/use-click-away";
 import { VariableType } from "../models/variable";
 
 import "./expression-editor.scss";
@@ -10,13 +11,13 @@ interface IProps {
 
 export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEditor}) => {
   const [appliedExpression, setAppliedExpression] = useState(variable.expression);
-  const expressionEditorRef = useRef<HTMLTextAreaElement | null>(null);
+  const expressionEditorTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    if (expressionEditorRef?.current) {
-      expressionEditorRef.current.style.height = "0px";
-      const scrollHeight = expressionEditorRef.current.scrollHeight;
-      expressionEditorRef.current.style.height = scrollHeight + "px";
+    if (expressionEditorTextAreaRef?.current) {
+      expressionEditorTextAreaRef.current.style.height = "0px";
+      const scrollHeight = expressionEditorTextAreaRef.current.scrollHeight;
+      expressionEditorTextAreaRef.current.style.height = scrollHeight + "px";
     }
   }, [variable.expression]);
 
@@ -24,6 +25,8 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
     setAppliedExpression(variable.expression);
     onShowExpressionEditor(false);
   };
+  const expressionEditorDialogRef = useClickAway(handleCloseEditor);
+
   const handleCancelEditor = () => {
     variable.setExpression(appliedExpression);
     onShowExpressionEditor(false);
@@ -33,26 +36,31 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
     variable.setExpression(evt.target.value || undefined);
   };
 
-  const handleEnter = (evt: any) => {
-    if (evt.key === "Enter") {
-      handleCloseEditor();
+  const handleKeyDown = (evt: any) => {
+    switch (evt.key) {
+      case "Enter":
+        handleCloseEditor();
+        break;
+      case "Escape":
+        handleCancelEditor();
+        break;
     }
   };
 
   return (
-    <div className={"expression-editor-dialog"} data-testid="expression-editor-dialog">
+    <div ref={expressionEditorDialogRef} className={"expression-editor-dialog"} data-testid="expression-editor-dialog">
       <div className="title">Expression Editor</div>
       <div className="expression-editor-container">
         <div className="variable-name">{variable.name || "variable"}=</div>
         <textarea className="expression-editor"
-                  ref={expressionEditorRef}
+                  ref={expressionEditorTextAreaRef}
                   rows={1}
                   placeholder="expression"
                   value={variable.expression || ""}
                   data-testid="expression-editor-input-field"
                   onMouseDown={e => e.stopPropagation()}
                   onChange={handleExpressionChange}
-                  onKeyDown={handleEnter}
+                  onKeyDown={handleKeyDown}
         >
           {variable.expression || ""}
         </textarea>
