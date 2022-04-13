@@ -36,7 +36,8 @@ export const Variable = types.model("Variable", {
   //     }
   //     return sn;
   // })
-  value: types.maybe(types.number), 
+  value: types.maybe(types.number),
+  expression: types.maybe(types.string),
   inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
@@ -75,7 +76,7 @@ export const Variable = types.model("Variable", {
           return "a + b";
         case "-":
           return "a - b";
-      }  
+      }
     } else if (self.inputA) {
       return "a";
     } else if (self.inputB) {
@@ -84,7 +85,7 @@ export const Variable = types.model("Variable", {
   };
 
   return {
-    get expression() {
+    get processedExpression() {
       const baseExpression = getBaseExpression();
       if (!baseExpression) {
         return;
@@ -117,7 +118,7 @@ export const Variable = types.model("Variable", {
     const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;
     const value = this.computedValueIncludingMessageAndError.value ?? 1;
     if (selfComputedUnit) {
-      // This will add any custom units 
+      // This will add any custom units
       return getMathUnit(value, selfComputedUnit);
     } else {
       return value;
@@ -129,7 +130,7 @@ export const Variable = types.model("Variable", {
       return {value: self.value};
     }
 
-    const expression = self.expression;
+    const expression = self.processedExpression;
     if (!expression) {
       // If there is just one input the expression will be the label of the
       // input. So we should never get here. If the there are 2 inputs then the
@@ -162,10 +163,10 @@ export const Variable = types.model("Variable", {
         // If mathValue and computedValue are undefined,
         // the input node/card might be showing an error or message itself.
         //
-        // Or the input node might only have a unit and the user is just 
+        // Or the input node might only have a unit and the user is just
         // doing unit algebra.
         //
-        // In both cases it is best to not show an explicit error. By returning 
+        // In both cases it is best to not show an explicit error. By returning
         // an empty object the current UI will just show NaN for the value.
         return {};
       }
@@ -173,7 +174,7 @@ export const Variable = types.model("Variable", {
 
     try {
       const result = evaluate(expression, {
-        a: self.inputs[0]?.mathValue, 
+        a: self.inputs[0]?.mathValue,
         b: self.inputs[1]?.mathValue
       });
       const resultType = typeof result;
@@ -210,20 +211,20 @@ export const Variable = types.model("Variable", {
       }
     }
   },
-  
+
   // If there are two inputs then units can't be changed
   // otherwise current node units override previous node units
   get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
     if (self.numberOfInputs === 0) {
-      // Just return the current unit. 
+      // Just return the current unit.
       // The current unit might be undefined
       return {unit: self.unit};
     }
 
-    const expression = self.expression;
+    const expression = self.processedExpression;
     if (!expression) {
       // We should only have an empty expression if there are two inputs and the
-      // operation is not set. 
+      // operation is not set.
       // With a single input the expression should always be set.
       // The computedValue above will already include a message about this, so it is
       // not reported here too.
@@ -246,7 +247,7 @@ export const Variable = types.model("Variable", {
         return {error: "invalid input units"};
       }
     }
-    
+
     try {
       const result = evaluate(expression, {
         a: self.inputs[0]?.mathValueWithValueOr1,
@@ -256,7 +257,7 @@ export const Variable = types.model("Variable", {
         const unitString = result.simplify().formatUnits();
         if (unitString === "") {
           // This seems to be unreachable currently, but it is possible for
-          // MathJS to return the empty string in some cases. See the test 
+          // MathJS to return the empty string in some cases. See the test
           // "...units cancel on manually created unit"
           return {message: "units cancel"};
         } else {
@@ -349,6 +350,9 @@ export const Variable = types.model("Variable", {
   },
   setOperation(newOperation?: Operation) {
     self.operation = newOperation;
+  },
+  setExpression(newExpression?: string) {
+    self.expression = newExpression;
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}

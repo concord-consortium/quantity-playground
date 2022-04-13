@@ -1,5 +1,5 @@
-$node-width: 200px;
-$node-height: 130px;
+$node-width: 220px;
+$node-height: 155px;
 $node-inner-width: 160px;
 $input-half-width: calc(($node-inner-width/2) - 8px);
 $color8:   #e98c42;
@@ -50,10 +50,32 @@ $gray-mid: #bcbcbc;
     border-radius: 5px;
     position: absolute;
     top: 5px;
+    box-sizing: border-box;
 
-    .variable-info-value-unit {
+    .variable-info-row {
       display: flex;
       flex-direction: row;
+      align-items: center;
+      width: 100%;
+      .edit-expression-button {
+        width: 18px;
+        height: 18px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        svg {
+          width: 24px;
+          height: 24px;
+          z-index: 1;
+          fill: $color8-1;
+          &:hover {
+            fill: $color8-hover;
+          }
+          &:active {
+            fill: $color8-selected
+          }
+        }
+      }
     }
 
     .variable-info {
@@ -66,6 +88,21 @@ $gray-mid: #bcbcbc;
       white-space: nowrap;
       &.name {
         min-width: 150px;
+      }
+      &.expression {
+        background-color: white;
+        height: 24px;
+        border-radius: 5px;
+        min-width: 150px;
+        font-size: 14px;
+        line-height:24px;
+        padding-right: 5px;
+        &:empty:before {
+          content: attr(placeholder);
+          color: gray;
+          font-size: 14px;
+          margin: 5px;
+        }
       }
       &.unit {
         width: $input-half-width;

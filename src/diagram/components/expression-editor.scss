@@ -1,0 +1,58 @@
+.expression-editor-dialog {
+  height: 125px;
+  width: 510px;
+  position: absolute;
+  top: 85px;
+  left: 100px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #cdebf2;
+  box-sizing: border-box;
+  .title {
+    width: 100%;
+    height: 34px;
+    flex: 0 0 auto;
+    background-color: #eee;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+  }
+  .expression-editor-container {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    .variable-name {
+      font-size: 14px;
+      font-weight: bold;
+      margin: 2px 0;
+    }
+    .expression-editor {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+  .footer-buttons {
+    width: 100%;
+    height: 45px;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 0 20px;
+    box-sizing: border-box;
+    .dialog-button {
+      height: 30px;
+      min-width: 62px;
+      margin-left: 10px;
+      color: #3f3f3f;
+      background-color: #fff;
+      border: solid 1.5px #949494;
+      border-radius: 5px;
+      outline: none;
+    }
+  }
+}
