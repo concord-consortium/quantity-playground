@@ -27,7 +27,6 @@ export const getMathUnit = (value: number, unitString: string): math.Unit | unde
 export const replaceInputNames = (expression: string, inputNames: (string | undefined)[]) => {
   let localExpression = expression;
 
-  console.log("replaceInputNames");
   inputNames.forEach((name, index) => {
     if (!name) {
       return;
@@ -35,7 +34,6 @@ export const replaceInputNames = (expression: string, inputNames: (string | unde
     localExpression = localExpression.replace("`" + name + "`", `input_${index}`);
   });
 
-  console.log(localExpression);
   try {
     const expressionNode = parse(localExpression);
     const symbols = expressionNode.filter(node => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
@@ -46,7 +44,6 @@ export const replaceInputNames = (expression: string, inputNames: (string | unde
         }
       });
     }
-    console.log(expressionNode.toString());
     return expressionNode.toString();
   } catch (e) {
     // if there is parse error just return the expression for now
