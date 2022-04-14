@@ -19,7 +19,7 @@ export const DQRoot = types.model("DQRoot", {
   get reactFlowElements() {
     const elements: Elements = [];
     self.nodes.forEach((node) => {
-      elements.push(...node.reactFlowElements);
+      elements.push(...node.getReactFlowElements(self));
     });
     return elements;
   },

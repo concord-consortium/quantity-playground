@@ -5,6 +5,9 @@
   "main": "index.js",
   "jest": {
     "testURL": "https://quantity-playground.unexisting.url.com",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },

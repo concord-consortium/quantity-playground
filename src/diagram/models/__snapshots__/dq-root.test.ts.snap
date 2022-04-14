@@ -4,6 +4,29 @@ exports[`DQRoot can generate react flow elements 1`] = `
 Array [
   Object {
     "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 200,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 250,
+            "y": 150,
+          },
+        },
+      },
       "node": Object {
         "id": "1",
         "variable": "a",
@@ -20,6 +43,29 @@ Array [
   },
   Object {
     "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 200,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 250,
+            "y": 150,
+          },
+        },
+      },
       "node": Object {
         "id": "2",
         "variable": "b",
@@ -36,6 +82,29 @@ Array [
   },
   Object {
     "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 200,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 250,
+            "y": 150,
+          },
+        },
+      },
       "node": Object {
         "id": "3",
         "variable": "c",
