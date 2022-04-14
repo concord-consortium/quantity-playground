@@ -2,7 +2,7 @@ import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getMathUnit } from "./units";
+import { getMathUnit, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
 
 export enum Operation {
@@ -14,7 +14,8 @@ export enum Operation {
 
 // This is used to help with circular definition of Variable
 // Variable has inputs that are also Variables
-interface IVariable extends IAnyComplexType {
+interface IVariable  {
+  name?: string;
   computedValue?: number;
   computedUnit?: string;
   mathValue?: number | math.Unit;
@@ -37,10 +38,10 @@ export const Variable = types.model("Variable", {
   //     return sn;
   // })
   value: types.maybe(types.number),
-  expression: types.maybe(types.string),
   inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
+  expression: types.maybe(types.string),
 })
 .views(self => ({
   get numberOfInputs() {
@@ -64,23 +65,35 @@ export const Variable = types.model("Variable", {
     ];
   }
 }))
+.views(self => ({
+  get inputNames() {
+    return self.inputs.map(input => input?.name);
+  }
+}))
 .views(self => {
   const getBaseExpression = () => {
+    if (self.expression) {
+      // TODO: To handle input node renaming and port moving, 
+      // we need to store the expression in its processed form.
+      // Then view reverses this. This way it will update when the nodes
+      // change.
+      return replaceInputNames(self.expression, self.inputNames);
+    }
     if (self.numberOfInputs === 2) {
       switch (self.operation) {
         case "÷":
-          return "a / b";
+          return "input_0 / input_1";
         case "×":
-          return "a * b";
+          return "input_0 * input_1";
         case "+":
-          return "a + b";
+          return "input_0 + input_1";
         case "-":
-          return "a - b";
-      }
+          return "input_0 - input_1";
+      }  
     } else if (self.inputA) {
-      return "a";
+      return "input_0";
     } else if (self.inputB) {
-      return "b";
+      return "input_1";
     }
   };
 
@@ -145,6 +158,13 @@ export const Variable = types.model("Variable", {
         continue;
       }
 
+      // TODO: you can make an expression that only uses one input and the other 
+      // input is connected but not used. In that case the unused input should 
+      // should be skipped. 
+      //
+      // Currently if an unused input doesn't have a value, the output will show
+      // NaN because of the validation below.
+
       // The mathValue could be a number so a falsy check can't be used
       if (input.mathValue !== undefined) {
         // this input should be fine
@@ -174,8 +194,8 @@ export const Variable = types.model("Variable", {
 
     try {
       const result = evaluate(expression, {
-        a: self.inputs[0]?.mathValue,
-        b: self.inputs[1]?.mathValue
+        input_0: self.inputs[0]?.mathValue, 
+        input_1: self.inputs[1]?.mathValue
       });
       const resultType = typeof result;
       if (isUnit(result)) {
@@ -250,8 +270,8 @@ export const Variable = types.model("Variable", {
 
     try {
       const result = evaluate(expression, {
-        a: self.inputs[0]?.mathValueWithValueOr1,
-        b: self.inputs[1]?.mathValueWithValueOr1
+        input_0: self.inputs[0]?.mathValueWithValueOr1,
+        input_1: self.inputs[1]?.mathValueWithValueOr1
       });
       if (isUnit(result)) {
         const unitString = result.simplify().formatUnits();
