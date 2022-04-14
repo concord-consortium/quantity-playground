@@ -44,19 +44,6 @@ export const Variable = types.model("Variable", {
   expression: types.maybe(types.string),
 })
 .views(self => ({
-  get numberOfInputs() {
-    let count = 0;
-    if (self.inputA) {
-        count++;
-    }
-    if (self.inputB) {
-        count++;
-    }
-    return count;
-  },
-  get firstValidInput() {
-    return self.inputA || self.inputB;
-  },
   get inputs() {
     // IVariable is used here because of the circular references
     return [
@@ -64,6 +51,12 @@ export const Variable = types.model("Variable", {
       self.inputB as IVariable | undefined
     ];
   }
+}))
+.views(self => ({
+  get numberOfInputs() {
+    const validInputs = self.inputs.filter(input => !!input);
+    return validInputs.length;
+  },
 }))
 .views(self => ({
   get inputNames() {
@@ -78,22 +71,6 @@ export const Variable = types.model("Variable", {
       // Then view reverses this. This way it will update when the nodes
       // change.
       return replaceInputNames(self.expression, self.inputNames);
-    }
-    if (self.numberOfInputs === 2) {
-      switch (self.operation) {
-        case "÷":
-          return "input_0 / input_1";
-        case "×":
-          return "input_0 * input_1";
-        case "+":
-          return "input_0 + input_1";
-        case "-":
-          return "input_0 - input_1";
-      }  
-    } else if (self.inputA) {
-      return "input_0";
-    } else if (self.inputB) {
-      return "input_1";
     }
   };
 
