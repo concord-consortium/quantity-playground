@@ -27,8 +27,8 @@ describe("Variable", () => {
   it("with 1 inputA it returns the input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 999.9},
-        {id: "variable", value: 123.5, inputA: "input"}
+        {id: "input", name: "a", value: 999.9},
+        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -44,8 +44,8 @@ describe("Variable", () => {
   it("with 1 inputA of 0 it returns the input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 0},
-        {id: "variable", value: 123.5, inputA: "input"}
+        {id: "input", name: "a", value: 0},
+        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -58,41 +58,7 @@ describe("Variable", () => {
 
   });
 
-  it("with 1 inputB it returns the input value, ignoring its own value", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "input", value: 999.9},
-        {id: "variable", value: 123.5, inputB: "input"}
-      ]
-    });
-    const input = container.items[0] as VariableType;
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.inputB).toEqual(input);
-    expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
-    expect(variable.computedValue).toBe(999.9);
-
-  });
-
-  it("with 1 inputB of 0 it returns the input value, ignoring its own value", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "input", value: 0},
-        {id: "variable", value: 123.5, inputB: "input"}
-      ]
-    });
-    const input = container.items[0] as VariableType;
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.inputB).toEqual(input);
-    expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0});
-    expect(variable.computedValue).toBe(0);
-
-  });
-
-  it("with 2 inputs and no operation it returns an error", () => {
+  it("with 2 inputs and no expression it returns an error", () => {
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999.9},
@@ -109,7 +75,7 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
   });
 
-  it("with 2 inputs and no operation and a unit, it returns an error", () => {
+  it("with 2 inputs and no expression and a unit, it returns an error", () => {
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999.9},
@@ -129,10 +95,10 @@ describe("Variable", () => {
   it("with 2 inputs and operation Multiply it returns result", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 999},
-        {id: "inputB", value: 111},
+        {id: "inputA", name: "a", value: 999},
+        {id: "inputB", name: "b", value: 111},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Multiply}
+          expression: "a*b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -145,8 +111,8 @@ describe("Variable", () => {
   it("with only a unit'd inputA and no unit of its own it returns the input value and unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input"}
+        {id: "input", name: "a", value: 999.9, unit: "mm"},
+        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -167,34 +133,8 @@ describe("Variable", () => {
   it("with only a unit'd inputA of 0 and no unit of its own it returns the input value and unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 0, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input"}
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
-  });
-
-  it("with only a unit'd inputB and no unit of its own it returns the input value and unit", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "input", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputB: "input"}
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
-  });
-
-  it("with only a unit'd inputB of 0 and no unit of its own it returns the input value and unit", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "input", value: 0, unit: "mm"},
-        {id: "variable", value: 123.5, inputB: "input"}
+        {id: "input", name: "a", value: 0, unit: "mm"},
+        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -206,8 +146,8 @@ describe("Variable", () => {
   it("with 1 different unit input it returns the converted input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", unit: "cm"}
+        {id: "input", name: "a", value: 999.9, unit: "mm"},
+        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -219,8 +159,8 @@ describe("Variable", () => {
   it("with 1 different unit input of 0 it returns the converted input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 0, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", unit: "cm"}
+        {id: "input", name: "a", value: 0, unit: "mm"},
+        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -232,8 +172,8 @@ describe("Variable", () => {
   it("with 1 different valueless unit input it returns the converted unit, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", unit: "cm"}
+        {id: "input", name: "a", unit: "mm"},
+        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -245,8 +185,8 @@ describe("Variable", () => {
   it("with 1 incompatible unit input it returns an error", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", unit: "N"}
+        {id: "input", name: "a", value: 999.9, unit: "mm"},
+        {id: "variable", value: 123.5, inputA: "input", expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -264,11 +204,11 @@ describe("Variable", () => {
     // Reason not to pass it through:
     //   If the user is only looking at the final output they might notice they
     //   have an error in their units further up the chain
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "N", error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
     expect(variable.computedValueError).toBe("incompatible units");
-    expect(variable.computedUnit).toBe("N");
+    expect(variable.computedUnit).toBeUndefined();
     expect(variable.computedUnitError).toBe("incompatible units");
     expect(variable.computedUnitMessage).toBeUndefined();
 
@@ -277,8 +217,8 @@ describe("Variable", () => {
   it("with 1 incompatible valueless unit input it returns an error", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", unit: "N"}
+        {id: "input", name: "a", unit: "mm"},
+        {id: "variable", value: 123.5, inputA: "input", expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -287,11 +227,11 @@ describe("Variable", () => {
     expect(variable.inputA).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "N", error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
     expect(variable.computedValueError).toBeUndefined();
-    expect(variable.computedUnit).toBe("N");
+    expect(variable.computedUnit).toBeUndefined();
     expect(variable.computedUnitError).toBe("incompatible units");
     expect(variable.computedUnitMessage).toBeUndefined();
 
@@ -300,8 +240,8 @@ describe("Variable", () => {
   it("with a compound custom unit input and a compatible compound custom unit it does the conversion", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 9, unit: "m/things"},
-        {id: "variable", inputA: "input", unit: "cm/things"}
+        {id: "input", name: "a", value: 9, unit: "m/things"},
+        {id: "variable", inputA: "input", expression: "a to cm/things"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -313,22 +253,8 @@ describe("Variable", () => {
   it("with a invalid unit in A it returns without crashing", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "input", value: 9, unit: "m/"},
-        {id: "variable", inputA: "input", unit: "cm"}
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({message: "cannot compute value from inputs"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "invalid input units"});
-
-  });
-
-  it("with a invalid unit in B it returns without crashing", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "input", value: 9, unit: "m/"},
-        {id: "variable", inputB: "input", unit: "cm"}
+        {id: "input", name: "a", value: 9, unit: "m/"},
+        {id: "variable", inputA: "input", expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -341,10 +267,10 @@ describe("Variable", () => {
   it("with 2 inputs with units and operation multiply it returns result", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 999, unit: "m"},
-        {id: "inputB", value: 111, unit: "m"},
+        {id: "inputA", name: "a", value: 999, unit: "m"},
+        {id: "inputB", name: "b", value: 111, unit: "m"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Multiply}
+          expression: "a*b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -358,10 +284,10 @@ describe("Variable", () => {
   it("with 2 inputs with units and operation divide it returns result", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 20, unit: "m"},
-        {id: "inputB", value: 10, unit: "s"},
+        {id: "inputA", name: "a", value: 20, unit: "m"},
+        {id: "inputB", name: "b", value: 10, unit: "s"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Divide}
+          expression: "a/b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -375,10 +301,10 @@ describe("Variable", () => {
   it("with 2 inputs with matching units and operation add it returns result", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 20, unit: "m"},
-        {id: "inputB", value: 10, unit: "m"},
+        {id: "inputA", name: "a", value: 20, unit: "m"},
+        {id: "inputB", name: "b", value: 10, unit: "m"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -392,10 +318,10 @@ describe("Variable", () => {
   it("with 2 inputs with different units and operation add it returns a unit error", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 20, unit: "m"},
-        {id: "inputB", value: 10, unit: "s"},
+        {id: "inputA", name: "a", value: 20, unit: "m"},
+        {id: "inputB", name: "b", value: 10, unit: "s"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -409,10 +335,10 @@ describe("Variable", () => {
   it("with 2 inputs with matching units and operation subtract it returns result", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 20, unit: "m"},
-        {id: "inputB", value: 5, unit: "m"},
+        {id: "inputA", name: "a", value: 20, unit: "m"},
+        {id: "inputB", name: "b", value: 5, unit: "m"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Subtract}
+          expression: "a-b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -426,10 +352,10 @@ describe("Variable", () => {
   it("with 2 inputs with different units and operation subtract it returns a unit error", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 20, unit: "m"},
-        {id: "inputB", value: 5, unit: "s"},
+        {id: "inputA", name: "a", value: 20, unit: "m"},
+        {id: "inputB", name: "b", value: 5, unit: "s"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Subtract}
+          expression: "a-b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -444,10 +370,10 @@ describe("Variable", () => {
       "and different compatible output unit the unit is converted", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 2, unit: "m"},
-        {id: "inputB", value: 3, unit: "m"},
+        {id: "inputA", name: "a", value: 2, unit: "m"},
+        {id: "inputB", name: "b", value: 3, unit: "m"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Multiply, unit: "mm^2"}
+          expression: "a*b to mm^2"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -461,10 +387,10 @@ describe("Variable", () => {
   it("handles a custom unit being added to the same custom unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 98, unit: "things"},
-        {id: "inputB", value: 2, unit: "things"},
+        {id: "inputA", name: "a", value: 98, unit: "things"},
+        {id: "inputB", name: "b", value: 2, unit: "things"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -476,10 +402,10 @@ describe("Variable", () => {
   it("handles a custom unit being subtracted from the same custom unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 98, unit: "things"},
-        {id: "inputB", value: 2, unit: "things"},
+        {id: "inputA", name: "a", value: 98, unit: "things"},
+        {id: "inputB", name: "b", value: 2, unit: "things"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Subtract}
+          expression: "a-b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -491,10 +417,10 @@ describe("Variable", () => {
   it("handles a custom unit divided by the same custom unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 98, unit: "things"},
-        {id: "inputB", value: 2, unit: "things"},
+        {id: "inputA", name: "a", value: 98, unit: "things"},
+        {id: "inputB", name: "b", value: 2, unit: "things"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Divide}
+          expression: "a/b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -506,10 +432,10 @@ describe("Variable", () => {
   it("handles a compound unit that includes a custom unit multiplying by the custom unit", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 50, unit: "m/things"},
-        {id: "inputB", value: 2, unit: "things"},
+        {id: "inputA", name: "a", value: 50, unit: "m/things"},
+        {id: "inputB", name: "b", value: 2, unit: "things"},
         {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Multiply}
+          expression: "a*b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -521,10 +447,10 @@ describe("Variable", () => {
   it("handles adding compatible units with values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m"},
-        {id: "inputB", value: 100, unit: "cm"},
+        {id: "inputA", name: "a", value: 1, unit: "m"},
+        {id: "inputB", name: "b", value: 100, unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -536,10 +462,10 @@ describe("Variable", () => {
   it("handles adding compatible units without values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", unit: "m"},
-        {id: "inputB", unit: "cm"},
+        {id: "inputA", name: "a", unit: "m"},
+        {id: "inputB", name: "b", unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -551,10 +477,10 @@ describe("Variable", () => {
   it("handles subtracting compatible units with values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 2, unit: "m"},
-        {id: "inputB", value: 100, unit: "cm"},
+        {id: "inputA", name: "a", value: 2, unit: "m"},
+        {id: "inputB", name: "b", value: 100, unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Subtract}
+          expression: "a-b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -566,10 +492,10 @@ describe("Variable", () => {
   it("handles subtracting compatible units without values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", unit: "m"},
-        {id: "inputB", unit: "cm"},
+        {id: "inputA", name: "a", unit: "m"},
+        {id: "inputB", name: "b", unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Subtract}
+          expression: "a-b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -581,10 +507,10 @@ describe("Variable", () => {
   it("handles dividing compatible units with values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m"},
-        {id: "inputB", value: 100, unit: "cm"},
+        {id: "inputA", name: "a", value: 1, unit: "m"},
+        {id: "inputB", name: "b", value: 100, unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Divide}
+          expression: "a/b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -596,10 +522,10 @@ describe("Variable", () => {
   it("handles dividing compatible units without values", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", unit: "m"},
-        {id: "inputB", unit: "cm"},
+        {id: "inputA", name: "a", unit: "m"},
+        {id: "inputB", name: "b", unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Divide}
+          expression: "a/b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -611,10 +537,10 @@ describe("Variable", () => {
   it("handles dividing custom units", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "widgets"},
-        {id: "inputB", value: 100, unit: "widgets"},
+        {id: "inputA", name: "a", value: 1, unit: "widgets"},
+        {id: "inputB", name: "b",  value: 100, unit: "widgets"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Divide}
+          expression: "a/b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -627,10 +553,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m/"},
-        {id: "inputB", value: 100, unit: "s"},
+        {id: "inputA", name: "a", value: 1, unit: "m/"},
+        {id: "inputB", name: "b", value: 100, unit: "s"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Multiply}
+          expression: "a*b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -643,10 +569,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m"},
-        {id: "inputB", unit: "cm"},
+        {id: "inputA", name: "a", value: 1, unit: "m"},
+        {id: "inputB", name: "b", unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -664,10 +590,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", unit: "m"},
-        {id: "inputB", value: 1, unit: "cm"},
+        {id: "inputA", name: "a", unit: "m"},
+        {id: "inputB", name: "b", value: 1, unit: "cm"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -685,10 +611,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1},
-        {id: "inputB", value: 1, unit: "m"},
+        {id: "inputA", name: "a", value: 1},
+        {id: "inputB", name: "b", value: 1, unit: "m"},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -701,10 +627,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m"},
-        {id: "inputB", value: 1},
+        {id: "inputA", name: "a", value: 1, unit: "m"},
+        {id: "inputB", name: "b", value: 1},
         {id: "variable", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -717,10 +643,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1},
-        {id: "inputB", value: 1, unit: "m"},
+        {id: "inputA", name: "a", value: 1},
+        {id: "inputB", name: "b", value: 1, unit: "m"},
         {id: "variable", unit: "m",  inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -733,10 +659,10 @@ describe("Variable", () => {
     // This can happen when a user is typing a unit
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1, unit: "m"},
-        {id: "inputB", value: 1},
+        {id: "inputA", name: "a", value: 1, unit: "m"},
+        {id: "inputB", name: "b", value: 1},
         {id: "variable", unit: "m", inputA: "inputA", inputB: "inputB", 
-          operation: Operation.Add}
+          expression: "a+b"}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -749,40 +675,14 @@ describe("Variable", () => {
   it("doesn't handle units canceling in a unit typed by a user", () => {
     const container = GenericContainer.create({
       items: [
-        {id: "inputA", value: 1 },
-        {id: "variable", unit: "m / m", inputA: "inputA" }
+        {id: "inputA", name: "a", value: 1 },
+        {id: "variable", expression: "a", unit: "m / m", inputA: "inputA" }
       ]
     });
     const variable = container.items[1] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m / m", error: "incompatible units"});
-  });
-
-  it("handles unit-less single inputA", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "inputA", value: 1 },
-        {id: "variable", inputA: "inputA" }
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({});
-  });
-
-  it("handles unit-less single inputB", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "inputB", value: 1 },
-        {id: "variable", inputB: "inputB" }
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({});
   });
 
   it("can be modified after being created", () => {
