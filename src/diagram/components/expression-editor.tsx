@@ -14,6 +14,14 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   const expressionEditorTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown, true);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, true);
+    };
+  });
+
+  useEffect(() => {
     if (expressionEditorTextAreaRef?.current) {
       expressionEditorTextAreaRef.current.style.height = "0px";
       const scrollHeight = expressionEditorTextAreaRef.current.scrollHeight;
@@ -37,6 +45,7 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   };
 
   const handleKeyDown = (evt: any) => {
+    evt.stopPropagation();
     switch (evt.key) {
       case "Enter":
         handleCloseEditor();
