@@ -84,9 +84,11 @@
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "@types/react-modal": "^3.13.1",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
     "autoprefixer": "^10.4.2",
+    "classnames": "^2.3.1",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^9.1.0",
     "css-loader": "^6.5.1",
@@ -131,6 +133,8 @@
     "nanoid": "^3.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-flow-renderer": "^9.6.11"
+    "react-flow-renderer": "^9.6.11",
+    "react-modal": "^3.14.4",
+    "react-modal-hook": "^3.0.0"
   }
 }

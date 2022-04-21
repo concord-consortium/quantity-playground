@@ -1,5 +1,7 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
-import React from "react";
+import React, { useEffect } from "react";
+import Modal from "react-modal";
+import { ModalProvider } from "react-modal-hook";
 import { Diagram } from "../diagram/components/diagram";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
@@ -21,7 +23,7 @@ const loadInitialState = () => {
       // fall back to the default diagram
       console.error("Diagram in the URL is an old version or invalid", error);
     }
-  } 
+  }
 
   return AppStore.create(defaultDiagram);
 };
@@ -83,9 +85,15 @@ const getDiagramExport = () => {
 };
 
 export const App = () => {
+  useEffect(()=>{
+    Modal.setAppElement(".app");
+  });
+
   return (
-    <div className="app">
-      <Diagram dqRoot={appStore.diagram} {...{showNestedSet, getDiagramExport}} />
-    </div>
+    <ModalProvider>
+      <div className="app">
+        <Diagram dqRoot={appStore.diagram} {...{showNestedSet, getDiagramExport}} />
+      </div>
+    </ModalProvider>
   );
 };

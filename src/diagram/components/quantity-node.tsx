@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
-import React, { useState } from "react";
+import React from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { Operation } from "../models/variable";
-import { ExpressionEditor } from "./expression-editor";
+import { useExpressionEditorModal } from "./use-expression-editor-modal";
 
 import DeleteIcon from "../../assets/delete.svg";
 import EditIcon from "../../assets/edit.svg";
@@ -17,8 +17,6 @@ interface IProps {
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
-  const [showExpressionEditor, setShowExpressionEditor] = useState(false);
-
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
@@ -27,14 +25,26 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   }
   const variable = data.node.variable;
 
+  const EditExpressionButton = () => {
+    const [showExpressionEditorModal] = useExpressionEditorModal({variable});
+    const handleEditExpression = () => {
+      showExpressionEditorModal();
+    };
+    return (
+      <div className="edit-expression-button" onClick={()=>handleEditExpression()} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
+        <EditIcon />
+      </div>
+    );
+  };
+
   const handleRemoveNode = () => {
     const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
     data.dqRoot.removeNode(nodeToRemove);
   };
 
-  const handleEditExpression = (show: boolean) => {
-    setShowExpressionEditor(show);
-  };
+  // const handleEditExpression = (show: boolean) => {
+  //   setShowExpressionEditor(show);
+  // };
 
   const onValueChange = (evt: any) => {
     // if the value is null or undefined or empty just store undefined
@@ -69,19 +79,19 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setOperation(evt.target.value);
     }
   };
-
+  const hasExpression = variable.numberOfInputs >= 1;
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
-  const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
+  const nodeHandleStyle = {border: "1px solid white", borderRadius: "3px", width: "6px", height: "6px", background: "#bcbcbc"};
   return (
-    <div className={"node"} data-testid="quantity-node">
+    <div className={`node ${hasExpression ? "expression-shown" : ""}`} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon />
       </div>
       <Handle
         type="target"
         position={Position.Left}
-        style={{top: "30%", left: "-6px", ...nodeHandleStyle}}
+        style={{top: "30%", left: "-3px", ...nodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="a"
@@ -89,7 +99,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ top: "70%", left: "-6px", ...nodeHandleStyle}}
+        style={{ top: "70%", left: "-3px", ...nodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="b"
@@ -99,12 +109,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
         </div>
-        {variable.numberOfInputs >= 1 &&
+        {hasExpression &&
           <div className="variable-info-row">
             <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
-            <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
+            <EditExpressionButton />
+            {/* <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
               <EditIcon />
-            </div>
+            </div> */}
           </div>
         }
         <div className="variable-info-row">
@@ -145,7 +156,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         isConnectable={isConnectable}
         style={nodeHandleStyle}
       />
-      {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
+      {/* {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>} */}
     </div>
   );
 };
