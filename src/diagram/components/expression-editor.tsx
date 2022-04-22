@@ -13,6 +13,8 @@ export const ExpressionEditor: React.FC<IProps> = ({variable, onShowExpressionEd
   const [appliedExpression, setAppliedExpression] = useState(variable.expression);
   const expressionEditorTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  // This is needed to capture keyboard events for user is outside the textarea and uses the delete key.
+  // Without it, the current node is deleted along with the expression editor.
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown, true);
 
