@@ -42,26 +42,16 @@ export const DQNode = types.model("DQNode", {
 
     const variable = self.tryVariable;
     if (variable) {
-      const inputA = self.variable.inputA as VariableType | undefined;
-      const inputB = self.variable.inputB as VariableType | undefined;
-      if (inputA) {
+      const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
+      inputs?.forEach((input) => {
         elements.push({
-          id: `e${inputA.id}-${id}-a`,
-          source: inputA.id,
+          id: `e${input.id}-${id}`,
+          source: input.id,
           target: id,
           targetHandle: "a",
           arrowHeadType: ArrowHeadType.ArrowClosed
         });
-      }
-      if (inputB) {
-        elements.push({
-          id: `e${inputB.id}-${id}-b`,
-          source: inputB.id,
-          target: id,
-          targetHandle: "b",
-          arrowHeadType: ArrowHeadType.ArrowClosed
-        });
-      }
+      });
     }
 
     return elements;
@@ -69,7 +59,6 @@ export const DQNode = types.model("DQNode", {
 
 }))
 .actions(self => ({
-
   // Note: as far as I know React Flow will ignore this change
   // it only pays attention to the position of the node when the
   // diagram is first initialized
@@ -78,12 +67,8 @@ export const DQNode = types.model("DQNode", {
     self.y = y;
   },
 
-  setInputA(newInputA: Instance<IAnyComplexType> | undefined) {
-    self.tryVariable?.setInputA((newInputA as any)?.variable);
-  },
-
-  setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
-    self.tryVariable?.setInputB((newInputB as any)?.variable);
+  setInput(newInput: Instance<IAnyComplexType> | undefined) {
+    self.tryVariable?.setInput((newInput as any)?.variable);
   },
 
 }));

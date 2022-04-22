@@ -5,6 +5,8 @@ import ReactFlow, { Edge, Elements, OnConnectFunc,
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
+import { FloatingEdge } from "./floating-edge";
+import { FloatingConnectionLine } from "./floating-connection-line";
 import { ToolBar } from "./toolbar";
 
 // We use the nocss version of RF so we can manually load
@@ -17,9 +19,13 @@ import "react-flow-renderer/dist/theme-default.css";
 // The order matters the diagram css overrides some styles
 // from the react-flow css.
 import "./diagram.scss";
+import { ConnectionLineComponent } from "react-flow-renderer";
 
 const nodeTypes = {
   quantityNode: QuantityNode,
+};
+const edgeTypes = {
+  floating: FloatingEdge,
 };
 
 interface IProps {
@@ -43,21 +49,12 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
     // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
-    const oldTargetHandle = oldEdge.targetHandle;
-    if (oldTargetHandle === "a") {
-      oldTargetNode?.setInputA(undefined);
-    } else if (oldTargetHandle === "b") {
-      oldTargetNode?.setInputB(undefined);
-    }
 
-    const { source, target, targetHandle: newTargetHandle } = newConnection;
+      oldTargetNode?.setInput(undefined);
+    const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
     const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
-    if (newTargetHandle === "a") {
-      newTargetNode?.setInputA(newSourceNode);
-    } else if (newTargetHandle === "b") {
-      newTargetNode?.setInputB(newSourceNode);
-    }
+      newTargetNode?.setInput(newSourceNode);
   };
 
   const onConnect: OnConnectFunc = (params) => {
@@ -66,11 +63,7 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
     if ( source && target ) {
       const targetModel = dqRoot.getNodeFromVariableId(target);
       const sourceModel = dqRoot.getNodeFromVariableId(source);
-      if (targetHandle === "a") {
-        targetModel?.setInputA(sourceModel);
-      } else if (targetHandle === "b") {
-        targetModel?.setInputB(sourceModel);
-      }
+        targetModel?.setInput(sourceModel);
     }
   };
 
@@ -80,13 +73,9 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
       if ((element as any).target) {
         // This is a edge (I think)
         const edge = element as Edge;
-        const { target, targetHandle } = edge;
+        const { target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
-        if (targetHandle === "a") {
-          targetModel?.setInputA(undefined);
-        } else if (targetHandle === "b") {
-          targetModel?.setInputB(undefined);
-        }
+          targetModel?.setInput(undefined);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
@@ -145,10 +134,13 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
-        <ReactFlow elements={dqRoot.reactFlowElements}
+        <ReactFlow
+          elements={dqRoot.reactFlowElements}
           defaultPosition={defaultPosition}
           defaultZoom={defaultZoom}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          connectionLineComponent={FloatingConnectionLine as ConnectionLineComponent}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect as any}  // TODO: fix types
           onElementsRemove={onElementsRemove}

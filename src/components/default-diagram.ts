@@ -23,7 +23,13 @@ const defaultDiagram: SnapshotIn<typeof AppStore> = {
             variable: "c",
             x: 250,
             y: 150
-        }
+        },
+        "4": {
+          id: "4",
+          variable: "d",
+          x: 250,
+          y: 250
+      }
     }
   },
   variables: {
@@ -36,10 +42,12 @@ const defaultDiagram: SnapshotIn<typeof AppStore> = {
     },
     "c": {
       id: "c",
-      inputA: "a",
-      inputB: "b",
-      operation: Operation.Divide,
-    }
+      inputs:["a", "d", "b"],
+      operation: Operation.Add,
+    },
+    "d": {
+      id: "d",
+    },
   }
 };
 

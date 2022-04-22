@@ -1,0 +1,98 @@
+import { Position } from "react-flow-renderer";
+import { DQNodeType } from "../../diagram/models/dq-node";
+
+const kNodeWidth = 220;
+const kNodeHeight = 155;
+// this helper function returns the intersection point
+// of the line between the center of the intersectionNode and the target node
+function getNodeIntersection(node1x: number, node1y: number, node2x: number, node2y: number) {
+  // https://math.stackexchange.com/questions/1724792/an-algorithm-for-finding-the-intersection-point-between-a-center-of-vision-and-a
+  // const { x, y } = node1;
+  // const targetPosition = {node2.x, node2.y};
+
+  const w = kNodeWidth / 2;
+  const h = kNodeHeight / 2;
+
+  const x2 = node1x + w;
+  const y2 = node1y + h;
+  const x1 = node2x + w;
+  const y1 = node2y + h;
+
+  const xx1 = (x1 - x2) / (2 * w) - (y1 - y2) / (2 * h);
+  const yy1 = (x1 - x2) / (2 * w) + (y1 - y2) / (2 * h);
+  const a = 1 / (Math.abs(xx1) + Math.abs(yy1));
+  const xx3 = a * xx1;
+  const yy3 = a * yy1;
+  const xIntersect = w * (xx3 + yy3) + x2;
+  const yIntersect = h * (-xx3 + yy3) + y2;
+
+  return { xIntersect, yIntersect };
+}
+
+// returns the position (top,right,bottom or right) passed node compared to the intersection point
+function getEdgePosition(node: any, intersectionPoint: any) {
+  const n = { ...node.position, ...node };
+  const nx = Math.round(n.x);
+  const ny = Math.round(n.y);
+  const px = Math.round(intersectionPoint.x);
+  const py = Math.round(intersectionPoint.y);
+
+  if (px <= nx + 1) {
+    return Position.Left;
+  }
+  if (px >= nx + n.width - 1) {
+    return Position.Right;
+  }
+  if (py <= ny + 1) {
+    return Position.Top;
+  }
+  if (py >= n.y + n.height - 1) {
+    return Position.Bottom;
+  }
+
+  return Position.Top;
+}
+
+// returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) you need to create an edge
+export function getEdgeParams(source: DQNodeType, target: any) {
+  const sourceIntersectionPoint = getNodeIntersection(source.x, source.y, target.x, target.y);
+  const targetIntersectionPoint = getNodeIntersection(target.x, target.y, source.x, source.y);
+
+  const sourcePos = getEdgePosition(source, sourceIntersectionPoint);
+  const targetPos = getEdgePosition(target, targetIntersectionPoint);
+
+  return {
+    sx: sourceIntersectionPoint.xIntersect,
+    sy: sourceIntersectionPoint.yIntersect,
+    tx: targetIntersectionPoint.xIntersect,
+    ty: targetIntersectionPoint.yIntersect,
+    sourcePos,
+    targetPos,
+  };
+}
+
+// export function createNodesAndEdges() {
+//   const nodes = [];
+//   const edges = [];
+//   const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+//   nodes.push({ id: "target", data: { label: "Target" }, position: center });
+
+//   for (let i = 0; i < 8; i++) {
+//     const degrees = i * (360 / 8);
+//     const radians = degrees * (Math.PI / 180);
+//     const x = 250 * Math.cos(radians) + center.x;
+//     const y = 250 * Math.sin(radians) + center.y;
+
+//     nodes.push({ id: `${i}`, data: { label: "Source" }, position: { x, y } });
+
+//     edges.push({
+//       id: `edge-${i}`,
+//       target: "target",
+//       source: `${i}`,
+//       type: "floating",
+//     });
+//   }
+
+//   return { nodes, edges };
+// }

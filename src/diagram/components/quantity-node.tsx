@@ -81,18 +81,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{top: "30%", left: "-6px", ...nodeHandleStyle}}
+        style={{top: "50%", left: "-6px", ...nodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="a"
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        style={{ top: "70%", left: "-6px", ...nodeHandleStyle}}
-        onConnect={(params) => console.log("handle onConnect", params)}
-        isConnectable={isConnectable}
-        id="b"
       />
       <div className="variable-info-container">
         <div className="variable-info-row">
