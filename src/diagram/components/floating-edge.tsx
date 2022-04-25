@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { getBezierPath } from "react-flow-renderer";
+import { getBezierPath } from "react-flow-renderer/nocss";
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 import { DQNodeType } from "../models/dq-node";
 
@@ -8,12 +8,10 @@ interface IProps {
   id: string;
   source: DQNodeType;
   target: DQNodeType;
-  style: any
+  // style: any
 }
-const _FloatingEdge: React.FC<IProps>  = ({id, source, target, style}) =>  {
-  // const sourceNode = useCallback(store => store.nodeInternals.get(source), [source]);
-  // const targetNode = useCallback(store => store.nodeInternals.get(target), [target]);
-
+// const _FloatingEdge: React.FC<IProps>  = ({id, source, target, style}) =>  {
+  const _FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
   if (!source || !target) {
     return null;
   }
@@ -28,10 +26,9 @@ const _FloatingEdge: React.FC<IProps>  = ({id, source, target, style}) =>  {
     targetX: tx,
     targetY: ty,
   });
-
   return (
     <g className="react-flow__connection">
-      <path id={id} className="react-flow__edge-path" d={d} style={style} />
+      <path id={id} className="react-flow__edge-path" d={d} />
     </g>
   );
 };

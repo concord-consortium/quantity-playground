@@ -44,13 +44,15 @@ export const DQNode = types.model("DQNode", {
     if (variable) {
       const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
       inputs?.forEach((input) => {
-        elements.push({
-          id: `e${input.id}-${id}`,
-          source: input.id,
-          target: id,
-          targetHandle: "a",
-          arrowHeadType: ArrowHeadType.ArrowClosed
-        });
+        if (input) {
+          elements.push({
+            id: `e${input.id}-target${id}-a`,
+            source: input.id,
+            target: id,
+            targetHandle: "a",
+            arrowHeadType: ArrowHeadType.ArrowClosed
+          });
+        }
       });
     }
 

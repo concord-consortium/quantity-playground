@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
-import ReactFlow, { Edge, Elements, OnConnectFunc,
-  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
+import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
+  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, ConnectionLineComponent } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
-import { FloatingEdge } from "./floating-edge";
+// import { FloatingEdge } from "./floating-edge";
 import { FloatingConnectionLine } from "./floating-connection-line";
 import { ToolBar } from "./toolbar";
 
@@ -19,21 +19,20 @@ import "react-flow-renderer/dist/theme-default.css";
 // The order matters the diagram css overrides some styles
 // from the react-flow css.
 import "./diagram.scss";
-import { ConnectionLineComponent } from "react-flow-renderer";
 
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
-const edgeTypes = {
-  floating: FloatingEdge,
-};
+// const edgeTypes = {
+//   floating: FloatingEdge,
+// };
 
 interface IProps {
   dqRoot: DQRootType;
   showNestedSet?: boolean;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [ ,setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
@@ -69,8 +68,7 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
 
   const onElementsRemove = (elementsToRemove: Elements) => {
     for(const element of elementsToRemove) {
-      console.log(element);
-      if ((element as any).target) {
+      if (isEdge((element as any))) {
         // This is a edge (I think)
         const edge = element as Edge;
         const { target } = edge;
@@ -139,7 +137,7 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
           defaultPosition={defaultPosition}
           defaultZoom={defaultZoom}
           nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
+          // edgeTypes={edgeTypes}
           connectionLineComponent={FloatingConnectionLine as ConnectionLineComponent}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect as any}  // TODO: fix types
