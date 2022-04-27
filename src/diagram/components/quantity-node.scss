@@ -1,5 +1,5 @@
-$node-width: 220px;
-$node-height: 155px;
+$node-width: 180px;
+$node-height: 120px;
 $node-inner-width: 160px;
 $input-half-width: calc(($node-inner-width/2) - 8px);
 $color8:   #e98c42;
@@ -14,7 +14,7 @@ $gray-mid: #bcbcbc;
 
 .node {
   min-width: $node-width;
-  height: $node-height;
+  min-height: $node-height;
   border-radius: 5px;
   font-size: 11px;
   box-sizing: border-box;
@@ -22,6 +22,9 @@ $gray-mid: #bcbcbc;
   z-index: 4;
   background-color: $color8;
   border: 2px solid $color8-4;
+  &.expression-shown {
+    height: calc($node-height + 30px);
+  }
 
   .remove-node-button {
     position: absolute;
@@ -46,7 +49,7 @@ $gray-mid: #bcbcbc;
   .variable-info-container {
     display: flex;
     flex-direction: column;
-    margin: 15px 20px;
+    margin: 10px 10px;
     border-radius: 5px;
     position: absolute;
     top: 5px;
@@ -91,9 +94,7 @@ $gray-mid: #bcbcbc;
       }
       &.expression {
         background-color: white;
-        height: 24px;
-        border-radius: 5px;
-        min-width: 150px;
+        min-width: 135px;
         font-size: 14px;
         line-height:24px;
         padding-right: 5px;

@@ -70,14 +70,15 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const hasExpression = variable.numberOfInputs >= 1;
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHeight = "155px";
   const nodeWidth = "220px";
-  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0};
+  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
-    <div className={"node"} data-testid="quantity-node">
+    <div className={`node ${hasExpression ? "expression-shown" : ""}`} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon />
       </div>
@@ -96,7 +97,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"
             onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
         </div>
-        {variable.numberOfInputs >= 1 &&
+        {hasExpression &&
           <div className="variable-info-row">
             <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
             <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">

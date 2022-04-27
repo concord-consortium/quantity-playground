@@ -53,11 +53,12 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
-      oldTargetNode?.removeInput(oldTargetNode);
+    const oldSourceNode = dqRoot.getNodeFromVariableId(oldEdge.source);
+      oldTargetNode?.removeInput(oldSourceNode);
     const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
     const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
-      newTargetNode?.setInput(newSourceNode);
+    newTargetNode?.setInput(newSourceNode);
   };
 
   const onConnect: OnConnectFunc = (params) => {
