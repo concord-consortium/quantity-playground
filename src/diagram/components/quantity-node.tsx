@@ -74,21 +74,23 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHeight = "155px";
   const nodeWidth = "220px";
-  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", borderRadius: 0, border: "none", opacity: 0};
+  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
     <div className={"node"} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon />
       </div>
-      <Handle
-        type="target"
-        position={Position.Left}
-        style={{...targetNodeHandleStyle}}
-        onConnect={(params) => console.log("handle onConnect", params)}
-        isConnectable={isConnectable}
-        id="a"
-      />
+      {data.dqRoot.isInConnectingMode &&
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{...targetNodeHandleStyle}}
+          onConnect={(params) => console.log("handle onConnect", params)}
+          isConnectable={isConnectable}
+          id="a"
+        />
+      }
       <div className="variable-info-container">
         <div className="variable-info-row">
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"

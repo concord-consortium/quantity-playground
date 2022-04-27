@@ -1,12 +1,11 @@
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
-  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, ConnectionLineComponent } from "react-flow-renderer/nocss";
+  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
-import { FloatingConnectionLine } from "./floating-connection-line";
 import { ToolBar } from "./toolbar";
 
 // We use the nocss version of RF so we can manually load
@@ -41,14 +40,20 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     transform && dqRoot.setTransform(transform);
   };
 
+  const onConnectStart: OnConnectStartFunc = (event, { nodeId, handleType }) => {
+    dqRoot.setIsInConnectingMode(true);
+  };
+  const onConnectEnd: OnConnectEndFunc = () => {
+    dqRoot.setIsInConnectingMode(false);
+  };
+
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
-
     // We could try to be smart about this, and only update things that
     // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
-      oldTargetNode?.setInput(undefined);
+      oldTargetNode?.removeInput(oldTargetNode);
     const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
     const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
@@ -138,9 +143,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
           defaultZoom={defaultZoom}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
-          connectionLineComponent={FloatingConnectionLine as ConnectionLineComponent}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect as any}  // TODO: fix types
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
           onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
