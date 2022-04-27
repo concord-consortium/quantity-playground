@@ -5,8 +5,6 @@ import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 import { DQNodeType } from "../models/dq-node";
 
 interface IProps {
-  sourceX: number;
-  sourceY: number;
   sourcePosition?: Position;
   targetX: number;
   targetY: number;
@@ -17,8 +15,7 @@ interface IProps {
 }
 
 const _FloatingConnectionLine: React.FC<IProps> =
-  ({ sourceX, sourceY, sourcePosition, targetX, targetY,
-    targetPosition, sourceNode }) => {
+  ({ sourcePosition, targetX, targetY, targetPosition, sourceNode }) => {
   if (!sourceNode) {
     return null;
   }
@@ -38,8 +35,7 @@ const _FloatingConnectionLine: React.FC<IProps> =
 
   return (
     <g>
-      <path fill="none" stroke="#222" strokeWidth={1.5} d={d} />
-      <circle cx={targetX} cy={targetY} fill="#fff" r={3} stroke="#222" strokeWidth={1.5} />
+      <path fill="none" stroke="#BCBCBC" strokeWidth={1} d={d} />
     </g>
   );
 };

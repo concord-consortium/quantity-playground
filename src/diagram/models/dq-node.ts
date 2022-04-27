@@ -36,7 +36,7 @@ export const DQNode = types.model("DQNode", {
     elements.push({
       id,
       type: "quantityNode",
-      data: { node:  self, dqRoot },
+      data: { node: self, dqRoot },
       position: { x: self.x, y: self.y },
     });
 
@@ -49,18 +49,21 @@ export const DQNode = types.model("DQNode", {
             id: `e${input.id}-target${id}-a`,
             source: input.id,
             target: id,
-            targetHandle: "a",
-            arrowHeadType: ArrowHeadType.ArrowClosed
+            arrowHeadType: ArrowHeadType.ArrowClosed,
+            type: "floatingEdge",
+            data: { dqRoot },
           });
         }
       });
     }
 
     return elements;
-  },
-
+  }
 }))
 .actions(self => ({
+  getPosition() {
+    return { x: self.x, y: self.y };
+  },
   // Note: as far as I know React Flow will ignore this change
   // it only pays attention to the position of the node when the
   // diagram is first initialized
@@ -72,6 +75,19 @@ export const DQNode = types.model("DQNode", {
   setInput(newInput: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.setInput((newInput as any)?.variable);
   },
+  // removeInput(input: Instance<IAnyComplexType>) {
+    removeInput(input: DQNodeType) {
+    const variable = self.tryVariable;
+    if (variable) {
+      console.log("dqNode removeInput variable:", variable);
+      console.log("dqNode removeInput input:", input.variable.id);
+    //   const inputIdx = variable.inputs.indexOf(input);
+    //   inputIdx && variable.inputs.splice(inputIdx);
+    //   console.log("after removeInput input:", variable.inputs);
+      variable.removeInput(input);
+    }
+    // self.tryVariable?.removeInput((input));
+  }
 
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}

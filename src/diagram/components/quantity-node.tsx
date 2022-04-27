@@ -72,7 +72,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
-  const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
+  const nodeHeight = "155px";
+  const nodeWidth = "220px";
+  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", borderRadius: 0, border: "none", opacity: 0};
+  const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
     <div className={"node"} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
@@ -81,7 +84,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{top: "50%", left: "-6px", ...nodeHandleStyle}}
+        style={{...targetNodeHandleStyle}}
         onConnect={(params) => console.log("handle onConnect", params)}
         isConnectable={isConnectable}
         id="a"
@@ -135,7 +138,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        style={nodeHandleStyle}
+        style={sourceHandleStyle}
       />
       {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
     </div>

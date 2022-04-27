@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 
 import { getMathUnit, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
+import { DQNodeType } from "./dq-node";
 
 export enum Operation {
   Divide = "÷",
@@ -356,6 +357,14 @@ export const Variable = types.model("Variable", {
   },
   setExpression(newExpression?: string) {
     self.expression = newExpression;
+  },
+}))
+.actions(self => ({
+  removeInput(input: DQNodeType) {
+    const _var = self.inputs as unknown as DQNodeType[];
+     const inputToRemove = _var.find(i => i?.id === input.variable.id);
+    const inputIdx = self.inputs.indexOf(inputToRemove);
+    inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}

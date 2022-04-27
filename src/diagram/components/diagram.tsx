@@ -5,7 +5,7 @@ import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
-// import { FloatingEdge } from "./floating-edge";
+import { FloatingEdge } from "./floating-edge";
 import { FloatingConnectionLine } from "./floating-connection-line";
 import { ToolBar } from "./toolbar";
 
@@ -23,9 +23,9 @@ import "./diagram.scss";
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
-// const edgeTypes = {
-//   floating: FloatingEdge,
-// };
+const edgeTypes = {
+  floatingEdge: FloatingEdge,
+};
 
 interface IProps {
   dqRoot: DQRootType;
@@ -48,7 +48,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
-
       oldTargetNode?.setInput(undefined);
     const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
@@ -62,7 +61,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     if ( source && target ) {
       const targetModel = dqRoot.getNodeFromVariableId(target);
       const sourceModel = dqRoot.getNodeFromVariableId(source);
-        targetModel?.setInput(sourceModel);
+      targetModel?.setInput(sourceModel);
     }
   };
 
@@ -71,9 +70,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
       if (isEdge((element as any))) {
         // This is a edge (I think)
         const edge = element as Edge;
-        const { target } = edge;
+        const { source, target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
-          targetModel?.setInput(undefined);
+        const sourceModel = dqRoot.getNodeFromVariableId(source);
+        targetModel.removeInput(sourceModel);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
@@ -137,7 +137,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
           defaultPosition={defaultPosition}
           defaultZoom={defaultZoom}
           nodeTypes={nodeTypes}
-          // edgeTypes={edgeTypes}
+          edgeTypes={edgeTypes}
           connectionLineComponent={FloatingConnectionLine as ConnectionLineComponent}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect as any}  // TODO: fix types

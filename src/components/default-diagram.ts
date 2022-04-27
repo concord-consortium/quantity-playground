@@ -16,19 +16,19 @@ const defaultDiagram: SnapshotIn<typeof AppStore> = {
             id: "2",
             variable: "b",
             x: 100,
-            y: 200
+            y: 300
         },
         "3": {
             id: "3",
             variable: "c",
-            x: 250,
+            x: 550,
             y: 150
         },
         "4": {
           id: "4",
           variable: "d",
-          x: 250,
-          y: 250
+          x: 150,
+          y: 500
       }
     }
   },
