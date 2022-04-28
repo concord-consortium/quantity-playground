@@ -70,6 +70,25 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const renderValueUnitInput = () => {
+    return (
+      <div className="variable-info-row">
+        <input className="variable-info value" type="number" placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
+          value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
+        <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
+          onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
+      </div>
+    );
+  };
+  const renderValueUnitUnEditable = () => {
+    return (
+      <div className="variable-info-row">
+        <div className="variable-info value static">{shownValue !== undefined ? shownValue.toString() : ""}</div>
+        <div className="variable-info unit static">{shownUnit|| ""}</div>
+      </div>
+    );
+  };
+
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
@@ -107,37 +126,34 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             </div>
           </div>
         }
-        <div className="variable-info-row">
-          <input className="variable-info value" type="number" placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
-            value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
-          <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
-            onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
-        </div>
-        <div>
-          <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
-          { // in an enumeration the keys are the names and the values are string or numeric identifier
-          }
-          <option key="none" value="">none</option>
-          {Object.entries(Operation).map(([name, symbol]) =>
-            <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
-          )}
-          </select>
-          { variable.computedValueError &&
-            <div className="error-message">
-                ⚠️ {variable.computedValueError}
-            </div>
-          }
-          { variable.computedUnitError &&
-            <div className="error-message">
-                ⚠️ {variable.computedUnitError}
-            </div>
-          }
-          { variable.computedUnitMessage &&
-            <div className="error-message">
-                ⓘ {variable.computedUnitMessage}
-            </div>
-          }
-        </div>
+        {variable.numberOfInputs >= 1 ? renderValueUnitUnEditable() : renderValueUnitInput()}
+        {!(variable.numberOfInputs >= 1) &&
+          <div>
+            <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
+            { // in an enumeration the keys are the names and the values are string or numeric identifier
+            }
+            <option key="none" value="">none</option>
+            {Object.entries(Operation).map(([name, symbol]) =>
+              <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
+            )}
+            </select>
+            { variable.computedValueError &&
+              <div className="error-message">
+                  ⚠️ {variable.computedValueError}
+              </div>
+            }
+            { variable.computedUnitError &&
+              <div className="error-message">
+                  ⚠️ {variable.computedUnitError}
+              </div>
+            }
+            { variable.computedUnitMessage &&
+              <div className="error-message">
+                  ⓘ {variable.computedUnitMessage}
+              </div>
+            }
+          </div>
+        }
       </div>
       <Handle
         type="source"

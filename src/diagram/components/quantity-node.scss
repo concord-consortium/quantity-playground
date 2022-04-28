@@ -113,6 +113,10 @@ $gray-mid: #bcbcbc;
       &.operation {
         width: calc($input-half-width - 5px);
       }
+      &.static {
+        margin: 5px;
+        font-size: 14px;
+      }
     }
     .error-message {
       display: inline-block;
