@@ -28,7 +28,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9},
-        {id: "variable", expression: "a", value: 123.5, inputs: ["inputA"]}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -45,7 +45,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0},
-        {id: "variable", expression: "a", value: 123.5, inputs: ["inputA"]}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -112,7 +112,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", expression: "a", value: 123.5, inputs: ["inputA"]}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -134,7 +134,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0, unit: "mm"},
-        {id: "variable", expression: "a", value: 123.5, inputs: ["inputA"]}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -147,7 +147,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["inputA"], expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -160,7 +160,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0, unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["inputA"], expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -173,7 +173,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["inputA"], expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -186,7 +186,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["inputA"], expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -218,7 +218,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["inputA"], expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -241,7 +241,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 9, unit: "m/things"},
-        {id: "variable", inputs: ["inputA"], expression: "a to cm/things"}
+        {id: "variable", inputs: ["input"], expression: "a to cm/things"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -254,7 +254,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 9, unit: "m/"},
-        {id: "variable", inputs: ["inputA"], expression: "a to cm"}
+        {id: "variable", inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -703,8 +703,7 @@ describe("Variable", () => {
 
     expect(getSnapshot(variable)).toEqual({
       id: expect.stringMatching(/^.{16}$/),
-      inputA: inputA.id,
-      inputB: inputB.id,
+      inputs: [inputA.id, inputB.id],
       value: 123.5,
       unit: "m",
       name: "my variable",
@@ -719,14 +718,26 @@ describe("Variable", () => {
 
     // NaN should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
     variable.setValue(Infinity);
 
     // Infinity should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
     // If someone finds a way to pass in null
@@ -734,19 +745,36 @@ describe("Variable", () => {
 
     // null should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
     // regular numbers can be set back to undefined
     variable.setValue(123.0);
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
       value: 123.0
     });
 
     variable.setValue(undefined);
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
   });

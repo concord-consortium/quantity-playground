@@ -163,17 +163,13 @@ export const Variable = types.model("Variable", {
     }
 
     const getMathValues = () => {
-      let valueObj: any;
+      const valueObj: Record<string, number| math.Unit | undefined> = {};
       nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValue);
       return valueObj;
     };
     const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, { mathValues
-        //TODO: (EMI) Need to give the inputs to evaluate
-        // input_0: nodeInputs[0]?.mathValue,
-        // input_1: nodeInputs[1]?.mathValue
-      });
+      const result = evaluate(expression, mathValues);
       const resultType = typeof result;
       if (isUnit(result)) {
         // We need to use simplify here so we are consistent with the unit
@@ -248,18 +244,12 @@ export const Variable = types.model("Variable", {
 
     const getMathValues = () => {
       const valueObj: Record<string, number| math.Unit | undefined> = {};
-      nodeInputs.forEach((input, idx) => {
-        valueObj[`input_${idx}`] = input.mathValue;
-      });
+      nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValueWithValueOr1);
       return valueObj;
     };
     const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, { mathValues
-        // TODO (EMI): need to give this the inputs to evaluate
-        // input_0: nodeInputs[0]?.mathValueWithValueOr1,
-        // input_1: nodeInputs[1]?.mathValueWithValueOr1
-      });
+      const result = evaluate(expression, mathValues);
       if (isUnit(result)) {
         const unitString = result.simplify().formatUnits();
         if (unitString === "") {

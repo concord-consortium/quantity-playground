@@ -76,7 +76,7 @@ export const DQNode = types.model("DQNode", {
     self.tryVariable?.setInput((newInput as any)?.variable);
   },
   // removeInput(input: Instance<IAnyComplexType>) {
-    removeInput(input: DQNodeType) {
+  removeInput(input: DQNodeType) {
     const variable = self.tryVariable;
     if (variable) {
       console.log("dqNode removeInput variable:", variable);

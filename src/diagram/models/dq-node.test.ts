@@ -41,8 +41,7 @@ describe("DQNode", () => {
     container.add(inputBNode);
 
     expect(node.variable).toBeDefined();
-    expect(node.variable.inputs[0]).toBeUndefined();
-    expect(node.variable.inputs[1]).toBeUndefined();
+    expect(node.variable.inputs).toEqual([]);
 
     node.setInput(inputANode);
     node.setInput(inputBNode);
