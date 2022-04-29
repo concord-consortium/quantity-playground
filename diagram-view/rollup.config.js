@@ -7,7 +7,6 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript from "rollup-plugin-typescript2";
 import commonjs from "@rollup/plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
-import image from "@rollup/plugin-image";
 
 import packageJson from "./package.json";
 
@@ -46,7 +45,6 @@ export default [
         extract: path.resolve("dist/index.css")
       }),
       visualizer({ open: false }), // <== set to true to automatically open visualizer on build
-      image()
     ]
   },
   { // bundle declaration files

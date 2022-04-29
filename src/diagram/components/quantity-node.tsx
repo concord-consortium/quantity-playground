@@ -7,8 +7,6 @@ import { DQRootType } from "../models/dq-root";
 import { Operation } from "../models/variable";
 import { ExpressionEditor } from "./expression-editor";
 
-import DeleteIcon from "../../assets/delete.svg";
-import EditIcon from "../../assets/edit.svg";
 import "./quantity-node.scss";
 
 interface IProps {
@@ -70,13 +68,31 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const DeleteIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">
+        <path d="M5.41,4,7.93,1.49a.27.27,0,0,0,0-.36L6.87.07a.27.27,0,0,0-.36,0L4,2.59,1.49.07a.27.27,
+0,0,0-.36,0L.07,1.13a.27.27,0,0,0,0,.36L2.59,4,.07,6.51a.27.27,0,0,0,0,.36L1.13,7.93a.27.27,0,0,
+0,.36,0L4,5.41,6.51,7.93a.27.27,0,0,0,.36,0L7.93,6.87a.27.27,0,0,0,0-.36Z"/>
+      </svg>
+    );
+  };
+
+  const EditIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+        <path d="M12.06,4,10.94,5.16a.3.3,0,0,1-.41,0L7.84,2.47a.3.3,0,0,1,0-.41L9,.94a1.16,1.16,0,0,1,1.64,0L12.06,2.4A1.16,1.16,0,0,1,12.06,4ZM6.88,3,.52,9.38,0,12.32A.58.58,0,0,0,.68,13l2.95-.51L10,6.12a.31.31,0,0,0,0-.42L7.3,3a.29.29,0,0,0-.42,0ZM3,8.83a.33.33,0,0,1,0-.48L6.73,4.62a.34.34,0,0,1,.48,0,.33.33,0,0,1,0,.48L3.48,8.83a.33.33,0,0,1-.47,0Zm-.88,2H3.29v.88L1.73,12,1,11.27,1.25,9.7h.88Z" />
+      </svg>
+    );
+  };
+
   const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
   const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
   const nodeHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
   return (
     <div className={"node"} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
-        <DeleteIcon />
+        {DeleteIcon()}
       </div>
       <Handle
         type="target"
@@ -103,7 +119,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           <div className="variable-info-row">
             <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
             <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
-              <EditIcon />
+              {EditIcon()}
             </div>
           </div>
         }
