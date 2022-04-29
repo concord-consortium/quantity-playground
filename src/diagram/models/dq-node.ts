@@ -61,9 +61,6 @@ export const DQNode = types.model("DQNode", {
   }
 }))
 .actions(self => ({
-  getPosition() {
-    return { x: self.x, y: self.y };
-  },
   // Note: as far as I know React Flow will ignore this change
   // it only pays attention to the position of the node when the
   // diagram is first initialized
@@ -72,23 +69,12 @@ export const DQNode = types.model("DQNode", {
     self.y = y;
   },
 
-  setInput(newInput: Instance<IAnyComplexType> | undefined) {
-    self.tryVariable?.setInput((newInput as any)?.variable);
+  addInput(newInput: Instance<IAnyComplexType> | undefined) {
+    self.tryVariable?.addInput((newInput as any)?.variable);
   },
-  // removeInput(input: Instance<IAnyComplexType>) {
-  removeInput(input: DQNodeType) {
-    const variable = self.tryVariable;
-    if (variable) {
-      console.log("dqNode removeInput variable:", variable);
-      console.log("dqNode removeInput input:", input.variable.id);
-    //   const inputIdx = variable.inputs.indexOf(input);
-    //   inputIdx && variable.inputs.splice(inputIdx);
-    //   console.log("after removeInput input:", variable.inputs);
-      variable.removeInput(input);
-    }
-    // self.tryVariable?.removeInput((input));
-  }
-
+  removeInput(input: VariableType) {
+    self.tryVariable?.removeInput((input));
+  },
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}
 export interface DQNodeSnapshot extends SnapshotIn<typeof DQNode> {}

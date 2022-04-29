@@ -70,10 +70,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
-  const hasExpression = variable.numberOfInputs >= 1;
-  const shownValue = variable.numberOfInputs > 0 ? variable.computedValue : variable.value;
-  const shownUnit = variable.numberOfInputs > 0 ? variable.computedUnit : variable.unit;
-  const nodeHeight = "155px";
+  const hasExpression = variable.numberOfInputs > 0;
+  const shownValue = hasExpression ? variable.computedValue : variable.value;
+  const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
+  const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
@@ -82,16 +82,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon />
       </div>
-      {data.dqRoot.isInConnectingMode &&
-        <Handle
-          type="target"
-          position={Position.Left}
-          style={{...targetNodeHandleStyle}}
-          onConnect={(params) => console.log("handle onConnect", params)}
-          isConnectable={isConnectable}
-          id="a"
-        />
-      }
       <div className="variable-info-container">
         <div className="variable-info-row">
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"
@@ -137,6 +127,16 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           }
         </div>
       </div>
+      {data.dqRoot.isInConnectingMode &&
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{...targetNodeHandleStyle}}
+          onConnect={(params) => console.log("handle onConnect", params)}
+          isConnectable={isConnectable}
+          id="a"
+        />
+      }
       <Handle
         type="source"
         position={Position.Right}

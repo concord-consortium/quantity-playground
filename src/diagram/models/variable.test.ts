@@ -694,8 +694,8 @@ describe("Variable", () => {
     container.add(inputB);
     container.add(variable);
 
-    variable.setInput(inputA);
-    variable.setInput(inputB);
+    variable.addInput(inputA);
+    variable.addInput(inputB);
     variable.setValue(123.5);
     variable.setUnit("m");
     variable.setName("my variable");
@@ -721,10 +721,6 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
-      name: undefined,
-      operation: undefined,
-      unit: undefined,
-      value: undefined,
     });
 
     variable.setValue(Infinity);

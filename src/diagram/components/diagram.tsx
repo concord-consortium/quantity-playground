@@ -54,11 +54,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
     const oldSourceNode = dqRoot.getNodeFromVariableId(oldEdge.source);
-      oldTargetNode?.removeInput(oldSourceNode);
+    oldTargetNode?.removeInput(oldSourceNode.variable);
     const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
     const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
-    newTargetNode?.setInput(newSourceNode);
+    newTargetNode?.addInput(newSourceNode);
   };
 
   const onConnect: OnConnectFunc = (params) => {
@@ -67,19 +67,18 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
     if ( source && target ) {
       const targetModel = dqRoot.getNodeFromVariableId(target);
       const sourceModel = dqRoot.getNodeFromVariableId(source);
-      targetModel?.setInput(sourceModel);
+      targetModel?.addInput(sourceModel);
     }
   };
 
   const onElementsRemove = (elementsToRemove: Elements) => {
     for(const element of elementsToRemove) {
       if (isEdge((element as any))) {
-        // This is a edge (I think)
         const edge = element as Edge;
         const { source, target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
         const sourceModel = dqRoot.getNodeFromVariableId(source);
-        targetModel.removeInput(sourceModel);
+        targetModel.removeInput(sourceModel.variable);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);

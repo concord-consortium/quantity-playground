@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite";
 import React, { useMemo } from "react";
 import { getBezierPath, useStoreState } from "react-flow-renderer/nocss";
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
@@ -8,10 +7,7 @@ interface IProps {
   source: string;
   target: string;
 }
-const _FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
-  // When the node is removed from MST, this component gets
-  // re-rendered for some reason, so we check here to make sure we
-  // aren't working with a destroyed model
+export const FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
   const nodes = useStoreState((state) => state.nodes);
   const sourceNode = useMemo(() => nodes.find((n) => n.id === source), [source, nodes]);
   const targetNode = useMemo(() => nodes.find((n) => n.id === target), [target, nodes]);
@@ -34,6 +30,3 @@ const _FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
     </g>
   );
 };
-
-export const FloatingEdge = observer(_FloatingEdge);
-FloatingEdge.displayName = "FloatingEdge";

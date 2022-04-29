@@ -43,8 +43,8 @@ describe("DQNode", () => {
     expect(node.variable).toBeDefined();
     expect(node.variable.inputs).toEqual([]);
 
-    node.setInput(inputANode);
-    node.setInput(inputBNode);
+    node.addInput(inputANode);
+    node.addInput(inputBNode);
     expect(node.variable.inputs[0]).toBe(inputAVariable);
     expect(node.variable.inputs[1]).toBe(inputBVariable);
 

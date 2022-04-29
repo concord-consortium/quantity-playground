@@ -4,7 +4,6 @@ import { nanoid } from "nanoid";
 
 import { getMathUnit, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
-import { DQNodeType } from "./dq-node";
 
 export enum Operation {
   Divide = "÷",
@@ -261,7 +260,7 @@ export const Variable = types.model("Variable", {
           return {unit: unitString};
         }
       } else {
-        if (nodeInputs[0]?.computedUnit || nodeInputs[1]?.computedUnit) {
+        if (nodeInputs.some(input => input?.computedUnit)) {
           // If one of the inputs has units and the result is not a Unit
           // that should mean the units have canceled
           return {message: "units cancel"};
@@ -328,7 +327,7 @@ export const Variable = types.model("Variable", {
   }
 }))
 .actions(self => ({
-  setInput(newInput: Instance<IAnyComplexType> | undefined) {
+  addInput(newInput: Instance<IAnyComplexType> | undefined) {
     self.inputs.push(newInput);
   },
   setValue(newValue?: number) {
@@ -350,9 +349,9 @@ export const Variable = types.model("Variable", {
   },
 }))
 .actions(self => ({
-  removeInput(input: DQNodeType) {
-    const _var = self.inputs as unknown as DQNodeType[];
-     const inputToRemove = _var.find(i => i?.id === input.variable.id);
+  removeInput(input: VariableType) {
+    const _var = self.inputs as unknown as VariableType[];
+     const inputToRemove = _var.find(i => i?.id === input.id);
     const inputIdx = self.inputs.indexOf(inputToRemove);
     inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },
