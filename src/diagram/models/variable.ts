@@ -14,7 +14,7 @@ export enum Operation {
 
 // This is used to help with circular definition of Variable
 // Variable has inputs that are also Variables
-interface IVariable  {
+export interface IVariable  { // build needs to know dq-node to have access to this
   name?: string;
   computedValue?: number;
   computedUnit?: string;
@@ -66,7 +66,7 @@ export const Variable = types.model("Variable", {
 .views(self => {
   const getBaseExpression = () => {
     if (self.expression) {
-      // TODO: To handle input node renaming and port moving, 
+      // TODO: To handle input node renaming and port moving,
       // we need to store the expression in its processed form.
       // Then view reverses this. This way it will update when the nodes
       // change.
@@ -135,9 +135,9 @@ export const Variable = types.model("Variable", {
         continue;
       }
 
-      // TODO: you can make an expression that only uses one input and the other 
-      // input is connected but not used. In that case the unused input should 
-      // should be skipped. 
+      // TODO: you can make an expression that only uses one input and the other
+      // input is connected but not used. In that case the unused input should
+      // should be skipped.
       //
       // Currently if an unused input doesn't have a value, the output will show
       // NaN because of the validation below.
@@ -171,7 +171,7 @@ export const Variable = types.model("Variable", {
 
     try {
       const result = evaluate(expression, {
-        input_0: self.inputs[0]?.mathValue, 
+        input_0: self.inputs[0]?.mathValue,
         input_1: self.inputs[1]?.mathValue
       });
       const resultType = typeof result;
