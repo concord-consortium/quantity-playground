@@ -127,33 +127,33 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         }
         {variable.numberOfInputs >= 1 ? renderValueUnitUnEditable() : renderValueUnitInput()}
-        {!(variable.numberOfInputs >= 1) &&
-          <div>
+        <div>
+          {!(variable.numberOfInputs >= 1) &&
             <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
             { // in an enumeration the keys are the names and the values are string or numeric identifier
             }
-            <option key="none" value="">none</option>
-            {Object.entries(Operation).map(([name, symbol]) =>
-              <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
-            )}
+              <option key="none" value="">none</option>
+              {Object.entries(Operation).map(([name, symbol]) =>
+                <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
+              )}
             </select>
-            { variable.computedValueError &&
-              <div className="error-message">
-                  ⚠️ {variable.computedValueError}
-              </div>
-            }
-            { variable.computedUnitError &&
-              <div className="error-message">
-                  ⚠️ {variable.computedUnitError}
-              </div>
-            }
-            { variable.computedUnitMessage &&
-              <div className="error-message">
-                  ⓘ {variable.computedUnitMessage}
-              </div>
-            }
-          </div>
-        }
+          }
+          { variable.computedValueError &&
+            <div className="error-message">
+                ⚠️ {variable.computedValueError}
+            </div>
+          }
+          { variable.computedUnitError &&
+            <div className="error-message">
+                ⚠️ {variable.computedUnitError}
+            </div>
+          }
+          { variable.computedUnitMessage &&
+            <div className="error-message">
+                ⓘ {variable.computedUnitMessage}
+            </div>
+          }
+        </div>
       </div>
       <Handle
         type="source"
