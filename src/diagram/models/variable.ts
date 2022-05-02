@@ -14,7 +14,7 @@ export enum Operation {
 
 // This is used to help with circular definition of Variable
 // Variable has inputs that are also Variables
-interface IVariable  {
+export interface IVariable  { // build needs to know dq-node to have access to this
   name?: string;
   computedValue?: number;
   computedUnit?: string;
