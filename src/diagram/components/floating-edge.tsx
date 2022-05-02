@@ -7,7 +7,7 @@ interface IProps {
   source: string;
   target: string;
 }
-export const FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
+export const FloatingEdge: React.FC<IProps>  = ({ id, source, target }) =>  {
   const nodes = useStoreState((state) => state.nodes);
   const sourceNode = useMemo(() => nodes.find((n) => n.id === source), [source, nodes]);
   const targetNode = useMemo(() => nodes.find((n) => n.id === target), [target, nodes]);
@@ -24,9 +24,10 @@ export const FloatingEdge: React.FC<IProps>  = ({id, source, target }) =>  {
     targetX: tx,
     targetY: ty,
   });
+  // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (
     <g className="react-flow__connection">
-      <path id={id} className="react-flow__edge-path" d={d} markerEnd="url(#react-flow__arrowclosed)"/>
+      <path id={id} className="react-flow__edge-path react-flow__edgeupdater" d={d} markerEnd="url(#react-flow__arrowclosed)"/>
     </g>
   );
 };
