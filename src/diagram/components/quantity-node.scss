@@ -110,9 +110,6 @@ $gray-mid: #bcbcbc;
       &.value {
         width: $input-half-width;
       }
-      &.operation {
-        width: calc($input-half-width - 5px);
-      }
       &.static {
         margin: 5px;
         font-size: 14px;

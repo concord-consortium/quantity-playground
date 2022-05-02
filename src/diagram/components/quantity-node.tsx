@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
-import { Operation } from "../models/variable";
 import { ExpressionEditor } from "./expression-editor";
 
 import DeleteIcon from "../../assets/delete.svg";
@@ -60,13 +59,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setName(undefined);
     } else {
       variable.setName(evt.target.value);
-    }
-  };
-  const onOperationChange = (evt: any) => {
-    if (!evt.target.value) {
-      variable.setOperation(undefined);
-    } else {
-      variable.setOperation(evt.target.value);
     }
   };
 
@@ -127,33 +119,23 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         }
         {variable.numberOfInputs >= 1 ? renderValueUnitUnEditable() : renderValueUnitInput()}
-        <div>
-          {!(variable.numberOfInputs >= 1) &&
-            <select className="variable-info operation" value={data.node.variable.operation || ""} onChange={onOperationChange}>
-            { // in an enumeration the keys are the names and the values are string or numeric identifier
-            }
-              <option key="none" value="">none</option>
-              {Object.entries(Operation).map(([name, symbol]) =>
-                <option key={name} value={symbol} data-testid={`variable-operation-${name}`}>{symbol}</option>
-              )}
-            </select>
+        {/* <div> */}
+        { variable.computedValueError &&
+          <div className="error-message">
+              ⚠️ {variable.computedValueError}
+          </div>
+        }
+        { variable.computedUnitError &&
+          <div className="error-message">
+              ⚠️ {variable.computedUnitError}
+          </div>
+        }
+        { variable.computedUnitMessage &&
+          <div className="error-message">
+              ⓘ {variable.computedUnitMessage}
+          </div>
           }
-          { variable.computedValueError &&
-            <div className="error-message">
-                ⚠️ {variable.computedValueError}
-            </div>
-          }
-          { variable.computedUnitError &&
-            <div className="error-message">
-                ⚠️ {variable.computedUnitError}
-            </div>
-          }
-          { variable.computedUnitMessage &&
-            <div className="error-message">
-                ⓘ {variable.computedUnitMessage}
-            </div>
-          }
-        </div>
+        {/* </div> */}
       </div>
       <Handle
         type="source"
