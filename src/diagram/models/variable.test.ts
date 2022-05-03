@@ -28,13 +28,13 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9},
-        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
     const variable = container.items[1] as VariableType;
 
-    expect(variable.inputA).toEqual(input);
+    expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedValue).toBe(999.9);
@@ -45,13 +45,13 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0},
-        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
     const variable = container.items[1] as VariableType;
 
-    expect(variable.inputA).toEqual(input);
+    expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0});
     expect(variable.computedValue).toBe(0);
@@ -63,7 +63,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", value: 999.9},
         {id: "inputB", value: 111.1},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB"}
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"]}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -80,7 +80,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", value: 999.9},
         {id: "inputB", value: 111.1},
-        {id: "variable", value: 123.5, unit: "m", inputA: "inputA", inputB: "inputB"}
+        {id: "variable", value: 123.5, unit: "m", inputs: ["inputA", "inputB"]}
       ]
     });
     const variable = container.items[2] as VariableType;
@@ -97,7 +97,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 999},
         {id: "inputB", name: "b", value: 111},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a*b"}
       ]
     });
@@ -112,13 +112,13 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const input = container.items[0] as VariableType;
     const variable = container.items[1] as VariableType;
 
-    expect(variable.inputA).toEqual(input);
+    expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
@@ -134,7 +134,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0, unit: "mm"},
-        {id: "variable", expression: "a", value: 123.5, inputA: "input"}
+        {id: "variable", expression: "a", value: 123.5, inputs: ["input"]}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -147,7 +147,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -160,7 +160,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 0, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -173,7 +173,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", expression: "a to cm"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -186,18 +186,18 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
     const variable = container.items[1] as VariableType;
 
-    expect(variable.inputA).toEqual(input);
+    expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
     // TODO: this case should be checked with project leaders: do we want to
     // pass the unit through to future nodes that depend on this one when there
-    // is an error like this?  
+    // is an error like this?
     // Reason to pass it through:
     //   it limits the number of error messages shown so it would be easier to
     //   track down the problem.
@@ -218,13 +218,13 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", unit: "mm"},
-        {id: "variable", value: 123.5, inputA: "input", expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
       ]
     });
     const input = container.items[0] as VariableType;
     const variable = container.items[1] as VariableType;
 
-    expect(variable.inputA).toEqual(input);
+    expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
@@ -241,7 +241,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 9, unit: "m/things"},
-        {id: "variable", inputA: "input", expression: "a to cm/things"}
+        {id: "variable", inputs: ["input"], expression: "a to cm/things"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -254,7 +254,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 9, unit: "m/"},
-        {id: "variable", inputA: "input", expression: "a to cm"}
+        {id: "variable", inputs: ["input"], expression: "a to cm"}
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -269,7 +269,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 999, unit: "m"},
         {id: "inputB", name: "b", value: 111, unit: "m"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a*b"}
       ]
     });
@@ -286,7 +286,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 20, unit: "m"},
         {id: "inputB", name: "b", value: 10, unit: "s"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a/b"}
       ]
     });
@@ -303,7 +303,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 20, unit: "m"},
         {id: "inputB", name: "b", value: 10, unit: "m"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -320,7 +320,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 20, unit: "m"},
         {id: "inputB", name: "b", value: 10, unit: "s"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -337,7 +337,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 20, unit: "m"},
         {id: "inputB", name: "b", value: 5, unit: "m"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a-b"}
       ]
     });
@@ -354,7 +354,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 20, unit: "m"},
         {id: "inputB", name: "b", value: 5, unit: "s"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a-b"}
       ]
     });
@@ -366,13 +366,13 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
   });
 
-  it("with 2 inputs with units, operation Multiply, " + 
+  it("with 2 inputs with units, operation Multiply, " +
       "and different compatible output unit the unit is converted", () => {
     const container = GenericContainer.create({
       items: [
         {id: "inputA", name: "a", value: 2, unit: "m"},
         {id: "inputB", name: "b", value: 3, unit: "m"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a*b to mm^2"}
       ]
     });
@@ -389,7 +389,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 98, unit: "things"},
         {id: "inputB", name: "b", value: 2, unit: "things"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -404,7 +404,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 98, unit: "things"},
         {id: "inputB", name: "b", value: 2, unit: "things"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a-b"}
       ]
     });
@@ -419,7 +419,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 98, unit: "things"},
         {id: "inputB", name: "b", value: 2, unit: "things"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a/b"}
       ]
     });
@@ -434,7 +434,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 50, unit: "m/things"},
         {id: "inputB", name: "b", value: 2, unit: "things"},
-        {id: "variable", value: 123.5, inputA: "inputA", inputB: "inputB", 
+        {id: "variable", value: 123.5, inputs: ["inputA", "inputB"],
           expression: "a*b"}
       ]
     });
@@ -449,7 +449,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m"},
         {id: "inputB", name: "b", value: 100, unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -464,7 +464,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", unit: "m"},
         {id: "inputB", name: "b", unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -479,7 +479,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 2, unit: "m"},
         {id: "inputB", name: "b", value: 100, unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a-b"}
       ]
     });
@@ -494,7 +494,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", unit: "m"},
         {id: "inputB", name: "b", unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a-b"}
       ]
     });
@@ -509,7 +509,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m"},
         {id: "inputB", name: "b", value: 100, unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a/b"}
       ]
     });
@@ -524,7 +524,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", unit: "m"},
         {id: "inputB", name: "b", unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a/b"}
       ]
     });
@@ -539,7 +539,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "widgets"},
         {id: "inputB", name: "b",  value: 100, unit: "widgets"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a/b"}
       ]
     });
@@ -555,7 +555,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m/"},
         {id: "inputB", name: "b", value: 100, unit: "s"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a*b"}
       ]
     });
@@ -571,7 +571,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m"},
         {id: "inputB", name: "b", unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -592,7 +592,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", unit: "m"},
         {id: "inputB", name: "b", value: 1, unit: "cm"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -613,7 +613,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1},
         {id: "inputB", name: "b", value: 1, unit: "m"},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -629,7 +629,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m"},
         {id: "inputB", name: "b", value: 1},
-        {id: "variable", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -645,7 +645,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1},
         {id: "inputB", name: "b", value: 1, unit: "m"},
-        {id: "variable", unit: "m",  inputA: "inputA", inputB: "inputB", 
+        {id: "variable", unit: "m", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -661,7 +661,7 @@ describe("Variable", () => {
       items: [
         {id: "inputA", name: "a", value: 1, unit: "m"},
         {id: "inputB", name: "b", value: 1},
-        {id: "variable", unit: "m", inputA: "inputA", inputB: "inputB", 
+        {id: "variable", unit: "m", inputs: ["inputA", "inputB"],
           expression: "a+b"}
       ]
     });
@@ -671,12 +671,12 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
   });
 
-  // This might be fixable by calling `simplify` 
+  // This might be fixable by calling `simplify`
   it("doesn't handle units canceling in a unit typed by a user", () => {
     const container = GenericContainer.create({
       items: [
         {id: "inputA", name: "a", value: 1 },
-        {id: "variable", expression: "a", unit: "m / m", inputA: "inputA" }
+        {id: "variable", expression: "a", unit: "m / m", inputs: ["inputA"] }
       ]
     });
     const variable = container.items[1] as VariableType;
@@ -694,8 +694,8 @@ describe("Variable", () => {
     container.add(inputB);
     container.add(variable);
 
-    variable.setInputA(inputA);
-    variable.setInputB(inputB);
+    variable.addInput(inputA);
+    variable.addInput(inputB);
     variable.setValue(123.5);
     variable.setUnit("m");
     variable.setName("my variable");
@@ -703,8 +703,7 @@ describe("Variable", () => {
 
     expect(getSnapshot(variable)).toEqual({
       id: expect.stringMatching(/^.{16}$/),
-      inputA: inputA.id,
-      inputB: inputB.id,
+      inputs: [inputA.id, inputB.id],
       value: 123.5,
       unit: "m",
       name: "my variable",
@@ -719,14 +718,22 @@ describe("Variable", () => {
 
     // NaN should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
     });
 
     variable.setValue(Infinity);
 
     // Infinity should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
     // If someone finds a way to pass in null
@@ -734,19 +741,36 @@ describe("Variable", () => {
 
     // null should be converted to undefined
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
     // regular numbers can be set back to undefined
     variable.setValue(123.0);
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
       value: 123.0
     });
 
     variable.setValue(undefined);
     expect(getSnapshot(variable)).toEqual({
+      expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
+      inputs: [],
+      name: undefined,
+      operation: undefined,
+      unit: undefined,
+      value: undefined,
     });
 
   });
@@ -756,6 +780,6 @@ describe("Variable", () => {
   // custom unit for this partially typed unit. And then this unit will not be
   // removed afterwards. So now these partially typed units might cause hard to
   // understand error messages when expressions are typed by users. The
-  // evaluator might interpret a missing variable as a partial unit. 
+  // evaluator might interpret a missing variable as a partial unit.
 
 });

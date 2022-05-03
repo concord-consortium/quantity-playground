@@ -38,20 +38,10 @@ export const Variable = types.model("Variable", {
   //     return sn;
   // })
   value: types.maybe(types.number),
-  inputA: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
-  inputB: types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable))),
+  inputs: types.array(types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable)))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
   expression: types.maybe(types.string),
 })
-.views(self => ({
-  get inputs() {
-    // IVariable is used here because of the circular references
-    return [
-      self.inputA as IVariable | undefined,
-      self.inputB as IVariable | undefined
-    ];
-  }
-}))
 .views(self => ({
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
@@ -60,7 +50,8 @@ export const Variable = types.model("Variable", {
 }))
 .views(self => ({
   get inputNames() {
-    return self.inputs.map(input => input?.name);
+    const nodeInputs = self.inputs as IVariable[];
+    return nodeInputs.map(input => input.name);
   }
 }))
 .views(self => {
@@ -116,6 +107,7 @@ export const Variable = types.model("Variable", {
   },
 
   get computedValueIncludingMessageAndError(): {value?:number, error?:string, message?: string} {
+    const nodeInputs = self.inputs as IVariable[];
     if (self.numberOfInputs === 0) {
       return {value: self.value};
     }
@@ -129,7 +121,7 @@ export const Variable = types.model("Variable", {
     }
 
     // Validate the inputs
-    for (const input of self.inputs) {
+    for (const input of nodeInputs) {
       if (!input) {
         // this input is not connected
         continue;
@@ -169,11 +161,14 @@ export const Variable = types.model("Variable", {
       }
     }
 
+    const getMathValues = () => {
+      const valueObj: Record<string, number| math.Unit | undefined> = {};
+      nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValue);
+      return valueObj;
+    };
+    const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, {
-        input_0: self.inputs[0]?.mathValue,
-        input_1: self.inputs[1]?.mathValue
-      });
+      const result = evaluate(expression, mathValues);
       const resultType = typeof result;
       if (isUnit(result)) {
         // We need to use simplify here so we are consistent with the unit
@@ -212,6 +207,7 @@ export const Variable = types.model("Variable", {
   // If there are two inputs then units can't be changed
   // otherwise current node units override previous node units
   get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
+    const nodeInputs = self.inputs as IVariable[];
     if (self.numberOfInputs === 0) {
       // Just return the current unit.
       // The current unit might be undefined
@@ -229,7 +225,7 @@ export const Variable = types.model("Variable", {
     }
 
     // Validate the inputs
-    for (const input of self.inputs) {
+    for (const input of nodeInputs) {
       if (!input) {
         // this input is not connected
         continue;
@@ -245,11 +241,14 @@ export const Variable = types.model("Variable", {
       }
     }
 
+    const getMathValues = () => {
+      const valueObj: Record<string, number| math.Unit | undefined> = {};
+      nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValueWithValueOr1);
+      return valueObj;
+    };
+    const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, {
-        input_0: self.inputs[0]?.mathValueWithValueOr1,
-        input_1: self.inputs[1]?.mathValueWithValueOr1
-      });
+      const result = evaluate(expression, mathValues);
       if (isUnit(result)) {
         const unitString = result.simplify().formatUnits();
         if (unitString === "") {
@@ -261,7 +260,7 @@ export const Variable = types.model("Variable", {
           return {unit: unitString};
         }
       } else {
-        if (self.inputs[0]?.computedUnit || self.inputs[1]?.computedUnit) {
+        if (nodeInputs.some(input => input?.computedUnit)) {
           // If one of the inputs has units and the result is not a Unit
           // that should mean the units have canceled
           return {message: "units cancel"};
@@ -328,11 +327,8 @@ export const Variable = types.model("Variable", {
   }
 }))
 .actions(self => ({
-  setInputA(newInputA: Instance<IAnyComplexType> | undefined) {
-    self.inputA = newInputA;
-  },
-  setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
-    self.inputB = newInputB;
+  addInput(newInput: Instance<IAnyComplexType> | undefined) {
+    self.inputs.push(newInput);
   },
   setValue(newValue?: number) {
     // NaN and Infinity are not valid JSON, we can probably fix MST to handle this correctly
@@ -350,6 +346,14 @@ export const Variable = types.model("Variable", {
   },
   setExpression(newExpression?: string) {
     self.expression = newExpression;
+  },
+}))
+.actions(self => ({
+  removeInput(input: VariableType) {
+    const _var = self.inputs as unknown as VariableType[];
+     const inputToRemove = _var.find(i => i?.id === input.id);
+    const inputIdx = self.inputs.indexOf(inputToRemove);
+    inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}

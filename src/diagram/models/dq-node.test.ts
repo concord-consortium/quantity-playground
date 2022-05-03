@@ -7,7 +7,7 @@ describe("DQNode", () => {
     const variable = Variable.create({});
     const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
 
-    // references have to be within the same tree so we need some container 
+    // references have to be within the same tree so we need some container
     const container = GenericContainer.create();
     container.add(variable);
     container.add(node);
@@ -31,7 +31,7 @@ describe("DQNode", () => {
     const inputBVariable = Variable.create({});
     const inputBNode = DQNode.create({ variable: inputBVariable.id, x: 0, y: 0 });
 
-    // references have to be within the same tree so we need some container 
+    // references have to be within the same tree so we need some container
     const container = GenericContainer.create();
     container.add(variable);
     container.add(node);
@@ -39,15 +39,14 @@ describe("DQNode", () => {
     container.add(inputANode);
     container.add(inputBVariable);
     container.add(inputBNode);
-    
-    expect(node.variable).toBeDefined();
-    expect(node.variable.inputA).toBeUndefined();
-    expect(node.variable.inputB).toBeUndefined();
 
-    node.setInputA(inputANode);
-    node.setInputB(inputBNode);
-    expect(node.variable.inputA).toBe(inputAVariable);
-    expect(node.variable.inputB).toBe(inputBVariable);
+    expect(node.variable).toBeDefined();
+    expect(node.variable.inputs).toEqual([]);
+
+    node.addInput(inputANode);
+    node.addInput(inputBNode);
+    expect(node.variable.inputs[0]).toBe(inputAVariable);
+    expect(node.variable.inputs[1]).toBe(inputBVariable);
 
     node.updatePosition(100,50);
     expect(node.x).toBe(100);

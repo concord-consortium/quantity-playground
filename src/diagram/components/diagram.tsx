@@ -1,10 +1,11 @@
 import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
-import ReactFlow, { Edge, Elements, OnConnectFunc,
-  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform } from "react-flow-renderer/nocss";
+import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
+  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
 import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
+import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
 
 // We use the nocss version of RF so we can manually load
@@ -21,13 +22,16 @@ import "./diagram.scss";
 const nodeTypes = {
   quantityNode: QuantityNode,
 };
+const edgeTypes = {
+  floatingEdge: FloatingEdge,
+};
 
 interface IProps {
   dqRoot: DQRootType;
   showNestedSet?: boolean;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [ ,setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
@@ -36,28 +40,25 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
     transform && dqRoot.setTransform(transform);
   };
 
+  const onConnectStart: OnConnectStartFunc = (event, { nodeId, handleType }) => {
+    dqRoot.setIsInConnectingMode(true);
+  };
+  const onConnectEnd: OnConnectEndFunc = () => {
+    dqRoot.setIsInConnectingMode(false);
+  };
+
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
-
     // We could try to be smart about this, and only update things that
     // changed but it is easier to just break the old connection
     // and make a new one
     const oldTargetNode = dqRoot.getNodeFromVariableId(oldEdge.target);
-    const oldTargetHandle = oldEdge.targetHandle;
-    if (oldTargetHandle === "a") {
-      oldTargetNode?.setInputA(undefined);
-    } else if (oldTargetHandle === "b") {
-      oldTargetNode?.setInputB(undefined);
-    }
-
-    const { source, target, targetHandle: newTargetHandle } = newConnection;
+    const oldSourceNode = dqRoot.getNodeFromVariableId(oldEdge.source);
+    oldTargetNode?.removeInput(oldSourceNode.variable);
+    const { source, target } = newConnection;
     const newSourceNode = source ? dqRoot.getNodeFromVariableId(source) : undefined;
     const newTargetNode = target ? dqRoot.getNodeFromVariableId(target) : undefined;
-    if (newTargetHandle === "a") {
-      newTargetNode?.setInputA(newSourceNode);
-    } else if (newTargetHandle === "b") {
-      newTargetNode?.setInputB(newSourceNode);
-    }
+    newTargetNode?.addInput(newSourceNode);
   };
 
   const onConnect: OnConnectFunc = (params) => {
@@ -66,27 +67,19 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
     if ( source && target ) {
       const targetModel = dqRoot.getNodeFromVariableId(target);
       const sourceModel = dqRoot.getNodeFromVariableId(source);
-      if (targetHandle === "a") {
-        targetModel?.setInputA(sourceModel);
-      } else if (targetHandle === "b") {
-        targetModel?.setInputB(sourceModel);
-      }
+      targetModel?.addInput(sourceModel);
     }
   };
 
   const onElementsRemove = (elementsToRemove: Elements) => {
     for(const element of elementsToRemove) {
-      console.log(element);
-      if ((element as any).target) {
-        // This is a edge (I think)
+      if (isEdge((element as any))) {
         const edge = element as Edge;
-        const { target, targetHandle } = edge;
+        const { source, target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
-        if (targetHandle === "a") {
-          targetModel?.setInputA(undefined);
-        } else if (targetHandle === "b") {
-          targetModel?.setInputB(undefined);
-        }
+        const sourceModel = dqRoot.getNodeFromVariableId(source);
+        // sourceModel gets removed first when a node is selected to be deleted, otherwise, just remove the connection
+        sourceModel.tryVariable && targetModel.removeInput(sourceModel.variable);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
@@ -145,12 +138,16 @@ export const _Diagram = ({ dqRoot, showNestedSet, getDiagramExport }: IProps) =>
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
-        <ReactFlow elements={dqRoot.reactFlowElements}
+        <ReactFlow
+          elements={dqRoot.reactFlowElements}
           defaultPosition={defaultPosition}
           defaultZoom={defaultZoom}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect as any}  // TODO: fix types
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
           onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
