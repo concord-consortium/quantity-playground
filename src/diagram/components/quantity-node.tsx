@@ -16,7 +16,7 @@ const DeleteIcon = () =>
   </svg>
 ;
 
-const EditIcon = () => 
+const EditIcon = () =>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
     <path d="M12.06,4,10.94,5.16a.3.3,0,0,1-.41,0L7.84,2.47a.3.3,0,0,1,0-.41L9,.94a1.16,1.16,0,0,1,1.64,0L12.06,2.4A1.16,1.16,0,0,1,12.06,4ZM6.88,3,.52,9.38,0,12.32A.58.58,0,0,0,.68,13l2.95-.51L10,6.12a.31.31,0,0,0,0-.42L7.3,3a.29.29,0,0,0-.42,0ZM3,8.83a.33.33,0,0,1,0-.48L6.73,4.62a.34.34,0,0,1,.48,0,.33.33,0,0,1,0,.48L3.48,8.83a.33.33,0,0,1-.47,0Zm-.88,2H3.29v.88L1.73,12,1,11.27,1.25,9.7h.88Z" />
   </svg>
@@ -87,8 +87,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitUnEditable = () => {
     return (
       <div className="variable-info-row">
-        <div className="variable-info value static">{shownValue !== undefined ? shownValue.toString() : ""}</div>
-        <div className="variable-info unit static">{shownUnit|| ""}</div>
+        <div className={`variable-info value static ${shownValue ? "" : "no-value"}`}>{shownValue !== undefined ? shownValue.toString() : "value"}</div>
+        <div className={`variable-info unit static ${shownUnit ? "" : "no-value"}`}>{shownUnit || "unit"}</div>
       </div>
     );
   };
@@ -131,7 +131,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         }
         {variable.numberOfInputs >= 1 ? renderValueUnitUnEditable() : renderValueUnitInput()}
-        {/* <div> */}
         { variable.computedValueError &&
           <div className="error-message">
               ⚠️ {variable.computedValueError}
@@ -147,7 +146,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               ⓘ {variable.computedUnitMessage}
           </div>
           }
-        {/* </div> */}
       </div>
       <Handle
         type="source"

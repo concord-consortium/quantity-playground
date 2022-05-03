@@ -114,6 +114,15 @@ $gray-mid: #bcbcbc;
       &.static {
         margin: 5px;
         font-size: 14px;
+        height: 24px;
+        border-radius: 5px;
+        background-color: $color8-2;
+        text-align: center;
+        line-height: 24px;
+        padding-right: 5px;
+      }
+      &.no-value {
+        color: gray;
       }
     }
     .error-message {
