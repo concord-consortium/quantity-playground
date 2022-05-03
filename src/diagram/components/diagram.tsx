@@ -78,7 +78,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
         const { source, target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
         const sourceModel = dqRoot.getNodeFromVariableId(source);
-        targetModel.removeInput(sourceModel.variable);
+        // sourceModel gets removed first when a node is selected to be deleted, otherwise, just remove the connection
+        sourceModel.tryVariable && targetModel.removeInput(sourceModel.variable);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
