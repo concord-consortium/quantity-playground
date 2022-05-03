@@ -36,40 +36,31 @@ export const DQNode = types.model("DQNode", {
     elements.push({
       id,
       type: "quantityNode",
-      data: { node:  self, dqRoot },
+      data: { node: self, dqRoot },
       position: { x: self.x, y: self.y },
     });
 
     const variable = self.tryVariable;
     if (variable) {
-      const inputA = self.variable.inputA as VariableType | undefined;
-      const inputB = self.variable.inputB as VariableType | undefined;
-      if (inputA) {
-        elements.push({
-          id: `e${inputA.id}-${id}-a`,
-          source: inputA.id,
-          target: id,
-          targetHandle: "a",
-          arrowHeadType: ArrowHeadType.ArrowClosed
-        });
-      }
-      if (inputB) {
-        elements.push({
-          id: `e${inputB.id}-${id}-b`,
-          source: inputB.id,
-          target: id,
-          targetHandle: "b",
-          arrowHeadType: ArrowHeadType.ArrowClosed
-        });
-      }
+      const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
+      inputs?.forEach((input) => {
+        if (input) {
+          elements.push({
+            id: `e${input.id}-target${id}-a`,
+            source: input.id,
+            target: id,
+            arrowHeadType: ArrowHeadType.ArrowClosed,
+            type: "floatingEdge",
+            data: { dqRoot },
+          });
+        }
+      });
     }
 
     return elements;
-  },
-
+  }
 }))
 .actions(self => ({
-
   // Note: as far as I know React Flow will ignore this change
   // it only pays attention to the position of the node when the
   // diagram is first initialized
@@ -78,14 +69,12 @@ export const DQNode = types.model("DQNode", {
     self.y = y;
   },
 
-  setInputA(newInputA: Instance<IAnyComplexType> | undefined) {
-    self.tryVariable?.setInputA((newInputA as any)?.variable);
+  addInput(newInput: Instance<IAnyComplexType> | undefined) {
+    self.tryVariable?.addInput((newInput as any)?.variable);
   },
-
-  setInputB(newInputB: Instance<IAnyComplexType> | undefined) {
-    self.tryVariable?.setInputB((newInputB as any)?.variable);
+  removeInput(input: VariableType) {
+    self.tryVariable?.removeInput((input));
   },
-
 }));
 export interface DQNodeType extends Instance<typeof DQNode> {}
 export interface DQNodeSnapshot extends SnapshotIn<typeof DQNode> {}

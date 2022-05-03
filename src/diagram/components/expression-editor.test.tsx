@@ -38,7 +38,7 @@ describe("Expression Editor", () => {
   it("Quantity node should have expression field and edit icon when there are two inputs", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const inputB = Variable.create({id: "inputB", value: 111, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA", inputB: "inputB"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA", "inputB"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeB = DQNode.create({ variable: inputB.id, x: 0, y: 10 });
@@ -47,7 +47,7 @@ describe("Expression Editor", () => {
       items: [
         {id: "inputA", value: 999, unit: "m"},
         {id: "inputB", value: 111, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputA: "inputA", inputB: "inputB"}
+        {id: "expressionVar", value: 123.5, inputs: ["inputA", "inputB"]}
       ]
     });
     root.addNode(nodeA);
@@ -62,14 +62,14 @@ describe("Expression Editor", () => {
   it("quantity node entries should have expression field and edit icon when there is only one input", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     // const inputB = Variable.create({id: "inputB", value: 111, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", inputA: "inputA"}
+        {id: "expressionVar", inputs: ["inputA"]}
       ]
     });
     root.addNode(nodeA);
@@ -100,14 +100,14 @@ describe("Expression Editor", () => {
   });
   it("expression editor should render", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
       ]
     });
     root.addNode(nodeA);
@@ -123,14 +123,14 @@ describe("Expression Editor", () => {
   });
   it("expression editor should save its value", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
       ]
     });
     root.addNode(nodeA);
@@ -147,14 +147,14 @@ describe("Expression Editor", () => {
   });
   it("expression editor should save its value when user hits Enter", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
       ]
     });
     root.addNode(nodeA);
@@ -170,14 +170,14 @@ describe("Expression Editor", () => {
   });
   it("expression editor does not save its value when user hits Esc", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputA: "inputA"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
     const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
     const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputA: "inputA"}
+        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
       ]
     });
     root.addNode(nodeA);
