@@ -34,5 +34,18 @@ describe("mathjs-utils", () => {
       expect(replaceInputNames("var-foo",inputs)).toBe("input_1 - input_0");
       expect(replaceInputNames("-var",inputs)).toBe("-input_1");
     });
+
+    it("replaces names with backticks", () => {
+      const inputs = ["foo b", "var a"];
+
+      expect(replaceInputNames("`var a`/1",inputs)).toBe("input_1 / 1");
+      expect(replaceInputNames("2`var a`",inputs)).toBe("2 input_1");
+      expect(replaceInputNames("`var a`^2",inputs)).toBe("input_1 ^ 2");
+      expect(replaceInputNames("varA * `var a`",inputs)).toBe("varA * input_1");
+      expect(replaceInputNames("var2 * `var a`",inputs)).toBe("var2 * input_1");
+      expect(replaceInputNames("`var a` 2 * `var a`",inputs)).toBe("input_1 2 * input_1");
+      expect(replaceInputNames("`var a`-`foo b`",inputs)).toBe("input_1 - input_0");
+      expect(replaceInputNames("-`var a`",inputs)).toBe("-input_1");
+    });
   });
 });
