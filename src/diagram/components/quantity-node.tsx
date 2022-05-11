@@ -85,9 +85,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
   const renderValueUnitUnEditable = () => {
+    variable.setUnit(undefined);
     return (
       <div className="variable-info-row">
-        <div className={`variable-info value static ${shownValue ? "" : "no-value"}`}>{shownValue !== undefined ? shownValue.toString() : "value"}</div>
+        <div className={`variable-info value static ${shownValue ? "" : "no-value"}`}>{shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}</div>
         <div className={`variable-info unit static ${shownUnit ? "" : "no-value"}`}>{shownUnit || "unit"}</div>
       </div>
     );
@@ -113,13 +114,15 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         </div>
         {hasExpression &&
           <div className="variable-info-row">
-            <div className="variable-info expression" placeholder="expression" data-testid="variable-expression">{variable.expression || ""}</div>
+            <div className="variable-info expression" placeholder="expression" data-testid="variable-expression" onClick={()=>handleEditExpression(true)} >
+              {variable.expression || ""}
+            </div>
             <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
               <EditIcon/>
             </div>
           </div>
         }
-        {variable.numberOfInputs >= 1 ? renderValueUnitUnEditable() : renderValueUnitInput()}
+        {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
         { variable.computedValueError &&
           <div className="error-message">
               ⚠️ {variable.computedValueError}
