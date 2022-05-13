@@ -54,8 +54,8 @@ export const Variable = types.model("Variable", {
     return nodeInputs.map(input => input.name);
   }
 }))
-.views(self => {
-  const getBaseExpression = () => {
+.views(self => ({
+  get processedExpression() {
     if (self.expression) {
       // TODO: To handle input node renaming and port moving,
       // we need to store the expression in its processed form.
@@ -63,19 +63,8 @@ export const Variable = types.model("Variable", {
       // change.
       return replaceInputNames(self.expression, self.inputNames);
     }
-  };
-
-  return {
-    get processedExpression() {
-      const baseExpression = getBaseExpression();
-      if (!baseExpression) {
-        return;
-      }
-
-      return (self.unit) ? `(${baseExpression}) to ${self.unit}` : baseExpression;
-    }
-  };
-})
+  }
+}))
 .views(self => ({
   get mathValue() {
     const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;

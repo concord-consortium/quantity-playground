@@ -85,7 +85,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
   const renderValueUnitUnEditable = () => {
-    variable.setUnit(undefined);
     return (
       <div className="variable-info-row">
         <div className={`variable-info value static ${shownValue ? "" : "no-value"}`}>{shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}</div>
