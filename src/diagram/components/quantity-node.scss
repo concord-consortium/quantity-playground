@@ -99,6 +99,7 @@ $gray-mid: #bcbcbc;
         font-size: 14px;
         line-height:24px;
         padding-right: 5px;
+        cursor: pointer;
         &:empty:before {
           content: attr(placeholder);
           color: gray;
@@ -112,8 +113,18 @@ $gray-mid: #bcbcbc;
       &.value {
         width: $input-half-width;
       }
-      &.operation {
-        width: calc($input-half-width - 5px);
+      &.static {
+        margin: 5px;
+        font-size: 14px;
+        height: 24px;
+        border-radius: 5px;
+        background-color: $color8-2;
+        text-align: center;
+        line-height: 24px;
+        padding-right: 5px;
+      }
+      &.no-value {
+        color: gray;
       }
     }
     .error-message {

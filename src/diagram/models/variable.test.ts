@@ -143,6 +143,32 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
   });
 
+  it("with 1 valueless unit input it returns the input unit, ignoring its own unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", name: "a", unit: "mm"},
+        {id: "variable", unit: "cats", inputs: ["input"], expression: "a"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
+  });
+
+  it("with 1 unit input it returns the input unit and value, ignoring its own unit", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", name: "a", value: 1, unit: "mm"},
+        {id: "variable", unit: "cats", inputs: ["input"], expression: "a"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
+  });
+
   it("with 1 different unit input it returns the converted input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
@@ -669,20 +695,6 @@ describe("Variable", () => {
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
-  });
-
-  // This might be fixable by calling `simplify`
-  it("doesn't handle units canceling in a unit typed by a user", () => {
-    const container = GenericContainer.create({
-      items: [
-        {id: "inputA", name: "a", value: 1 },
-        {id: "variable", expression: "a", unit: "m / m", inputs: ["inputA"] }
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m / m", error: "incompatible units"});
   });
 
   it("can be modified after being created", () => {
