@@ -31,7 +31,8 @@ export const replaceInputNames = (expression: string, inputNames: (string | unde
     if (!name) {
       return;
     }
-    localExpression = localExpression.replace("`" + name + "`", `input_${index}`);
+    // A RegExp is used so all matches are replaced not just the first one
+    localExpression = localExpression.replace(RegExp("`" + name + "`", "g"), `input_${index}`);
   });
 
   try {
