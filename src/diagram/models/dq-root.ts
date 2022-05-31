@@ -14,7 +14,7 @@ export const DQRoot = types.model("DQRoot", {
 })
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
-  isInConnectingMode: false
+  connectingVariable: undefined as VariableType | undefined
 }))
 .views(self => ({
   get reactFlowElements() {
@@ -67,8 +67,8 @@ export const DQRoot = types.model("DQRoot", {
   setVariablesAPI(variablesAPI: VariablesAPI) {
     self.variablesAPI = variablesAPI;
   },
-  setIsInConnectingMode(connecting: boolean) {
-    self.isInConnectingMode = connecting;
+  setConnectingVariable(variable?: VariableType) {
+    self.connectingVariable = variable;
   }
 }));
 export interface DQRootType extends Instance<typeof DQRoot> {}

@@ -138,7 +138,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
           }
       </div>
-      {data.dqRoot.isInConnectingMode &&
+      {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
         <Handle
           type="target"
           position={Position.Left}
@@ -153,6 +153,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         position={Position.Right}
         isConnectable={isConnectable}
         style={sourceHandleStyle}
+        title="drag to connect"
       />
       {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
     </div>

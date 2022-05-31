@@ -69,7 +69,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no operation"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
@@ -86,7 +86,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no operation"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
