@@ -131,8 +131,8 @@ export const Variable = types.model("Variable", {
         }
       } catch (error) {
         // TODO: this can happen when there is a cycle, perhaps it can happen in other cases
-        // MobX errors do not provide programmatically readable info. The are also different
-        // in development mode. The code for this an be seen here: 
+        // MobX errors do not provide programmatically readable info. They are also different
+        // in development mode. The code for this can be seen here: 
         // https://github.com/mobxjs/mobx/blob/main/packages/mobx/src/errors.ts
         // In this case, 
         // - in development mode we could check for: "[MobX] Cycle detected"

@@ -706,8 +706,7 @@ describe("Variable", () => {
     });
     const variable = container.items[1] as VariableType;
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => null);
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
