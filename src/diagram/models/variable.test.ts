@@ -697,6 +697,23 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
   });
 
+  it("shows error when a cycle exists between two variables", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", name: "a", inputs: ["inputA"], expression: "b"},
+        {id: "inputB", name: "b", inputs: ["inputB"], expression: "a"},
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
+    expect(warn).toBeCalledTimes(3);
+  });
+
   it("can be modified after being created", () => {
     const inputA = Variable.create();
     const inputB = Variable.create();
