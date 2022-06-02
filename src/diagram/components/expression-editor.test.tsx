@@ -98,7 +98,7 @@ describe("Expression Editor", () => {
     expect(screen.queryByTestId("variable-expression")).toBeNull();
     expect(screen.queryByTestId("variable-expression-edit-button")).toBeNull();
   });
-  it("expression editor should render", () => {
+  it("expression editor should render", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
@@ -116,12 +116,12 @@ describe("Expression Editor", () => {
     render(<Diagram dqRoot={root} />);
 
     expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    await userEvent.click(screen.getByTestId("variable-expression-edit-button"));
     expect(screen.getByTestId("expression-editor-dialog")).toBeInTheDocument();
     expect(screen.getByTestId("expression-editor-apply-button")).toBeInTheDocument();
     expect(screen.getByTestId("expression-editor-cancel-button")).toBeInTheDocument();
   });
-  it("expression editor should save its value", () => {
+  it("expression editor should save its value", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
@@ -139,13 +139,13 @@ describe("Expression Editor", () => {
     render(<Diagram dqRoot={root} />);
 
     expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    await userEvent.click(screen.getByTestId("variable-expression-edit-button"));
     expect(screen.getByTestId("expression-editor-input-field")).toBeInTheDocument();
-    userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9");
-    userEvent.click(screen.getByTestId("expression-editor-apply-button"));
+    await userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9");
+    await userEvent.click(screen.getByTestId("expression-editor-apply-button"));
     expect(nodeExpressionVar.variable.expression).toBe("9+9");
   });
-  it("expression editor should save its value when user hits Enter", () => {
+  it("expression editor should save its value when user hits Enter", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
@@ -163,12 +163,12 @@ describe("Expression Editor", () => {
     render(<Diagram dqRoot={root} />);
 
     expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    await userEvent.click(screen.getByTestId("variable-expression-edit-button"));
     expect(screen.getByTestId("expression-editor-input-field")).toBeInTheDocument();
-    userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{enter}");
+    await userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{Enter}");
     expect(nodeExpressionVar.variable.expression).toBe("9+9");
   });
-  it("expression editor does not save its value when user hits Esc", () => {
+  it("expression editor does not save its value when user hits Esc", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
     const root = DQRoot.create();
@@ -186,9 +186,9 @@ describe("Expression Editor", () => {
     render(<Diagram dqRoot={root} />);
 
     expect(screen.getByTestId("variable-expression-edit-button")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("variable-expression-edit-button"));
+    await userEvent.click(screen.getByTestId("variable-expression-edit-button"));
     expect(screen.getByTestId("expression-editor-input-field")).toBeInTheDocument();
-    userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{esc}");
+    await userEvent.type(screen.getByTestId("expression-editor-input-field"), "9+9{Escape}");
     expect(nodeExpressionVar.variable.expression).toBe(undefined);
   });
 });

@@ -49,7 +49,7 @@ describe("Quantity Node", () => {
     expect(screen.getByTestId("quantity-node")).toBeInTheDocument();
     expect(screen.getByTestId("delete-node-button")).toBeInTheDocument();
   });
-  it("quantity node entries should be saved", () => {
+  it("quantity node entries should be saved", async () => {
     const variable = Variable.create({});
     const root = DQRoot.create();
     const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
@@ -64,15 +64,15 @@ describe("Quantity Node", () => {
     const nameTextBox = screen.getByTestId("variable-name");
     const valueTextBox = screen.getByTestId("variable-value");
     const unitTextBox = screen.getByTestId("variable-unit");
-    userEvent.type(nameTextBox, "my variable name");
-    userEvent.type(valueTextBox, "45");
-    userEvent.type(unitTextBox, "miles");
+    await userEvent.type(nameTextBox, "my variable name");
+    await userEvent.type(valueTextBox, "45");
+    await userEvent.type(unitTextBox, "miles");
     expect(variable.name).toBe("my variable name");
     expect(variable.value).toEqual(45);
     expect(variable.unit).toBe("miles");
 
     //verify cannot enter a non-digit into value input
-    userEvent.type(valueTextBox, "letter");
+    await userEvent.type(valueTextBox, "letter");
     expect(variable.value).toBe(undefined);
   });
 });

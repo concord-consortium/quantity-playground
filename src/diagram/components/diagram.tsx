@@ -41,10 +41,14 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
   };
 
   const onConnectStart: OnConnectStartFunc = (event, { nodeId, handleType }) => {
-    dqRoot.setIsInConnectingMode(true);
+    if (!nodeId) {
+      return;
+    }
+    const node = dqRoot.getNodeFromVariableId(nodeId);
+    dqRoot.setConnectingVariable(node.variable);
   };
   const onConnectEnd: OnConnectEndFunc = () => {
-    dqRoot.setIsInConnectingMode(false);
+    dqRoot.setConnectingVariable(undefined);
   };
 
   // gets called after end of edge gets dragged to another source or target

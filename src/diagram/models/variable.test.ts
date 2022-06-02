@@ -69,7 +69,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no operation"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
@@ -86,7 +86,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no operation"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
@@ -695,6 +695,22 @@ describe("Variable", () => {
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
+  });
+
+  it("shows error when a cycle exists between two variables", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", name: "a", inputs: ["inputA"], expression: "b"},
+        {id: "inputB", name: "b", inputs: ["inputB"], expression: "a"},
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    const warn = jest.spyOn(console, "warn").mockImplementation(() => null);
+
+    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
+    expect(warn).toBeCalledTimes(3);
   });
 
   it("can be modified after being created", () => {

@@ -106,7 +106,7 @@ export const Variable = types.model("Variable", {
       // If there is just one input the expression will be the label of the
       // input. So we should never get here. If the there are 2 inputs then the
       // expression will only be available if the operation is set.
-      return {error: "no operation"};
+      return {error: "no expression"};
     }
 
     // Validate the inputs
@@ -124,9 +124,23 @@ export const Variable = types.model("Variable", {
       // NaN because of the validation below.
 
       // The mathValue could be a number so a falsy check can't be used
-      if (input.mathValue !== undefined) {
-        // this input should be fine
-        continue;
+      try {
+        if (input.mathValue !== undefined) {
+          // this input should be fine
+          continue;
+        }
+      } catch (error) {
+        // TODO: this can happen when there is a cycle, perhaps it can happen in other cases
+        // MobX errors do not provide programmatically readable info. They are also different
+        // in development mode. The code for this can be seen here: 
+        // https://github.com/mobxjs/mobx/blob/main/packages/mobx/src/errors.ts
+        // In this case, 
+        // - in development mode we could check for: "[MobX] Cycle detected"
+        // - in production we'd check for: "[MobX] minified error nr: 32"
+        // If we add this kind of check we need to add Jest tests which can trigger
+        // the error in both environments so we will know if MobX changes these strings
+        console.warn("error reading input.mathValue", error);
+        return {error: "cycles or loops between cards is not supported"};
       }
 
       // If the input mathValue is undefined then we can't compute the result.
@@ -220,13 +234,20 @@ export const Variable = types.model("Variable", {
         continue;
       }
 
-      // The input value could be a number so we can't use falsy here
-      if (input.mathValueWithValueOr1 === undefined) {
-        // Because we are using `1` if there is no input value, and we just
-        // return the value if there is no unit, the only reason the
-        // mathValueWithValueOr1 should be undefined is if there is an error with the
-        // input unit.
-        return {error: "invalid input units"};
+      try {
+        // The input value could be a number so we can't use falsy here
+        if (input.mathValueWithValueOr1 === undefined) {
+          // Because we are using `1` if there is no input value, and we just
+          // return the value if there is no unit, the only reason the
+          // mathValueWithValueOr1 should be undefined is if there is an error with the
+          // input unit.
+          return {error: "invalid input units"};
+        }
+      } catch (error) {
+        // TODO: this can happen when there is a cycle, perhaps it can happen in other cases too?
+        // See the TODO comment about cycles above for more info.
+        console.warn("error reading input.mathValueWithValueOr1", error);
+        return {error: "cycles or loops between cards is not supported"};
       }
     }
 
