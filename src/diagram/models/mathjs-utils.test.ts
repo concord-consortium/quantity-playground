@@ -3,24 +3,24 @@ import {getMathUnit, replaceInputNames} from "./mathjs-utils";
 describe("mathjs-utils", () => {
   describe("getMathUnit", () => {
     it("get standard unit", () => {
-      const result = getMathUnit(0,'mm');
-      expect(result?.toString()).toBe('0 mm');
+      const result = getMathUnit(0,"mm");
+      expect(result?.toString()).toBe("0 mm");
     });
     it("get custom unit", () => {
-      const result = getMathUnit(0, 'cat');
-      expect(result?.toString()).toBe('0 cat');
+      const result = getMathUnit(0, "cat");
+      expect(result?.toString()).toBe("0 cat");
     });
     it("plural of existing custom unit is same", () => {
-      const singU = getMathUnit(0, 'mouse');
-      const plurU = getMathUnit(0, 'mice');
+      const singU = getMathUnit(0, "mouse");
+      const plurU = getMathUnit(0, "mice");
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
     it("plural of existing custom unit is same 2", () => {
-      const singU = getMathUnit(0, 'halves');
-      const plurU = getMathUnit(0, 'half');
+      const singU = getMathUnit(0, "halves");
+      const plurU = getMathUnit(0, "half");
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
-  })
+  });
   describe("replaceInputNames", () => {
     it("replaces backtick variables", () => {
       const result = replaceInputNames("`var`", ["var"]);
