@@ -15,9 +15,9 @@ describe("mathjs-utils", () => {
       const plurU = getMathUnit(0, "mice");
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
-    it("plural of existing custom unit is same 2", () => {
-      const singU = getMathUnit(0, "halves");
-      const plurU = getMathUnit(0, "half");
+    it("plural of unit can be named first", () => {
+      const plurU = getMathUnit(0, "halves");
+      const singU = getMathUnit(0, "half");
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
   });
