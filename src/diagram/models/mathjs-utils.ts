@@ -3,6 +3,7 @@
 // Importing the types like this doesn't seem to increase the size of the bundle.
 import math, { SymbolNode } from "mathjs";
 import { unit, parse, createUnit, Unit } from "../custom-mathjs";
+import * as pluralize from "pluralize";
 
 export const getMathUnit = (value: number, unitString: string): math.Unit | undefined => {
   try {
@@ -12,7 +13,10 @@ export const getMathUnit = (value: number, unitString: string): math.Unit | unde
     for(const symbol of symbols) {
       // if the symbol isn't already a unit, make a unit for it
       if (!Unit.isValuelessUnit(symbol.name)) {
-        createUnit(symbol.name);
+        const singular = pluralize.singular(symbol.name);
+        const plural = pluralize.plural(symbol.name);
+        createUnit(singular, {aliases: [plural]});
+        // console.log(`Created unit: ${singular}(${plural})`);
       }
     }
     return unit(value, unitString);
