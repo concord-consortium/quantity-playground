@@ -735,7 +735,8 @@ describe("Variable", () => {
       value: 123.5,
       unit: "m",
       name: "my variable",
-      operation: "+"
+      operation: "+",
+      color: "#e98b42"
     });
   });
 
@@ -749,6 +750,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      color: "#e98b42",
     });
 
     variable.setValue(Infinity);
@@ -762,6 +764,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
+      color: "#e98b42"
     });
 
     // If someone finds a way to pass in null
@@ -776,6 +779,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
+      color: "#e98b42",
     });
 
     // regular numbers can be set back to undefined
@@ -787,7 +791,8 @@ describe("Variable", () => {
       name: undefined,
       operation: undefined,
       unit: undefined,
-      value: 123.0
+      value: 123.0,
+      color: "#e98b42",
     });
 
     variable.setValue(undefined);
@@ -799,6 +804,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
+      color: "#e98b42",
     });
 
   });
