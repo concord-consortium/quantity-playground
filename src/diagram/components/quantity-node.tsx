@@ -179,7 +179,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       />
       {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
       <div className="variable-info-floater">
-        <div className="edit-color-button" onClick={()=>handleEditColor(true)} title={"Edit Color"}  data-testid="color-edit-button">
+        <div className="edit-color-button" onClick={()=>handleEditColor(!showColorEditor)} title={"Edit Color"}  data-testid="color-edit-button">
           <ColorPickerIcon/>
         </div>
         {showColorEditor && <ColorEditor variable={variable} onShowColorEditor={handleEditColor}/>}
