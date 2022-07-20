@@ -21,7 +21,7 @@ export const ColorEditor: React.FC<IProps> = ({variable, onShowColorEditor}) => 
   };
 
   return (
-    <div className="color-editor-dialog">
+    <div className="color-editor-dialog" title={"color picker"}>
       <div className="variable-info-row ">
         <CirclePicker color={color} onChange={handleColorChange} width={"110px"} colors={
           [
