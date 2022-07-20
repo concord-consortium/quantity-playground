@@ -64,12 +64,15 @@ describe("Quantity Node", () => {
     const nameTextBox = screen.getByTestId("variable-name");
     const valueTextBox = screen.getByTestId("variable-value");
     const unitTextBox = screen.getByTestId("variable-unit");
+    const descriptionTextBox = screen.getByTestId("variable-description");
     await userEvent.type(nameTextBox, "my variable name");
     await userEvent.type(valueTextBox, "45");
     await userEvent.type(unitTextBox, "miles");
+    await userEvent.type(descriptionTextBox, "a\ndescription")
     expect(variable.name).toBe("my variable name");
     expect(variable.value).toEqual(45);
     expect(variable.unit).toBe("miles");
+    expect(variable.description).toBe("a\ndescription");
 
     //verify cannot enter a non-digit into value input
     await userEvent.type(valueTextBox, "letter");

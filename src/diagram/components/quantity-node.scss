@@ -154,4 +154,16 @@ $gray-mid: #bcbcbc;
     padding: 2px 6px;
     border: 0 solid #999;
   }
+
+  .variable-description-area {
+    resize: none;
+    width: 100%;
+    text-align-last:left!important;
+    border-radius: 5px;
+    border: none;
+    margin: 3px;
+    padding-left: .5em;
+    padding-right: .5em;
+    overscroll-behavior-y: auto;
+  }
 }
