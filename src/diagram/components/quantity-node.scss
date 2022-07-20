@@ -20,7 +20,6 @@ $gray-mid: #bcbcbc;
   box-sizing: border-box;
   color: #242424;
   z-index: 4;
-  background-color: $color8;
   border: 2px solid $color8-4;
   &.expression-shown {
     height: calc($node-height + 30px);
@@ -61,7 +60,7 @@ $gray-mid: #bcbcbc;
       flex-direction: row;
       align-items: center;
       width: 100%;
-      .edit-expression-button {
+      .edit-expression-button, .edit-color-button {
         width: 18px;
         height: 18px;
         align-items: center;
@@ -137,9 +136,22 @@ $gray-mid: #bcbcbc;
     }
   }
 
+  .variable-info-floater {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 18px;
+    height: 18px;
+  }
+  .variable-info-floater svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+  }
+
   select, input {
     background-color: white;
     padding: 2px 6px;
-    border: 0px solid #999;
+    border: 0 solid #999;
   }
 }
