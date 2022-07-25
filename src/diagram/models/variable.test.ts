@@ -728,7 +728,7 @@ describe("Variable", () => {
     variable.setUnit("m");
     variable.setName("my variable");
     variable.setOperation(Operation.Add);
-    variable.setDescription("This is my variable")
+    variable.setDescription("This is my variable");
 
     expect(getSnapshot(variable)).toEqual({
       id: expect.stringMatching(/^.{16}$/),
