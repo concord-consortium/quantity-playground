@@ -68,7 +68,7 @@ describe("Quantity Node", () => {
     await userEvent.type(nameTextBox, "my variable name");
     await userEvent.type(valueTextBox, "45");
     await userEvent.type(unitTextBox, "miles");
-    await userEvent.type(descriptionTextBox, "a\ndescription")
+    await userEvent.type(descriptionTextBox, "a\ndescription");
     expect(variable.name).toBe("my variable name");
     expect(variable.value).toEqual(45);
     expect(variable.unit).toBe("miles");
@@ -92,7 +92,7 @@ describe("Quantity Node", () => {
     const colorSelectButton = screen.getByTestId("color-edit-button");
     await userEvent.click(colorSelectButton);
     expect(screen.getByTitle("color picker")).toBeInTheDocument();
-    await userEvent.click(screen.getByTitle("#9900EF"))
+    await userEvent.click(screen.getByTitle("#9900EF"));
     expect(variable.color).toBe("#9900ef");
   });
 });
