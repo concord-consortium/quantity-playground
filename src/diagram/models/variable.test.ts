@@ -728,6 +728,7 @@ describe("Variable", () => {
     variable.setUnit("m");
     variable.setName("my variable");
     variable.setOperation(Operation.Add);
+    variable.setDescription("This is my variable")
 
     expect(getSnapshot(variable)).toEqual({
       id: expect.stringMatching(/^.{16}$/),
@@ -736,7 +737,8 @@ describe("Variable", () => {
       unit: "m",
       name: "my variable",
       operation: "+",
-      color: "#e98b42"
+      color: "#e98b42",
+      description: "This is my variable"
     });
   });
 
