@@ -78,4 +78,21 @@ describe("Quantity Node", () => {
     await userEvent.type(valueTextBox, "letter");
     expect(variable.value).toBe(undefined);
   });
+  it("can edit a variable color", async () => {
+    const variable = Variable.create({});
+    expect(variable.color).toBe("#e98b42");
+    const root = DQRoot.create();
+    const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
+    root.addNode(node);
+    const container = GenericContainer.create();
+    container.add(variable);
+    container.setRoot(root);
+    render(<Diagram dqRoot={root} />);
+    expect(screen.getByTestId("variable-name")).toBeInTheDocument();
+    const colorSelectButton = screen.getByTestId("color-edit-button");
+    await userEvent.click(colorSelectButton);
+    expect(screen.getByTitle("color picker")).toBeInTheDocument();
+    await userEvent.click(screen.getByTitle("#9900EF"))
+    expect(variable.color).toBe("#9900ef");
+  });
 });
