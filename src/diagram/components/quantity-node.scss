@@ -20,7 +20,8 @@ $gray-mid: #bcbcbc;
   box-sizing: border-box;
   color: #242424;
   z-index: 4;
-  border: 2px solid $color8-4;
+  //border: 2px solid $color8-4;
+  border: none;
   &.expression-shown {
     height: calc($node-height + 30px);
   }

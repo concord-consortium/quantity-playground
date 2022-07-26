@@ -25,16 +25,16 @@ export const ColorEditor: React.FC<IProps> = ({variable, onShowColorEditor}) => 
       <div className="variable-info-row ">
         <CirclePicker color={color} onChange={handleColorChange} width={"110px"} colors={
           [
-            "#FF6900",
-            "#e98b42",
-            "#7BDCB5",
-            "#00D084",
-            "#8ED1FC",
-            "#0693E3",
             "#ABB8C3",
-            "#EB144C",
+            "#0693E3",
+            "#8ED1FC",
+            "#00D084",
+            "#7BDCB5",
             "#F78DA7",
-            "#9900EF"
+            "#e98b42",
+            "#FF6900",
+            "#EB144C",
+            "#9900EF",
           ]} circleSize={14} circleSpacing={7}/>
       </div>
     </div>
