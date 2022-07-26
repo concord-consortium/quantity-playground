@@ -164,6 +164,18 @@ $gray-mid: #bcbcbc;
     margin: 3px;
     padding-left: .5em;
     padding-right: .5em;
-    overscroll-behavior-y: auto;
+    overflow-y: scroll;
+  }
+  /* Make scrollbar always visible when active:
+   * https://stackoverflow.com/questions/1202425/making-the-main-scrollbar-always-visible
+   */
+  .variable-description-area::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+  .variable-description-area::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
   }
 }
