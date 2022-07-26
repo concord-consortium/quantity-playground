@@ -6,6 +6,7 @@ import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
+import TextareaAutosize from "react-textarea-autosize";
 
 import "./quantity-node.scss";
 
@@ -96,6 +97,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const onDescriptionChange = (evt: any) => {
+    if (!evt.target.value) {
+      variable.setDescription(undefined);
+    } else {
+      variable.setDescription(evt.target.value);
+    }
+  };
+
   const renderValueUnitInput = () => {
     return (
       <div className="variable-info-row">
@@ -144,6 +153,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         }
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
+        <div className="variable-info-row">
+          <TextareaAutosize className="variable-description-area"
+                            onChange={onDescriptionChange} minRows={1}
+                            maxRows={4}  placeholder={"description"} data-testid={"variable-description"}/>
+        </div>
         { variable.computedValueError &&
           <div className="error-message">
               ⚠️ {variable.computedValueError}

@@ -25,6 +25,7 @@ export interface IVariable  { // build needs to know dq-node to have access to t
 export const Variable = types.model("Variable", {
   id: types.optional(types.identifier, () => nanoid(16)),
   name: types.maybe(types.string),
+  description: types.maybe(types.string),
   unit: types.maybe(types.string),
   // null values have been seen in the implementation
   // hopefully we can track down where those come from instead of making this
@@ -351,6 +352,9 @@ export const Variable = types.model("Variable", {
   },
   setName(newName?: string) {
     self.name = newName;
+  },
+  setDescription(newDescription?: string) {
+    self.description = newDescription;
   },
   setOperation(newOperation?: Operation) {
     self.operation = newOperation;
