@@ -24,6 +24,10 @@ describe("mathjs-utils", () => {
       const u = getMathUnit(0,"$");
       expect(u?.toString()).toBe('0 $');
     });
+    it("doesn't permit the '*' unit", () => {
+      const u = getMathUnit(0,"*");
+      expect(u).toBe(undefined);
+    });
   });
   describe("replaceInputNames", () => {
     it("replaces backtick variables", () => {
