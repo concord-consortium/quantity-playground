@@ -19,4 +19,10 @@ const { simplify, unit, parse, createUnit, evaluate, number, isUnit } = math;
 
 // The types don't give access to the Unit class object, but it is there.
 const { Unit } = math as any;
+
+const isAlphaOriginal = Unit.isValidAlpha;
+Unit.isValidAlpha = function (c: string) : boolean{
+  return isAlphaOriginal(c) || c === "$";
+};
+
 export { simplify, unit, parse, createUnit, evaluate, number, isUnit, Unit };

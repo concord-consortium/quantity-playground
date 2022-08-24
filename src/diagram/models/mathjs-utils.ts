@@ -13,9 +13,13 @@ export const getMathUnit = (value: number, unitString: string): math.Unit | unde
     for(const symbol of symbols) {
       // if the symbol isn't already a unit, make a unit for it
       if (!Unit.isValuelessUnit(symbol.name)) {
-        const singular = pluralize.singular(symbol.name);
-        const plural = pluralize.plural(symbol.name);
-        createUnit(singular, {aliases: [plural]});
+        if (/^[a-zA-Z]\w*$/.test(symbol.name)) {
+          const singular = pluralize.singular(symbol.name);
+          const plural = pluralize.plural(symbol.name);
+          createUnit(singular, {aliases: [plural]});
+        } else {
+          createUnit(symbol.name);
+        }
         // console.log(`Created unit: ${singular}(${plural})`);
       }
     }
