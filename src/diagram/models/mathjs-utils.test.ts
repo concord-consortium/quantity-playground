@@ -20,6 +20,18 @@ describe("mathjs-utils", () => {
       const singU = getMathUnit(0, "half");
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
+    it("permits the '$' unit", () => {
+      const u = getMathUnit(0,"$");
+      expect(u?.toString()).toBe("0 $");
+    });
+    it("doesn't permit the '*' unit", () => {
+      const u = getMathUnit(0,"*");
+      expect(u).toBe(undefined);
+    });
+    it("can create multiple units from an expression", () => {
+      const u = getMathUnit(0,"$/year");
+      expect(u?.toString()).toBe("0 $ / year");
+    });
   });
   describe("replaceInputNames", () => {
     it("replaces backtick variables", () => {
