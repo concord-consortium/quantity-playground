@@ -5,13 +5,12 @@ import { kMaxNameCharacters, kMaxNotesCharacters } from "../utils/validate";
 import "./dialog.scss";
 
 interface INormalDialogRow {
-  defaultValue?: string;
   label: string;
   maxCharacters?: number;
   value: string;
   setValue: (value: string) => void;
 }
-const NormalDialogRow = ({ defaultValue, label, maxCharacters, value, setValue }: INormalDialogRow) => {
+const NormalDialogRow = ({ label, maxCharacters, value, setValue }: INormalDialogRow) => {
   return (
     <div className="normal-dialog-row">
       <label className="dialog-label" htmlFor={label}>
@@ -22,7 +21,6 @@ const NormalDialogRow = ({ defaultValue, label, maxCharacters, value, setValue }
         id={label}
         type="text"
         maxLength={maxCharacters}
-        defaultValue={defaultValue || ""}
         value={value}
         onChange={e => setValue(e.target.value)}
         dir="auto"

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
@@ -28,13 +28,19 @@ const edgeTypes = {
 
 interface IProps {
   dqRoot: DQRootType;
+  showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [ ,setSelectedNode] = useState<DQNodeType | undefined>();
+  const [selectedNode ,setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
+
+  // Keep the model's selected node up to date with ReactFlow's
+  useEffect(() => {
+    dqRoot.setSelectedNode(selectedNode);
+  }, [dqRoot, selectedNode]);
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
     transform && dqRoot.setTransform(transform);
@@ -162,7 +168,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{getDiagramExport}}/>
+          <ToolBar {...{getDiagramExport, showEditVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
