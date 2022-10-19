@@ -1,6 +1,8 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
-import React from "react";
+import React, { useState } from "react";
 import { Diagram } from "../diagram/components/diagram";
+import { DQNodeType } from "../diagram/models/dq-node";
+import { EditVariableDialog, updateVariable } from "../diagram/components/edit-variable-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
 import defaultDiagram from "./default-diagram";
@@ -83,9 +85,19 @@ const getDiagramExport = () => {
 };
 
 export const App = () => {
+  const [showEditVariableDialog, setShowEditVariableDialog] = useState(true);
+  const nodes: DQNodeType[] = [];
+  appStore.diagram.nodes.forEach((node) => nodes.push(node));
+
   return (
     <div className="app">
       <Diagram dqRoot={appStore.diagram} {...{showNestedSet, getDiagramExport}} />
+      {showEditVariableDialog && nodes.length > 0 &&
+        <EditVariableDialog
+          onClose={() => setShowEditVariableDialog(false)}
+          onSave={updateVariable}
+          variable={nodes[0].variable}
+        />}
     </div>
   );
 };
