@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { applySnapshot, getSnapshot } from "mobx-state-tree";
+import { cloneDeep } from "lodash";
 
 import { NormalDialogRow } from "./dialog";
 import { VariableType } from "../../models/variable";
@@ -48,10 +50,13 @@ interface IUpdateVariable {
   unit?: string;
 }
 export const updateVariable = ({ variable, name, notes, value, unit}: IUpdateVariable) => {
-  if (name) variable.setName(name);
-  if (notes) variable.setDescription(notes);
-  if (value) variable.setValue(+value);
-  if (unit) variable.setUnit(unit);
+  const copy = cloneDeep(getSnapshot(variable));
+  copy.name = name === undefined ? copy.name : name;
+  copy.description = notes === undefined ? copy.description : notes;
+  // TODO validate new value
+  copy.value = value === undefined ? copy.value : +value;
+  copy.unit = unit === undefined ? copy.unit : unit;
+  applySnapshot(variable, copy);
 };
 
 interface IEditVariableDialog {
