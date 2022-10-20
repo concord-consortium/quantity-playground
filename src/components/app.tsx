@@ -1,7 +1,7 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React, { useState } from "react";
 import { Diagram } from "../diagram/components/diagram";
-import { EditVariableDialog, updateVariable } from "../diagram/components/edit-variable-dialog";
+import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
 import defaultDiagram from "./default-diagram";

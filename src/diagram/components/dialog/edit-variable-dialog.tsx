@@ -1,33 +1,10 @@
 import React, { useState } from "react";
-import { VariableType } from "../models/variable";
-import { kMaxNameCharacters, kMaxNotesCharacters } from "../utils/validate";
+
+import { NormalDialogRow } from "./dialog";
+import { VariableType } from "../../models/variable";
+import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
 
 import "./dialog.scss";
-
-interface INormalDialogRow {
-  label: string;
-  maxCharacters?: number;
-  value: string;
-  setValue: (value: string) => void;
-}
-const NormalDialogRow = ({ label, maxCharacters, value, setValue }: INormalDialogRow) => {
-  return (
-    <div className="normal-dialog-row">
-      <label className="dialog-label" htmlFor={label}>
-        {label}
-      </label>
-      <input
-        className="dialog-input"
-        id={label}
-        type="text"
-        maxLength={maxCharacters}
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        dir="auto"
-      />
-    </div>
-  );
-};
 
 interface IEditVariableDialogContent {
   name: string;
@@ -43,10 +20,22 @@ export const EditVariableDialogContent = ({ name, setName, notes, setNotes, valu
   return (
     <div className="dialog-content">
       <div>Edit Variable:</div>
-      <NormalDialogRow label="Name" value={name} setValue={setName} maxCharacters={kMaxNameCharacters} />
-      <NormalDialogRow label="Notes" value={notes} setValue={setNotes} maxCharacters={kMaxNotesCharacters} />
-      <NormalDialogRow label="Units" value={unit} setValue={setUnit} />
-      <NormalDialogRow label="Value" value={value} setValue={setValue} />
+      <NormalDialogRow
+        label="Name"
+        value={name}
+        setValue={setName}
+        maxCharacters={kMaxNameCharacters}
+        width={230}
+      />
+      <NormalDialogRow
+        label="Notes"
+        value={notes}
+        setValue={setNotes}
+        maxCharacters={kMaxNotesCharacters}
+        textarea={{ cols: 50, rows: 2 }}
+      />
+      <NormalDialogRow label="Units" value={unit} setValue={setUnit} width={230} />
+      <NormalDialogRow label="Value" value={value} setValue={setValue} width={82} />
     </div>
   );
 };
@@ -89,8 +78,10 @@ export const EditVariableDialog = ({ onClose, onSave, variable }: IEditVariableD
         value={value} setValue={setValue}
         unit={unit} setUnit={setUnit}
       />
-      <button onClick={onClose}>Cancel</button>
-      <button onClick={handleOK}>OK</button>
+      <div className="dialog-button-row">
+        <button className="dialog-button" onClick={onClose}>Cancel</button>
+        <button className="dialog-button" onClick={handleOK}>OK</button>
+      </div>
     </div>
   );
 };
