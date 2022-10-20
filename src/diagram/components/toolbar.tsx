@@ -32,6 +32,7 @@ export const ToolBar: React.FC<IProps> = ({ dqRoot, getDiagramExport, showEditVa
         </div>
         { showEditVariableDialog &&
           <button
+            className="edit-variable-button"
             disabled={!dqRoot.selectedNode}
             onClick={showEditVariableDialog}
           >
