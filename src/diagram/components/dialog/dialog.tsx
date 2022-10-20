@@ -10,9 +10,9 @@ interface INormalDialogRow {
   label: string;
   maxCharacters?: number;
   setValue: (value: string) => void;
-  textarea?: ITextArea;
+  textarea?: ITextArea; // Include { cols, rows } to render a textarea instead of text input
   value: string;
-  width?: number;
+  width?: number; // Width of text input
 }
 export const NormalDialogRow = ({ label, maxCharacters, setValue, textarea, value, width }: INormalDialogRow) => {
   const style = { width };

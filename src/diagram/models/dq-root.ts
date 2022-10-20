@@ -48,6 +48,9 @@ export const DQRoot = types.model("DQRoot", {
       throw new Error("Need variables before deleting nodes");
     }
 
+    if (self.selectedNode === node) {
+      self.selectedNode = undefined;
+    }
     variables.removeVariable(node.variable);
   },
   setTransform(transform: FlowTransform) {

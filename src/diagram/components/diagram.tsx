@@ -34,7 +34,7 @@ interface IProps {
 }
 export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [selectedNode ,setSelectedNode] = useState<DQNodeType | undefined>();
+  const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
 
   // Keep the model's selected node up to date with ReactFlow's
@@ -168,7 +168,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{getDiagramExport, showEditVariableDialog}}/>
+          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
