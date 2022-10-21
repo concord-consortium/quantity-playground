@@ -73,6 +73,8 @@ The diagram-view is used in CLUE in the diagram tile, and it can be useful to te
 
 After you're happy with your changes and have deployed a new version of Quantity Playground, make sure you revert to using the published version by running `yalc remove @concord-consortium/diagram-view` in your `collaborative-learning` directory.
 
+For more information, see `README.md` in the `diagram-view` directory.
+
 ### Testing
 
 Run `npm test` to run jest tests. Run `npm run test:full` to run jest and Cypress tests.
