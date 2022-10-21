@@ -95,7 +95,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
   };
 
   const onSelectionChange = (selectedElements: Elements | null) => {
-    console.log(`selection`, selectedElements);
     if (selectedElements?.[0]?.type === "quantityNode" ) {
       dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
     } else {

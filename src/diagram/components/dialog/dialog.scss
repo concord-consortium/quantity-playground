@@ -34,6 +34,10 @@
   padding: 3.5px 6px;
   font-family: PTSans-Narrow, sans-serif;
   font-size: 14px;
+
+  &.invalid {
+    color: red;
+  }
 }
 
 .dialog-textarea {

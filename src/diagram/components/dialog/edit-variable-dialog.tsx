@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { applySnapshot, getSnapshot } from "mobx-state-tree";
 
@@ -8,12 +8,20 @@ import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
 
 import "./dialog.scss";
 
+const validNumber = (v: string) => !isNaN(+v);
+
 interface IEditVariableDialogContent {
   variable: VariableType;
 }
 export const EditVariableDialogContent = observer(({ variable }: IEditVariableDialogContent) => {
-  // TODO validate the value before saving it
-  const setValue = (value: string) => variable.setValue(+value);
+  const [value, setValue] = useState(variable.value?.toString());
+  const updateValue = (newValue: string) => {
+    setValue(newValue);
+    if (validNumber(newValue)) {
+      variable.setValue(+newValue);
+    }
+  };
+  
   return (
     <div className="dialog-content">
       <div>Edit Variable:</div>
@@ -32,7 +40,7 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
         textarea={{ cols: 50, rows: 2 }}
       />
       <DialogRow label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
-      <DialogRow label="Value" value={variable.value?.toString() || ""} setValue={setValue} width={82} />
+      <DialogRow invalid={!validNumber(value || "")} label="Value" value={value || ""} setValue={updateValue} width={82} />
     </div>
   );
 });

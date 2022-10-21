@@ -1,4 +1,5 @@
 import React from "react";
+import classnames from "classnames";
 
 import "./dialog.scss";
 
@@ -7,6 +8,7 @@ interface ITextArea {
   rows: number;
 }
 interface IDialogRow {
+  invalid?: boolean;
   label: string;
   maxCharacters?: number;
   setValue: (value: string) => void;
@@ -14,8 +16,9 @@ interface IDialogRow {
   value: string;
   width?: number; // Width of text input
 }
-export const DialogRow = ({ label, maxCharacters, setValue, textarea, value, width }: IDialogRow) => {
+export const DialogRow = ({ invalid, label, maxCharacters, setValue, textarea, value, width }: IDialogRow) => {
   const style = { width };
+  const classes = classnames("dialog-input", { invalid }, textarea ? "dialog-textarea" : "dialog-text");
   return (
     <div className="dialog-row">
       <label className="dialog-label" htmlFor={label}>
@@ -23,7 +26,7 @@ export const DialogRow = ({ label, maxCharacters, setValue, textarea, value, wid
       </label>
       { textarea
         ? <textarea
-          className="dialog-input dialog-textarea"
+          className={classes}
           id={label}
           maxLength={maxCharacters}
           value={value}
@@ -32,7 +35,7 @@ export const DialogRow = ({ label, maxCharacters, setValue, textarea, value, wid
           rows={textarea.rows}
         />
         : <input
-          className="dialog-input dialog-text"
+          className={classes}
           id={label}
           type="text"
           maxLength={maxCharacters}
