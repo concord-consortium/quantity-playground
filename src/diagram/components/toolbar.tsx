@@ -1,5 +1,6 @@
 
 import React from "react";
+import { observer } from "mobx-react-lite";
 import { DQRootType } from "../models/dq-root";
 
 interface IProps {
@@ -8,7 +9,7 @@ interface IProps {
   showEditVariableDialog?: () => void;
 }
 
-export const ToolBar: React.FC<IProps> = ({ dqRoot, getDiagramExport, showEditVariableDialog }) => {
+export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, showEditVariableDialog }) => {
     const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
@@ -41,4 +42,4 @@ export const ToolBar: React.FC<IProps> = ({ dqRoot, getDiagramExport, showEditVa
         }
       </div>
     );
-};
+});

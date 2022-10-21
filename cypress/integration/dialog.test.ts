@@ -11,7 +11,6 @@ context("Test Diagram interaction", () => {
     it("Edit variable button present and active when a node is selected", () => {
       editVariableButton().should("exist");
       editVariableButton().should("be.disabled");
-      nodes().last().click(); // There's currently a bug that requires two different nodes to be selected before the button becomes active
       nodeToEdit().click();
       editVariableButton().should("not.be.disabled");
     });

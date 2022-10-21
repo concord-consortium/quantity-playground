@@ -1,9 +1,8 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
-import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
@@ -34,13 +33,7 @@ interface IProps {
 }
 export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [selectedNode, setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
-
-  // Keep the model's selected node up to date with ReactFlow's
-  useEffect(() => {
-    dqRoot.setSelectedNode(selectedNode);
-  }, [dqRoot, selectedNode]);
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
     transform && dqRoot.setTransform(transform);
@@ -93,17 +86,20 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        setSelectedNode((currentNode) => nodeToRemove === currentNode ? undefined : currentNode);
+        if (dqRoot.selectedNode === nodeToRemove) {
+          dqRoot.setSelectedNode(undefined);
+        }
         dqRoot.removeNode(nodeToRemove);
       }
     }
   };
 
   const onSelectionChange = (selectedElements: Elements | null) => {
+    console.log(`selection`, selectedElements);
     if (selectedElements?.[0]?.type === "quantityNode" ) {
-      setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
+      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
     } else {
-      setSelectedNode(undefined);
+      dqRoot.setSelectedNode(undefined);
     }
   };
 
