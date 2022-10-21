@@ -154,7 +154,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         }
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
         <div className="variable-info-row">
-          <TextareaAutosize className="variable-description-area"
+          <TextareaAutosize className="variable-description-area" value={variable.description || ""}
                             onChange={onDescriptionChange} minRows={1}
                             maxRows={4}  placeholder={"description"} data-testid={"variable-description"}/>
         </div>
