@@ -1,5 +1,6 @@
 import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { Diagram } from "../diagram/components/diagram";
 import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
 import { AppStore } from "./app-store";
@@ -83,7 +84,7 @@ const getDiagramExport = () => {
   return getSnapshot(appStore);
 };
 
-export const App = () => {
+export const App = observer(() => {
   const [showEditVariableDialog, setShowEditVariableDialog] = useState(false);
 
   return (
@@ -101,4 +102,4 @@ export const App = () => {
         />}
     </div>
   );
-};
+});
