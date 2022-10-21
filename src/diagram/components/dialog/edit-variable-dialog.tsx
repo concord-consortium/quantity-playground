@@ -1,88 +1,63 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
+import { observer } from "mobx-react-lite";
 import { applySnapshot, getSnapshot } from "mobx-state-tree";
-import { cloneDeep } from "lodash";
 
 import { DialogRow } from "./dialog-row";
-import { VariableType } from "../../models/variable";
+import { Variable, VariableType } from "../../models/variable";
 import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
 
 import "./dialog.scss";
 
 interface IEditVariableDialogContent {
-  name: string;
-  setName: React.Dispatch<React.SetStateAction<string>>;
-  notes: string;
-  setNotes: React.Dispatch<React.SetStateAction<string>>;
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  unit: string;
-  setUnit: React.Dispatch<React.SetStateAction<string>>;
+  variable: VariableType;
 }
-export const EditVariableDialogContent = ({ name, setName, notes, setNotes, value, setValue, unit, setUnit }: IEditVariableDialogContent) => {
+export const EditVariableDialogContent = observer(({ variable }: IEditVariableDialogContent) => {
+  // TODO validate the value before saving it
+  const setValue = (value: string) => variable.setValue(+value);
   return (
     <div className="dialog-content">
       <div>Edit Variable:</div>
       <DialogRow
         label="Name"
-        value={name}
-        setValue={setName}
+        value={variable.name || ""}
+        setValue={variable.setName}
         maxCharacters={kMaxNameCharacters}
         width={230}
       />
       <DialogRow
         label="Notes"
-        value={notes}
-        setValue={setNotes}
+        value={variable.description || ""}
+        setValue={variable.setDescription}
         maxCharacters={kMaxNotesCharacters}
         textarea={{ cols: 50, rows: 2 }}
       />
-      <DialogRow label="Units" value={unit} setValue={setUnit} width={230} />
-      <DialogRow label="Value" value={value} setValue={setValue} width={82} />
+      <DialogRow label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
+      <DialogRow label="Value" value={variable.value?.toString() || ""} setValue={setValue} width={82} />
     </div>
   );
-};
+});
 
-interface IUpdateVariable {
-  variable: VariableType;
-  name?: string;
-  notes?: string;
-  value?: string;
-  unit?: string;
-}
-export const updateVariable = ({ variable, name, notes, value, unit}: IUpdateVariable) => {
-  const copy = cloneDeep(getSnapshot(variable));
-  copy.name = name === undefined ? copy.name : name;
-  copy.description = notes === undefined ? copy.description : notes;
-  // TODO validate new value
-  copy.value = value === undefined ? copy.value : +value;
-  copy.unit = unit === undefined ? copy.unit : unit;
-  applySnapshot(variable, copy);
+// Copies data from copyVariable into variable
+export const updateVariable = (variable: VariableType, copyVariable: VariableType) => {
+  applySnapshot(variable, getSnapshot(copyVariable));
 };
 
 interface IEditVariableDialog {
   onClose: () => void;
-  onSave: (updates: IUpdateVariable) => void;
+  onSave: (variable: VariableType, copyVariable: VariableType) => void;
   variable: VariableType;
 }
 export const EditVariableDialog = ({ onClose, onSave, variable }: IEditVariableDialog) => {
-  const [name, setName] = useState(variable.name || "");
-  const [notes, setNotes] = useState(variable.description || "");
-  const [value, setValue] = useState(variable.value?.toString() || "");
-  const [unit, setUnit] = useState(variable.unit || "");
+  const variableClone = useMemo(() => Variable.create(getSnapshot(variable)), [variable]);
 
   const handleOK = () => {
-    onSave({ variable, name, notes, value, unit });
+    onSave(variable, variableClone);
     onClose();
   };
 
   return (
     <div className="qp-dialog">
-      <EditVariableDialogContent
-        name={name} setName={setName}
-        notes={notes} setNotes={setNotes}
-        value={value} setValue={setValue}
-        unit={unit} setUnit={setUnit}
-      />
+      <EditVariableDialogContent variable={variableClone} />
       <div className="dialog-button-row">
         <button className="dialog-button" onClick={onClose}>Cancel</button>
         <button className="dialog-button" onClick={handleOK}>OK</button>
