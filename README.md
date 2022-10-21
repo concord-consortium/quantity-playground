@@ -23,6 +23,10 @@ Alternately, you can run secure without certificates in Chrome:
 2. Change flag from disabled to enabled
 3. Run `npm run start:secure:no-certs` to run `webpack-dev-server` in development mode with hot module replacement
 
+### Testing in CLUE and other projects
+
+The diagram-view is used in CLUE in the diagram tile, and possibly other projects as well. As you're making changes to this library, it can be helpful to test those changes within client projects without deploying. For more on this, see README.md in the diagram-view directory.
+
 ### Building
 
 If you want to build a local version run `npm build`, it will create the files in the `dist` folder.
@@ -61,19 +65,6 @@ To deploy a production release:
     2. Click the "Run workflow" menu button. 
     3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to master)
     4. Click the `Run Workflow` button.
-
-### Testing in CLUE
-
-The diagram-view is used in CLUE in the diagram tile, and it can be useful to test changes made in Quantity Playground in CLUE without deploying updates. To do so, it's best to use `yalc`.
-
-1. Install Yalc by running `sudo npm install --global yalc`.
-2. Install Rollup by running `sudo npm install --global rollup`.
-3. In the `diagram-view` folder, run `yalc publish`.
-4. In your `collaborative-learning` directory, run `yalc add @concord-consortium/diagram-view`.
-
-After you're happy with your changes and have deployed a new version of Quantity Playground, make sure you revert to using the published version by running `yalc remove @concord-consortium/diagram-view` in your `collaborative-learning` directory.
-
-For more information, see `README.md` in the `diagram-view` directory.
 
 ### Testing
 
