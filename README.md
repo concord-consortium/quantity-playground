@@ -62,6 +62,17 @@ To deploy a production release:
     3. Type in the tag name you want to release for example `v1.2.3`.  (Note this won't work until the PR has been merged to master)
     4. Click the `Run Workflow` button.
 
+### Testing in CLUE
+
+The diagram-view is used in CLUE in the diagram tile, and it can be useful to test changes made in Quantity Playground in CLUE without deploying updates. To do so, it's best to use `yalc`.
+
+1. Install Yalc by running `sudo npm install --global yalc`.
+2. Install Rollup by running `sudo npm install --global rollup`.
+3. In the `diagram-view` folder, run `yalc publish`.
+4. In your `collaborative-learning` directory, run `yalc add @concord-consortium/diagram-view`.
+
+After you're happy with your changes and have deployed a new version of Quantity Playground, make sure you revert to using the published version by running `yalc remove @concord-consortium/diagram-view` in your `collaborative-learning` directory.
+
 ### Testing
 
 Run `npm test` to run jest tests. Run `npm run test:full` to run jest and Cypress tests.
