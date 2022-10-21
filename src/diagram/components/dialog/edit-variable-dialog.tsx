@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { applySnapshot, getSnapshot } from "mobx-state-tree";
 import { cloneDeep } from "lodash";
 
-import { NormalDialogRow } from "./dialog";
+import { DialogRow } from "./dialog-row";
 import { VariableType } from "../../models/variable";
 import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
 
@@ -22,22 +22,22 @@ export const EditVariableDialogContent = ({ name, setName, notes, setNotes, valu
   return (
     <div className="dialog-content">
       <div>Edit Variable:</div>
-      <NormalDialogRow
+      <DialogRow
         label="Name"
         value={name}
         setValue={setName}
         maxCharacters={kMaxNameCharacters}
         width={230}
       />
-      <NormalDialogRow
+      <DialogRow
         label="Notes"
         value={notes}
         setValue={setNotes}
         maxCharacters={kMaxNotesCharacters}
         textarea={{ cols: 50, rows: 2 }}
       />
-      <NormalDialogRow label="Units" value={unit} setValue={setUnit} width={230} />
-      <NormalDialogRow label="Value" value={value} setValue={setValue} width={82} />
+      <DialogRow label="Units" value={unit} setValue={setUnit} width={230} />
+      <DialogRow label="Value" value={value} setValue={setValue} width={82} />
     </div>
   );
 };

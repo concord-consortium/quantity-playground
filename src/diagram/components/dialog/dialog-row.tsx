@@ -6,7 +6,7 @@ interface ITextArea {
   cols: number;
   rows: number;
 }
-interface INormalDialogRow {
+interface IDialogRow {
   label: string;
   maxCharacters?: number;
   setValue: (value: string) => void;
@@ -14,10 +14,10 @@ interface INormalDialogRow {
   value: string;
   width?: number; // Width of text input
 }
-export const NormalDialogRow = ({ label, maxCharacters, setValue, textarea, value, width }: INormalDialogRow) => {
+export const DialogRow = ({ label, maxCharacters, setValue, textarea, value, width }: IDialogRow) => {
   const style = { width };
   return (
-    <div className="normal-dialog-row">
+    <div className="dialog-row">
       <label className="dialog-label" htmlFor={label}>
         {label}
       </label>
