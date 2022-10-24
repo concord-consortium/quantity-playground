@@ -23,6 +23,10 @@ Alternately, you can run secure without certificates in Chrome:
 2. Change flag from disabled to enabled
 3. Run `npm run start:secure:no-certs` to run `webpack-dev-server` in development mode with hot module replacement
 
+### Testing in CLUE and other projects
+
+The diagram-view is used in CLUE in the diagram tile, and possibly other projects as well. As you're making changes to this library, it can be helpful to test those changes within client projects without deploying. For more on this, see README.md in the diagram-view directory.
+
 ### Building
 
 If you want to build a local version run `npm build`, it will create the files in the `dist` folder.

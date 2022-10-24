@@ -8,7 +8,7 @@ import typescript from "rollup-plugin-typescript2";
 import commonjs from "@rollup/plugin-commonjs";
 import postcss from "rollup-plugin-postcss";
 
-import packageJson from "./package.json";
+import packageJson from "./package.json" assert { type: "json" };
 
 export default [
   {
@@ -44,7 +44,7 @@ export default [
       postcss({
         extract: path.resolve("dist/index.css")
       }),
-      visualizer({ open: false }), // <== set to true to automatically open visualizer on build
+      // visualizer({ open: false }), // <== set to true to automatically open visualizer on build
     ]
   },
   { // bundle declaration files

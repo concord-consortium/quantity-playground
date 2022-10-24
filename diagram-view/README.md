@@ -1,6 +1,6 @@
-#### Using yalc to test this is CLUE
+#### Using yalc to test the diagram-view in CLUE
 
-[yalc](https://www.npmjs.com/package/yalc) provides an alternative to `npm link`. It acts as a very simple local repository for locally developed packages that can be shared across a local environment. It provides a better workflow than `npm | yarn link` for package authors. There are scripts in package.json to make this easier. 
+[yalc](https://www.npmjs.com/package/yalc) provides an alternative to `npm link`. It acts as a very simple local repository for locally developed packages that can be shared across a local environment. It provides a better workflow than `npm | yarn link` for package authors. There are scripts in package.json to make this easier.
 
 To publish an in-development version of the diagram-view library, in this diagram-view directory run:
 ```
