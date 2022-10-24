@@ -2,12 +2,6 @@
 
 [yalc](https://www.npmjs.com/package/yalc) provides an alternative to `npm link`. It acts as a very simple local repository for locally developed packages that can be shared across a local environment. It provides a better workflow than `npm | yarn link` for package authors. There are scripts in package.json to make this easier.
 
-To start, install yalc and rollup:
-```
-$ sudo npm install --global yalc
-$ sudo npm install --global rollup
-```
-
 To publish an in-development version of the diagram-view library, in this diagram-view directory run:
 ```
 $ npm run yalc:publish
