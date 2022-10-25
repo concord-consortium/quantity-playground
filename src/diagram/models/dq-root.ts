@@ -14,7 +14,8 @@ export const DQRoot = types.model("DQRoot", {
 })
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
-  connectingVariable: undefined as VariableType | undefined
+  connectingVariable: undefined as VariableType | undefined,
+  selectedNode: undefined as DQNodeType | undefined
 }))
 .views(self => ({
   get reactFlowElements() {
@@ -47,10 +48,16 @@ export const DQRoot = types.model("DQRoot", {
       throw new Error("Need variables before deleting nodes");
     }
 
+    if (self.selectedNode === node) {
+      self.selectedNode = undefined;
+    }
     variables.removeVariable(node.variable);
   },
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
+  },
+  setSelectedNode(node?: DQNodeType) {
+    self.selectedNode = node;
   }
 }))
 .actions(self => ({

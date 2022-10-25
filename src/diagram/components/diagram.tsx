@@ -3,7 +3,6 @@ import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 import { DQRootType } from "../models/dq-root";
-import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
@@ -28,12 +27,12 @@ const edgeTypes = {
 
 interface IProps {
   dqRoot: DQRootType;
+  showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
-  const [ ,setSelectedNode] = useState<DQNodeType | undefined>();
   const [rfInstance, setRfInstance] = useState<any>();
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
@@ -87,7 +86,9 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        setSelectedNode((currentNode) => nodeToRemove === currentNode ? undefined : currentNode);
+        if (dqRoot.selectedNode === nodeToRemove) {
+          dqRoot.setSelectedNode(undefined);
+        }
         dqRoot.removeNode(nodeToRemove);
       }
     }
@@ -95,9 +96,9 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
 
   const onSelectionChange = (selectedElements: Elements | null) => {
     if (selectedElements?.[0]?.type === "quantityNode" ) {
-      setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
+      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
     } else {
-      setSelectedNode(undefined);
+      dqRoot.setSelectedNode(undefined);
     }
   };
 
@@ -162,7 +163,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport }: IProps) => {
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{getDiagramExport}}/>
+          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

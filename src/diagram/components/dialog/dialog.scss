@@ -1,0 +1,52 @@
+.qp-dialog {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+
+  padding: 15px;
+  background-color: white;
+  border-radius: 3px;
+  border: 2px solid #999;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialog-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dialog-label {
+  width: 82px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.dialog-input {
+  border-radius: 5px;
+  border: 1.5px solid #949494;
+  padding: 3.5px 6px;
+  font-family: PTSans-Narrow, sans-serif;
+  font-size: 14px;
+
+  &.invalid {
+    color: red;
+  }
+}
+
+.dialog-textarea {
+  resize: none;
+}
+
+.dialog-button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 8px;
+}
