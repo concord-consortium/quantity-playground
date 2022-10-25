@@ -26,6 +26,7 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
     <div className="dialog-content">
       <div>Edit Variable:</div>
       <DialogRow
+        inputId="evd-name"
         label="Name"
         value={variable.name || ""}
         setValue={variable.setName}
@@ -33,14 +34,15 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
         width={230}
       />
       <DialogRow
+        inputId="evd-notes"
         label="Notes"
         value={variable.description || ""}
         setValue={variable.setDescription}
         maxCharacters={kMaxNotesCharacters}
         textarea={{ cols: 50, rows: 2 }}
       />
-      <DialogRow label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
-      <DialogRow invalid={!validNumber(value || "")} label="Value" value={value || ""} setValue={updateValue} width={82} />
+      <DialogRow inputId="evd-units" label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
+      <DialogRow inputId="evd-value" invalid={!validNumber(value || "")} label="Value" value={value || ""} setValue={updateValue} width={82} />
     </div>
   );
 });

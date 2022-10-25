@@ -8,6 +8,7 @@ interface ITextArea {
   rows: number;
 }
 interface IDialogRow {
+  inputId: string;
   invalid?: boolean;
   label: string;
   maxCharacters?: number;
@@ -16,18 +17,18 @@ interface IDialogRow {
   value: string;
   width?: number; // Width of text input
 }
-export const DialogRow = ({ invalid, label, maxCharacters, setValue, textarea, value, width }: IDialogRow) => {
+export const DialogRow = ({ inputId, invalid, label, maxCharacters, setValue, textarea, value, width }: IDialogRow) => {
   const style = { width };
   const classes = classnames("dialog-input", { invalid }, textarea ? "dialog-textarea" : "dialog-text");
   return (
     <div className="dialog-row">
-      <label className="dialog-label" htmlFor={label}>
+      <label className="dialog-label" htmlFor={inputId}>
         {label}
       </label>
       { textarea
         ? <textarea
           className={classes}
-          id={label}
+          id={inputId}
           maxLength={maxCharacters}
           value={value}
           onChange={e => setValue(e.target.value)}
@@ -36,7 +37,7 @@ export const DialogRow = ({ invalid, label, maxCharacters, setValue, textarea, v
         />
         : <input
           className={classes}
-          id={label}
+          id={inputId}
           type="text"
           maxLength={maxCharacters}
           value={value}
