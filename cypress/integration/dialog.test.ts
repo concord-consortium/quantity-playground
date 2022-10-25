@@ -18,8 +18,8 @@ context("Test Diagram interaction", () => {
       const variableName = "variable-name";
       editVariableButton().click();
       editVariableDialog().should("exist");
-      cy.get("#Name").should("exist");
-      cy.get("#Name").type(variableName);
+      cy.get("#evd-name").should("exist");
+      cy.get("#evd-name").type(variableName);
       cy.get(".dialog-button").last().click();
       editVariableDialog().should("not.exist");
       nodeToEdit().find(".name").should("have.value", variableName);
