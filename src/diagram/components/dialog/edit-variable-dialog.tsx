@@ -14,6 +14,10 @@ interface IEditVariableDialogContent {
   variable: VariableType;
 }
 export const EditVariableDialogContent = observer(({ variable }: IEditVariableDialogContent) => {
+  const updateName = (newName: string) => {
+    variable.setName(newName.replace(" ", ""));
+  };
+
   const [value, setValue] = useState(variable.value?.toString());
   const updateValue = (newValue: string) => {
     setValue(newValue);
@@ -29,7 +33,7 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
         inputId="evd-name"
         label="Name"
         value={variable.name || ""}
-        setValue={variable.setName}
+        setValue={updateName}
         maxCharacters={kMaxNameCharacters}
         width={230}
       />
