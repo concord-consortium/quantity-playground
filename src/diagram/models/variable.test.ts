@@ -24,6 +24,11 @@ describe("Variable", () => {
     expect(variable.computedUnitMessage).toBeUndefined();
   });
 
+  it("with no inputs, null value (an error case that arrises for mysterious reasons)", () => {
+    const variable = Variable.create({value: null} as any);
+    expect(variable.value).toBeUndefined();
+  });
+
   it("with 1 inputA it returns the input value, ignoring its own value", () => {
     const container = GenericContainer.create({
       items: [
