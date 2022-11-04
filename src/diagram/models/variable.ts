@@ -27,22 +27,21 @@ export const Variable = types.model("Variable", {
   name: types.maybe(types.string),
   description: types.maybe(types.string),
   unit: types.maybe(types.string),
-  // null values have been seen in the implementation
-  // hopefully we can track down where those come from instead of making this
-  // more complex. If we do have to handle this, here is how it was done before:
-  //     .preProcessSnapshot(sn => {
-  //       // null values have been encountered in the field
-  //       if (sn.value == null) {
-  //         const { value, ...others } = sn;
-  //         return others;
-  //     }
-  //     return sn;
-  // })
   value: types.maybe(types.number),
   inputs: types.array(types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable)))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
   expression: types.maybe(types.string),
   color: types.optional(types.string, "#e98b42")
+})
+.preProcessSnapshot(sn => {
+  // null values have been encountered in the field.
+  // It would be good to discover how these null values are being created, but until then we can
+  // at least gracefully handle them.
+  if (sn.value == null) {
+    const { value, ...others } = sn;
+    return others;
+  }
+  return sn;
 })
 .views(self => ({
   get numberOfInputs() {
