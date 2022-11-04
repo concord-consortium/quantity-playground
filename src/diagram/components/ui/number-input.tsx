@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 
 interface INumberInput {
@@ -11,6 +11,10 @@ interface INumberInput {
 }
 export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
+  useEffect(() => {
+    setValue(realValue?.toString() || "");
+  }, [realValue]);
+  
   const onChange = (e: any) => {
     const val = e.target.value;
     if (isValid(val)) {
