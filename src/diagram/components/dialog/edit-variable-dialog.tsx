@@ -15,7 +15,7 @@ interface IEditVariableDialogContent {
 }
 export const EditVariableDialogContent = observer(({ variable }: IEditVariableDialogContent) => {
   const updateName = (newName: string) => {
-    variable.setName(newName.replace(" ", ""));
+    variable.setName(newName.replace(/ /g, ""));
   };
   
   return (

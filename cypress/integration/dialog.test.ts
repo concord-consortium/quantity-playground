@@ -1,3 +1,5 @@
+import { kMaxNotesCharacters } from "../../src/diagram/utils/validate";
+
 context("Test Diagram interaction", () => {
   before(() => {
     cy.visit("");
@@ -5,8 +7,12 @@ context("Test Diagram interaction", () => {
 
   const editVariableButton = () => cy.get(".edit-variable-button");
   const editVariableDialog = () => cy.get(".qp-dialog");
+  const editVariableOkButton = () => cy.get(".dialog-button").last();
   const nodes = () => cy.get("[data-testid='quantity-node']");
   const nodeToEdit = () => nodes().first();
+  const nameField = () => cy.get("#evd-name");
+  const valueField = () => cy.get("#evd-value");
+  const notesField = () => cy.get("#evd-notes");
   describe("Edit Variable Dialog", () => {
     it("Edit variable button present and active when a node is selected", () => {
       editVariableButton().should("exist");
@@ -18,11 +24,43 @@ context("Test Diagram interaction", () => {
       const variableName = "variable-name";
       editVariableButton().click();
       editVariableDialog().should("exist");
-      cy.get("#evd-name").should("exist");
-      cy.get("#evd-name").type(variableName);
-      cy.get(".dialog-button").last().click();
+      nameField().should("exist");
+      nameField().type(variableName);
+      editVariableOkButton().click();
       editVariableDialog().should("not.exist");
       nodeToEdit().find(".name").should("have.value", variableName);
+    });
+    it("Validation works", () => {
+      // Open the edit variable dialog
+      editVariableButton().click();
+
+      // Enter a name with spaces (spaces should be removed)
+      const nameSpaces = "name with spaces";
+      const nameNoSpaces = nameSpaces.replace(/ /g, "");
+      nameField().clear();
+      nameField().type(nameSpaces);
+
+      // Enter a value with characters (last legal value should be accepted)
+      const illegalValue = ".1a2b";
+      const finalValue = "0.1";
+      valueField().clear();
+      valueField().type(illegalValue);
+      valueField().should("have.class", "invalid");
+
+      // Enter notes that are too long (should truncate)
+      const longNotes = "a".repeat(kMaxNotesCharacters + 5);
+      const legalNotes = "a".repeat(kMaxNotesCharacters);
+      notesField().clear();
+      notesField().type(longNotes);
+
+      // After the value field has been blurred, it should switch to the legal value
+      valueField().should("have.value", finalValue);
+
+      // Save changes and make sure the correct values have been saved
+      editVariableOkButton().click();
+      nodeToEdit().find(".name").should("have.value", nameNoSpaces);
+      nodeToEdit().find(".value").should("have.value", finalValue);
+      nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });
   });
 });
