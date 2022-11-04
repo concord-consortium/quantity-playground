@@ -6,7 +6,7 @@ import { NumberRow } from "./number-row";
 import { TextRow } from "./text-row";
 import { TextAreaRow } from "./text-area-row";
 import { Variable, VariableType } from "../../models/variable";
-import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../../utils/validate";
 
 import "./dialog.scss";
 
@@ -15,7 +15,7 @@ interface IEditVariableDialogContent {
 }
 export const EditVariableDialogContent = observer(({ variable }: IEditVariableDialogContent) => {
   const updateName = (newName: string) => {
-    variable.setName(newName.replace(/ /g, ""));
+    variable.setName(processName(newName));
   };
   
   return (

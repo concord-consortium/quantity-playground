@@ -1,4 +1,4 @@
-import { kMaxNotesCharacters } from "../../src/diagram/utils/validate";
+import { kMaxNotesCharacters, processName } from "../../src/diagram/utils/validate";
 
 context("Test Diagram interaction", () => {
   before(() => {
@@ -36,7 +36,7 @@ context("Test Diagram interaction", () => {
 
       // Enter a name with spaces (spaces should be removed)
       const nameSpaces = "name with spaces";
-      const nameNoSpaces = nameSpaces.replace(/ /g, "");
+      const nameNoSpaces = processName(nameSpaces);
       nameField().clear();
       nameField().type(nameSpaces);
 

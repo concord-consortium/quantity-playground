@@ -9,7 +9,7 @@ import { ColorEditor } from "./color-editor";
 import { NumberInput } from "./ui/number-input";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
-import { kMaxNameCharacters, kMaxNotesCharacters, validNumber } from "../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters, processName, validNumber } from "../utils/validate";
 
 import "./quantity-node.scss";
 
@@ -90,7 +90,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     if (!evt.target.value) {
       variable.setName(undefined);
     } else {
-      variable.setName(evt.target.value);
+      variable.setName(processName(evt.target.value));
     }
   };
 
