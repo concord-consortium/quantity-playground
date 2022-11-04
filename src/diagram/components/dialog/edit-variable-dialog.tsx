@@ -4,11 +4,9 @@ import { applySnapshot, getSnapshot } from "mobx-state-tree";
 
 import { DialogRow } from "./dialog-row";
 import { Variable, VariableType } from "../../models/variable";
-import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters, validNumber } from "../../utils/validate";
 
 import "./dialog.scss";
-
-const validNumber = (v: string) => !isNaN(+v);
 
 interface IEditVariableDialogContent {
   variable: VariableType;
