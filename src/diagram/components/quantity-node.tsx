@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import React, { useState } from "react";
@@ -7,6 +6,7 @@ import TextareaAutosize from "react-textarea-autosize";
 
 import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
+import { NumberInput } from "./ui/number-input";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, validNumber } from "../utils/validate";
@@ -54,8 +54,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const variable = data.node.variable;
 
-  const [value, setValue] = useState(variable.value?.toString() || "");
-
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
@@ -64,7 +62,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   }
 
   const hasExpression = variable.numberOfInputs > 0;
-  const shownValue = hasExpression ? variable.computedValue?.toString() || "" : value;
+  const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
   const handleRemoveNode = () => {
@@ -78,14 +76,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const handleEditColor = (show: boolean) => {
     setShowColorEditor(show);
-  };
-
-  const onValueChange = (evt: any) => {
-    const eValue = evt.target.value;
-    if (validNumber(eValue)) {
-      variable.setValue(+eValue);
-    }
-    setValue(eValue);
   };
 
   const onUnitChange = (evt: any) => {
@@ -113,12 +103,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const renderValueUnitInput = () => {
-    const invalid = value && !validNumber(value);
-    const handleValueBlur = () => setValue(variable.value?.toString() || "");
     return (
       <div className="variable-info-row">
-        <input className={classNames("variable-info", "value", { invalid })} placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
-          maxLength={kMaxNameCharacters} value={value} onMouseDown={e => e.stopPropagation()} onBlur={handleValueBlur} />
+        <NumberInput className="variable-info value" isValid={validNumber} realValue={variable.value} setRealValue={variable.setValue}
+          otherProps={{ placeholder: "value", autoComplete: "off", dataTestid: "variable-value", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
         <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
           onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
       </div>
