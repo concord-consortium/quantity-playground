@@ -1,10 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { applySnapshot, getSnapshot } from "mobx-state-tree";
 
-import { DialogRow } from "./dialog-row";
+import { NumberRow } from "./number-row";
+import { TextRow } from "./text-row";
+import { TextAreaRow } from "./text-area-row";
 import { Variable, VariableType } from "../../models/variable";
-import { kMaxNameCharacters, kMaxNotesCharacters, validNumber } from "../../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters } from "../../utils/validate";
 
 import "./dialog.scss";
 
@@ -15,19 +17,11 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
   const updateName = (newName: string) => {
     variable.setName(newName.replace(" ", ""));
   };
-
-  const [value, setValue] = useState(variable.value?.toString());
-  const updateValue = (newValue: string) => {
-    setValue(newValue);
-    if (validNumber(newValue)) {
-      variable.setValue(+newValue);
-    }
-  };
   
   return (
     <div className="dialog-content">
       <div>Edit Variable:</div>
-      <DialogRow
+      <TextRow
         inputId="evd-name"
         label="Name"
         value={variable.name || ""}
@@ -35,16 +29,17 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
         maxCharacters={kMaxNameCharacters}
         width={230}
       />
-      <DialogRow
+      <TextAreaRow
+        cols={50}
         inputId="evd-notes"
         label="Notes"
-        value={variable.description || ""}
-        setValue={variable.setDescription}
         maxCharacters={kMaxNotesCharacters}
-        textarea={{ cols: 50, rows: 2 }}
+        rows={2}
+        setValue={variable.setDescription}
+        value={variable.description || ""}
       />
-      <DialogRow inputId="evd-units" label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
-      <DialogRow inputId="evd-value" invalid={!validNumber(value || "")} label="Value" value={value || ""} setValue={updateValue} width={82} />
+      <TextRow inputId="evd-units" label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />
+      <NumberRow inputId="evd-value" label="Value" realValue={variable.value} setRealValue={variable.setValue} width={82} />
     </div>
   );
 });

@@ -1,0 +1,28 @@
+import React from "react";
+
+import { DialogRow } from "./dialog-row";
+import { NumberInput } from "../ui/number-input";
+import { validNumber } from "../../utils/validate";
+
+import "./dialog.scss";
+
+interface INumberRow {
+  inputId: string;
+  label: string;
+  realValue?: number;
+  setRealValue: (value: number) => void;
+  width?: number; // Width of text input
+}
+export const NumberRow = ({ inputId, label, realValue, setRealValue, width }: INumberRow) => {
+  const style = { width };
+  const content = (
+    <NumberInput 
+      className="dialog-input dialog-text"
+      isValid={validNumber}
+      realValue={realValue}
+      setRealValue={setRealValue}
+      otherProps={{ id: inputId, style }}
+    />
+  );
+  return <DialogRow content={content} inputId={inputId} label={label} />;
+};
