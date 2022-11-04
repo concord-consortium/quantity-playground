@@ -1,4 +1,4 @@
-import classnames from "classnames";
+import classNames from "classnames";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import React, { useState } from "react";
@@ -82,22 +82,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const onValueChange = (evt: any) => {
     const eValue = evt.target.value;
-    console.log(`eValue`, eValue);
-
     if (validNumber(eValue)) {
-      console.log(`saving value`);
       variable.setValue(+eValue);
     }
     setValue(eValue);
-
-    // if the value is null or undefined or empty just store undefined
-    // if (evt.target.value == null || evt.target.value === "") {
-    //   variable.setValue(undefined);
-    // } else {
-    //   // If the value is the empty string parseFloat turns that into NaN which
-    //   // we want to avoid.
-    //   variable.setValue(parseFloat(evt.target.value));
-    // }
   };
 
   const onUnitChange = (evt: any) => {
@@ -126,10 +114,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const renderValueUnitInput = () => {
     const invalid = value && !validNumber(value);
+    const handleValueBlur = () => setValue(variable.value?.toString() || "");
     return (
       <div className="variable-info-row">
-        <input className={classnames("variable-info", "value", { invalid })} placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
-          maxLength={kMaxNameCharacters} value={value} onMouseDown={e => e.stopPropagation()} />
+        <input className={classNames("variable-info", "value", { invalid })} placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
+          maxLength={kMaxNameCharacters} value={value} onMouseDown={e => e.stopPropagation()} onBlur={handleValueBlur} />
         <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
           onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
       </div>
