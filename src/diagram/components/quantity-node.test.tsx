@@ -6,6 +6,7 @@ import { Variable } from "../models/variable";
 import { DQRoot } from "../models/dq-root";
 import { GenericContainer } from "../models/test-utils";
 import { Diagram } from "./diagram";
+import { kMaxNotesCharacters } from "../utils/validate";
 
 beforeAll(() => {
   // Setup ResizeObserver and offset* properties
@@ -78,6 +79,15 @@ describe("Quantity Node", () => {
     const oldValue = variable.value;
     await userEvent.type(valueTextBox, "letter");
     expect(variable.value).toBe(oldValue);
+    expect(valueTextBox.className.split(" ")).toContain("invalid");
+
+    // Notes are limited to kMaxNotesCharacters
+    const notesTextBox = screen.getByTestId("variable-description");
+    const typedNotes = "a".repeat(kMaxNotesCharacters + 5);
+    const acceptedNotes = "a".repeat(kMaxNotesCharacters);
+    await userEvent.clear(notesTextBox);
+    await userEvent.type(notesTextBox, typedNotes);
+    expect(variable.description).toBe(acceptedNotes);
   });
   it("can edit a variable color", async () => {
     const variable = Variable.create({});
