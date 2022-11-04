@@ -105,8 +105,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitInput = () => {
     return (
       <div className="variable-info-row">
-        <NumberInput className="variable-info value" isValid={validNumber} realValue={variable.value} setRealValue={variable.setValue}
-          otherProps={{ placeholder: "value", autoComplete: "off", dataTestid: "variable-value", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
+        <NumberInput className="variable-info value" dataTestId="variable-value" isValid={validNumber} realValue={variable.value} setRealValue={variable.setValue}
+          otherProps={{ placeholder: "value", autoComplete: "off", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
         <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
           onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
       </div>

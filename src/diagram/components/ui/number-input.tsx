@@ -3,12 +3,13 @@ import classNames from "classnames";
 
 interface INumberInput {
   className?: string;
+  dataTestId?: string;
   isValid: (value: string) => boolean;
   otherProps?: Record<string, any>;
   realValue?: number;
   setRealValue: (value: number) => void;
 }
-export const NumberInput = ({ className, isValid, otherProps, realValue, setRealValue }: INumberInput) => {
+export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
   const onChange = (e: any) => {
     const val = e.target.value;
@@ -20,5 +21,5 @@ export const NumberInput = ({ className, isValid, otherProps, realValue, setReal
   const onBlur = () => setValue(realValue?.toString() || "");
   const invalid = !isValid(value);
 
-  return <input className={classNames(className, { invalid })} value={value} onChange={onChange} onBlur={onBlur} {...otherProps} />;
+  return <input className={classNames(className, { invalid })} data-testid={dataTestId} value={value} onChange={onChange} onBlur={onBlur} {...otherProps} />;
 };
