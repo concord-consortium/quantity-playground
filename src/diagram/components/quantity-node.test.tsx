@@ -74,9 +74,10 @@ describe("Quantity Node", () => {
     expect(variable.unit).toBe("miles");
     expect(variable.description).toBe("a\ndescription");
 
-    //verify cannot enter a non-digit into value input
+    //verify entering a non-number does not change the value
+    const oldValue = variable.value;
     await userEvent.type(valueTextBox, "letter");
-    expect(variable.value).toBe(undefined);
+    expect(variable.value).toBe(oldValue);
   });
   it("can edit a variable color", async () => {
     const variable = Variable.create({});
