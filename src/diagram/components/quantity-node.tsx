@@ -9,7 +9,7 @@ import { ColorEditor } from "./color-editor";
 import { NumberInput } from "./ui/number-input";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
-import { kMaxNameCharacters, kMaxNotesCharacters, processName, validNumber } from "../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } from "../utils/validate";
 
 import "./quantity-node.scss";
 
@@ -105,7 +105,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitInput = () => {
     return (
       <div className="variable-info-row">
-        <NumberInput className="variable-info value" dataTestId="variable-value" isValid={validNumber} realValue={variable.value} setRealValue={variable.setValue}
+        <NumberInput className="variable-info value" dataTestId="variable-value" isValid={isValidNumber} realValue={variable.value} setRealValue={variable.setValue}
           otherProps={{ placeholder: "value", autoComplete: "off", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
         <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
           onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />

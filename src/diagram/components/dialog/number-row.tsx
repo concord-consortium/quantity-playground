@@ -2,7 +2,7 @@ import React from "react";
 
 import { DialogRow } from "./dialog-row";
 import { NumberInput } from "../ui/number-input";
-import { validNumber } from "../../utils/validate";
+import { isValidNumber } from "../../utils/validate";
 
 import "./dialog.scss";
 
@@ -18,7 +18,7 @@ export const NumberRow = ({ inputId, label, realValue, setRealValue, width }: IN
   const content = (
     <NumberInput 
       className="dialog-input dialog-text"
-      isValid={validNumber}
+      isValid={isValidNumber}
       realValue={realValue}
       setRealValue={setRealValue}
       otherProps={{ id: inputId, style }}
