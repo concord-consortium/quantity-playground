@@ -6,6 +6,7 @@ import { Variable } from "../models/variable";
 import { DQRoot } from "../models/dq-root";
 import { GenericContainer } from "../models/test-utils";
 import { Diagram } from "./diagram";
+import { kMaxNotesCharacters, processName } from "../utils/validate";
 
 beforeAll(() => {
   // Setup ResizeObserver and offset* properties
@@ -65,18 +66,29 @@ describe("Quantity Node", () => {
     const valueTextBox = screen.getByTestId("variable-value");
     const unitTextBox = screen.getByTestId("variable-unit");
     const descriptionTextBox = screen.getByTestId("variable-description");
-    await userEvent.type(nameTextBox, "my variable name");
+    const variableName = "my variable name";
+    await userEvent.type(nameTextBox, variableName);
     await userEvent.type(valueTextBox, "45");
     await userEvent.type(unitTextBox, "miles");
     await userEvent.type(descriptionTextBox, "a\ndescription");
-    expect(variable.name).toBe("my variable name");
+    expect(variable.name).toBe(processName(variableName));
     expect(variable.value).toEqual(45);
     expect(variable.unit).toBe("miles");
     expect(variable.description).toBe("a\ndescription");
 
-    //verify cannot enter a non-digit into value input
+    //verify entering a non-number does not change the value
+    const oldValue = variable.value;
     await userEvent.type(valueTextBox, "letter");
-    expect(variable.value).toBe(undefined);
+    expect(variable.value).toBe(oldValue);
+    expect(valueTextBox.className.split(" ")).toContain("invalid");
+
+    // Notes are limited to kMaxNotesCharacters
+    const notesTextBox = screen.getByTestId("variable-description");
+    const typedNotes = "a".repeat(kMaxNotesCharacters + 5);
+    const acceptedNotes = "a".repeat(kMaxNotesCharacters);
+    await userEvent.clear(notesTextBox);
+    await userEvent.type(notesTextBox, typedNotes);
+    expect(variable.description).toBe(acceptedNotes);
   });
   it("can edit a variable color", async () => {
     const variable = Variable.create({});

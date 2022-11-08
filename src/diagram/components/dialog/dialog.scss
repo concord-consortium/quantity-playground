@@ -1,3 +1,7 @@
+@use "../../../scss/vars.scss";
+
+$invalid-outline: .5px solid vars.$invalid-red;
+
 .qp-dialog {
   position: absolute;
   left: 50px;
@@ -36,7 +40,12 @@
   font-size: 14px;
 
   &.invalid {
-    color: red;
+    border: 1.5px solid vars.$invalid-red;
+    outline: $invalid-outline;
+
+    &:focus {
+      outline: $invalid-outline;
+    }
   }
 }
 
