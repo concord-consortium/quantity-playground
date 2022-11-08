@@ -3,7 +3,9 @@ import { EditVariableDialogContent, updateVariable } from "./components/dialog/e
 import { DQNode } from "./models/dq-node";
 import { DQRoot } from "./models/dq-root";
 import { Variable, VariableType } from "./models/variable";
+import { VariableChip } from "./components/ui/variable-chip";
+import { VariableChipList } from "./components/ui/variable-chip-list";
 
 import "./components/diagram.scss";
 
-export { Diagram, EditVariableDialogContent, updateVariable, DQNode, DQRoot, Variable, VariableType};
+export { Diagram, EditVariableDialogContent, updateVariable, DQNode, DQRoot, Variable, VariableChip, VariableChipList, VariableType};
