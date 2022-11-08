@@ -1,0 +1,7 @@
+@use "../../../scss/vars.scss";
+
+.variable-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}

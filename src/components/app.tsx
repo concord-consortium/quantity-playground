@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Diagram } from "../diagram/components/diagram";
 import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
+import { ListVariablesDialog } from "../diagram/components/dialog/list-variables-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
 import defaultDiagram from "./default-diagram";
@@ -86,6 +87,7 @@ const getDiagramExport = () => {
 
 export const App = observer(() => {
   const [showEditVariableDialog, setShowEditVariableDialog] = useState(false);
+  const [showListVariablesDialog, setShowListVariablesDialog] = useState(false);
 
   return (
     <div className="app">
@@ -93,12 +95,18 @@ export const App = observer(() => {
         dqRoot={appStore.diagram}
         {...{showNestedSet, getDiagramExport}}
         showEditVariableDialog={() => setShowEditVariableDialog(true)}
+        showListVariablesDialog={() => setShowListVariablesDialog(true)}
       />
       {showEditVariableDialog && appStore.diagram.selectedNode &&
         <EditVariableDialog
           onClose={() => setShowEditVariableDialog(false)}
           onSave={updateVariable}
           variable={appStore.diagram.selectedNode.variable}
+        />}
+      {showListVariablesDialog &&
+        <ListVariablesDialog
+          onClose={() => setShowListVariablesDialog(false)}
+          variables={appStore.diagram.variables}
         />}
     </div>
   );

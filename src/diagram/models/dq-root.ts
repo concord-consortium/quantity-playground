@@ -31,6 +31,11 @@ export const DQRoot = types.model("DQRoot", {
       map[node.variableId] = node;
     });
     return map;
+  },
+  get variables() {
+    const variables: VariableType[] = [];
+    self.nodes.forEach(node => variables.push(node.variable));
+    return variables;
   }
 }))
 .views(self => ({

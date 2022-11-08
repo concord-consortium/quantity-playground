@@ -1,3 +1,5 @@
+@use "../../../scss/vars.scss";
+
 .variable-chip {
   border: 1px solid black;
   border-radius: 5px;
@@ -16,6 +18,10 @@
 
   .variable-value {
     padding: 0 2px;
+  }
+
+  &.selected {
+    outline: 2px solid vars.$select-blue;
   }
 }
 

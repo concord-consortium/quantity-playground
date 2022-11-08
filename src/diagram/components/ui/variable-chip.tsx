@@ -1,17 +1,21 @@
-import { observer } from "mobx-react-lite";
 import React from "react";
+import { observer } from "mobx-react-lite";
+import classNames from "classnames";
 
 import { VariableType } from "../../models/variable";
 
-import "./variables-chip.scss";
+import "./variable-chip.scss";
 
 export const kEmptyVariable = "<no name>";
 
-interface IProps {
+interface IVariableChip {
+  nameOnly?: boolean;
+  onClick?: (variable: VariableType) => void;
+  selected?: boolean;
   variable: VariableType;
 }
 
-export const VariableChip = observer(({variable}: IProps) => {
+export const VariableChip = observer(({ nameOnly, onClick, selected, variable }: IVariableChip) => {
   const name = variable.name;
   const value = variable.computedValue;
   const valueString = variable.computedValueWithSignificantDigits;
@@ -20,23 +24,32 @@ export const VariableChip = observer(({variable}: IProps) => {
   const showEquals = showValue && name;
   const wrapUnit = !showValue;
 
-  if (!name && !showValue && !unit) {
-    return <span className="variable-name">{kEmptyVariable}</span>;
-  }
+  const className = classNames("variable-chip", { selected });
 
   return (
-    <>
-      {name && <span className="variable-name">{name}</span>}
-      {showEquals && <span className="variable-equals">=</span>}
-      {showValue && <span className="variable-value">{valueString}</span>}
-      {unit &&
-        <>
-          {wrapUnit && "("}
-            <span className="variable-unit">{unit}</span>
-          {wrapUnit && ")"}
-        </>
+    <span className={className} onClick={e => onClick?.(variable)} >
+      {!name && !showValue && !unit
+        ? <span className="variable-name">{kEmptyVariable}</span>
+        : (
+          <>
+            {name && <span className="variable-name">{name}</span>}
+            {(!nameOnly || !name) &&
+              <>
+                {showEquals && <span className="variable-equals">=</span>}
+                {showValue && <span className="variable-value">{valueString}</span>}
+                {unit &&
+                  <>
+                    {wrapUnit && "("}
+                      <span className="variable-unit">{unit}</span>
+                    {wrapUnit && ")"}
+                  </>
+                }
+              </>
+            }
+          </>
+        )
       }
-    </>
+    </span>
   );
 });
 VariableChip.displayName = "VariableChip";

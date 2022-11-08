@@ -7,9 +7,10 @@ interface IProps {
   dqRoot: DQRootType;
   getDiagramExport?: () => unknown;
   showEditVariableDialog?: () => void;
+  showListVariablesDialog?: () => void;
 }
 
-export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, showEditVariableDialog }) => {
+export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, showEditVariableDialog, showListVariablesDialog }) => {
     const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
@@ -38,6 +39,14 @@ export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, s
             onClick={showEditVariableDialog}
           >
             Edit Variable
+          </button>
+        }
+        { showListVariablesDialog &&
+          <button
+            className="list-variable-button"
+            onClick={showListVariablesDialog}
+          >
+            List Variables
           </button>
         }
       </div>
