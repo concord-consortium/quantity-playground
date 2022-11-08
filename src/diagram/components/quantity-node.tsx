@@ -2,11 +2,14 @@ import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
-import { DQNodeType } from "../models/dq-node";
-import { DQRootType } from "../models/dq-root";
+import TextareaAutosize from "react-textarea-autosize";
+
 import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
-import TextareaAutosize from "react-textarea-autosize";
+import { NumberInput } from "./ui/number-input";
+import { DQNodeType } from "../models/dq-node";
+import { DQRootType } from "../models/dq-root";
+import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } from "../utils/validate";
 
 import "./quantity-node.scss";
 
@@ -49,13 +52,18 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const [showExpressionEditor, setShowExpressionEditor] = useState(false);
   const [showColorEditor, setShowColorEditor] = useState(false);
 
+  const variable = data.node.variable;
+
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
   if (!isAlive(data.node) || !data.node.tryVariable) {
       return null;
   }
-  const variable = data.node.variable;
+
+  const hasExpression = variable.numberOfInputs > 0;
+  const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
+  const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
   const handleRemoveNode = () => {
     const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
@@ -70,17 +78,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowColorEditor(show);
   };
 
-  const onValueChange = (evt: any) => {
-    // if the value is null or undefined or empty just store undefined
-    if (evt.target.value == null || evt.target.value === "") {
-      variable.setValue(undefined);
-    } else {
-      // If the value is the empty string parseFloat turns that into NaN which
-      // we want to avoid.
-      variable.setValue(parseFloat(evt.target.value));
-    }
-  };
-
   const onUnitChange = (evt: any) => {
     if (!evt.target.value) {
       variable.setUnit(undefined);
@@ -93,7 +90,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     if (!evt.target.value) {
       variable.setName(undefined);
     } else {
-      variable.setName(evt.target.value);
+      variable.setName(processName(evt.target.value));
     }
   };
 
@@ -108,8 +105,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitInput = () => {
     return (
       <div className="variable-info-row">
-        <input className="variable-info value" type="number" placeholder="value" autoComplete="off" onChange={onValueChange} data-testid="variable-value"
-          value={shownValue !== undefined ? shownValue.toString() : ""} onMouseDown={e => e.stopPropagation()} />
+        <NumberInput className="variable-info value" dataTestId="variable-value" isValid={isValidNumber} realValue={variable.value} setRealValue={variable.setValue}
+          otherProps={{ placeholder: "value", autoComplete: "off", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
         <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
           onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
       </div>
@@ -124,9 +121,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
 
-  const hasExpression = variable.numberOfInputs > 0;
-  const shownValue = hasExpression ? variable.computedValue : variable.value;
-  const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
@@ -155,7 +149,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
         <div className="variable-info-row">
           <TextareaAutosize className="variable-description-area" value={variable.description || ""}
-                            onChange={onDescriptionChange} minRows={1}
+                            onChange={onDescriptionChange} minRows={1} maxLength={kMaxNotesCharacters}
                             maxRows={4}  placeholder={"description"} data-testid={"variable-description"}/>
         </div>
         { variable.computedValueError &&

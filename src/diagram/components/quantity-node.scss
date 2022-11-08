@@ -1,3 +1,5 @@
+@use "../../scss/vars.scss";
+
 $node-width: 180px;
 $node-height: 120px;
 $node-inner-width: 160px;
@@ -124,6 +126,9 @@ $gray-mid: #bcbcbc;
       }
       &.no-value {
         color: gray;
+      }
+      &.invalid {
+        outline: 2px solid vars.$invalid-red;
       }
     }
     .error-message {
