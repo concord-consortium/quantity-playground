@@ -9,13 +9,14 @@ import "./variable-chip.scss";
 export const kEmptyVariable = "<no name>";
 
 interface IVariableChip {
+  className?: string;
   nameOnly?: boolean;
   onClick?: (variable: VariableType) => void;
   selected?: boolean;
   variable: VariableType;
 }
 
-export const VariableChip = observer(({ nameOnly, onClick, selected, variable }: IVariableChip) => {
+export const VariableChip = observer(({ className, nameOnly, onClick, selected, variable }: IVariableChip) => {
   const name = variable.name;
   const value = variable.computedValue;
   const valueString = variable.computedValueWithSignificantDigits;
@@ -24,10 +25,10 @@ export const VariableChip = observer(({ nameOnly, onClick, selected, variable }:
   const showEquals = showValue && name;
   const wrapUnit = !showValue;
 
-  const className = classNames("variable-chip", { selected });
+  const classes = classNames("variable-chip", className, { selected });
 
   return (
-    <span className={className} onClick={e => onClick?.(variable)} >
+    <span className={classes} onClick={e => onClick?.(variable)} >
       {!name && !showValue && !unit
         ? <span className="variable-name">{kEmptyVariable}</span>
         : (

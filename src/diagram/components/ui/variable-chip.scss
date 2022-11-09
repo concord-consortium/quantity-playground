@@ -23,8 +23,13 @@
   &.selected {
     outline: 2px solid vars.$select-blue;
   }
+
+  // So selection matches text selection in slate
+  &.slate-selected {
+    outline: 2px solid lightskyblue;
+  }
 }
 
-.variable-chip-highlight {
-  box-shadow: 0 0 0 2px lightskyblue;
-}
+// .variable-chip-highlight {
+//   box-shadow: 0 0 0 2px lightskyblue;
+// }
