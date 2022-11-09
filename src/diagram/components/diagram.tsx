@@ -28,11 +28,10 @@ const edgeTypes = {
 interface IProps {
   dqRoot: DQRootType;
   showEditVariableDialog?: () => void;
-  showListVariablesDialog?: () => void;
   showNestedSet?: boolean;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog, showListVariablesDialog }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
@@ -164,7 +163,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog, sho
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog, showListVariablesDialog}}/>
+          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
