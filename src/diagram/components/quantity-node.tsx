@@ -3,6 +3,7 @@ import { isAlive } from "mobx-state-tree";
 import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
+import classNames from "classnames";
 
 import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
@@ -126,8 +127,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
 
+  const classnames = classNames(
+    "node",
+    hasExpression && "expression-shown",
+    data.dqRoot.selectedNode === data.node && "selected"
+  );
   return (
-    <div className={`node ${hasExpression ? "expression-shown" : ""}`} style={{background:variable.color}} data-testid="quantity-node">
+    <div className={classnames} style={{background:variable.color}} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
         <DeleteIcon/>
       </div>

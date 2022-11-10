@@ -27,6 +27,18 @@ $gray-mid: #bcbcbc;
     height: calc($node-height + 30px);
   }
 
+  &:hover {
+    outline: 2px solid vars.$hover-blue;
+  }
+
+  &.selected {
+    outline: 2px solid vars.$select-blue;
+
+    &:hover {
+      outline-color: vars.$select-blue;
+    }
+  }
+
   .remove-node-button {
     position: absolute;
     right: 5px;
