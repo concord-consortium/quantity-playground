@@ -2,6 +2,7 @@ import { applySnapshot, getSnapshot, onSnapshot } from "mobx-state-tree";
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Diagram } from "../diagram/components/diagram";
+import { VariableChipListContainer } from "../diagram/components/ui/variable-chip-list-container";
 import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
@@ -11,6 +12,7 @@ import "./app.scss";
 
 const url = new URL(window.location.href);
 const showNestedSet = !(url.searchParams.get("nestedSet") == null);
+const showVariableList = !(url.searchParams.get("showVariableList") == null);
 
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
@@ -100,6 +102,7 @@ export const App = observer(() => {
           onSave={updateVariable}
           variable={appStore.diagram.selectedNode.variable}
         />}
+      {showVariableList && <VariableChipListContainer variables={appStore.diagram.variables} />}
     </div>
   );
 });

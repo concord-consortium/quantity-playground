@@ -1,0 +1,31 @@
+@use "../../../scss/vars.scss";
+
+.variable-chip {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 1px 3px;
+  margin: 0 1px;
+  user-select: none;
+  white-space: nowrap;
+
+  .variable-name {
+    padding: 0 2px;
+  }
+
+  .variable-equals {
+    padding: 0 2px;
+  }
+
+  .variable-value {
+    padding: 0 2px;
+  }
+
+  &.selected {
+    outline: 2px solid vars.$select-blue;
+  }
+
+  // So selection matches text selection in slate
+  &.slate-selected {
+    outline: 2px solid lightskyblue;
+  }
+}
