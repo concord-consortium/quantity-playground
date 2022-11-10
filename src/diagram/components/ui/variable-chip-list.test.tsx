@@ -1,5 +1,4 @@
 import React from "react";
-// import { applySnapshot } from "mobx-state-tree";
 import { render } from "@testing-library/react";
 
 import { VariableChipList } from "./variable-chip-list";
