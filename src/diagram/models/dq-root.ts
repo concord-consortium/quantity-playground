@@ -56,7 +56,7 @@ export const DQRoot = types.model("DQRoot", {
     if (self.selectedNode === node) {
       self.selectedNode = undefined;
     }
-    variables.removeVariable(node.variable);
+    // variables.removeVariable(node.variable);
   },
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
