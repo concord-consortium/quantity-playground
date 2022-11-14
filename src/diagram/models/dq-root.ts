@@ -6,6 +6,7 @@ import { VariableType } from "./variable";
 export interface VariablesAPI {
   createVariable: () => VariableType;
   removeVariable: (variable?: VariableType) => void;
+  getVariables: () => VariableType[];
 }
 
 export const DQRoot = types.model("DQRoot", {
@@ -39,6 +40,16 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
+  get unusedVariables() {
+    const variables = self.variablesAPI?.getVariables();
+    const unusedVariables: VariableType[] = [];
+    variables?.forEach(variable => {
+      if (!self.variables.includes(variable)) {
+        unusedVariables.push(variable);
+      }
+    });
+    return unusedVariables;
+  },
   getNodeFromVariableId(id: string) {
     return self.nodeFromVariableMap[id];
   }
@@ -56,6 +67,7 @@ export const DQRoot = types.model("DQRoot", {
     if (self.selectedNode === node) {
       self.selectedNode = undefined;
     }
+    self.nodes.delete(node.id);
     // variables.removeVariable(node.variable);
   },
   setTransform(transform: FlowTransform) {

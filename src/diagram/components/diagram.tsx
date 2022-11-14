@@ -29,9 +29,10 @@ interface IProps {
   dqRoot: DQRootType;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
+  showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
@@ -163,7 +164,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog}}/>
+          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

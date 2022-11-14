@@ -25,7 +25,9 @@ export const AppStore = types.model("AppStore", {
         setTimeout(resolve, 1);
       });
 
-      destroy(node);
+      if (node) {
+        destroy(node);
+      }
     }
   });
 
@@ -40,6 +42,11 @@ export const AppStore = types.model("AppStore", {
     createVariable
   };
 })
+.views(self => ({
+  getVariables() {
+    return Array.from(self.variables.values());
+  }
+}))
 .actions(self => ({
   afterCreate() {
     self.diagram.setVariablesAPI(self);

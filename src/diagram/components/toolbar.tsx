@@ -7,9 +7,10 @@ interface IProps {
   dqRoot: DQRootType;
   getDiagramExport?: () => unknown;
   showEditVariableDialog?: () => void;
+  showUnusedVariableDialog?: () => void;
 }
 
-export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, showEditVariableDialog }) => {
+export const ToolBar: React.FC<IProps> = observer(function ToolBar({ dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog }) {
     const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
@@ -38,6 +39,15 @@ export const ToolBar: React.FC<IProps> = observer(({ dqRoot, getDiagramExport, s
             onClick={showEditVariableDialog}
           >
             Edit Variable
+          </button>
+        }
+        { showUnusedVariableDialog &&
+          <button
+            className="unused-variable-button"
+            disabled={dqRoot.unusedVariables.length <= 0}
+            onClick={showUnusedVariableDialog}
+          >
+            Unused Variables
           </button>
         }
       </div>
