@@ -12,14 +12,10 @@ interface IVariableChipListContainer {
 export const VariableChipListContainer = ({ variables }: IVariableChipListContainer) => {
   const { selectedVariables, toggleVariable } = useSelectMultipleVariables();
 
-  const onClick = (variable: VariableType) => {
-    toggleVariable(variable);
-  };
-
   return (
     <div className="variable-chip-list-container">
       <VariableChipList
-        onClick={onClick}
+        onClick={toggleVariable}
         selectedVariables={selectedVariables}
         variables={variables}
       />

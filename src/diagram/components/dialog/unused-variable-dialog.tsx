@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 
 import { VariableChipList } from "../ui/variable-chip-list";
 import { DQRootType } from "../../models/dq-root";
-import { VariableType } from "../../models/variable";
 import { useSelectMultipleVariables } from "../../../hooks/use-select-multiple-variables";
 
 import "./dialog.scss";
@@ -23,11 +22,9 @@ export const UnusedVariableDialog =
     onClose();
   };
 
-  const handleChipClick = (variable: VariableType) => toggleVariable(variable);
-
   return (
     <div className="qp-dialog">
-      <VariableChipList onClick={handleChipClick} selectedVariables={selectedVariables} variables={root.unusedVariables} />
+      <VariableChipList onClick={toggleVariable} selectedVariables={selectedVariables} variables={root.unusedVariables} />
       <div className="dialog-button-row">
         <button className="dialog-button" onClick={onClose}>Cancel</button>
         <button className="dialog-button" onClick={handleOK}>Permanently Remove</button>

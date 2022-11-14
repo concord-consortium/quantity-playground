@@ -127,11 +127,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
 
-  const classnames = classNames(
-    "node",
-    hasExpression && "expression-shown",
-    data.dqRoot.selectedNode === data.node && "selected"
-  );
+  const classnames = classNames({
+    node: true,
+    "expression-shown": hasExpression,
+    selected: data.dqRoot.selectedNode === data.node
+  });
   return (
     <div className={classnames} style={{background:variable.color}} data-testid="quantity-node">
       <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
