@@ -77,14 +77,19 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .actions(self => ({
+  insertNode(variable: VariableType, {x,y}: {x: number, y: number}) {
+    const node = DQNode.create({ variable: variable.id, x, y});
+    self.addNode(node);
+  }
+}))
+.actions(self => ({
   createNode({x,y}: {x:number, y:number}) {
     const variables = self.variablesAPI;
     if (!variables) {
       throw new Error("Need variables before creating nodes");
     }
     const variable = variables.createVariable();
-    const node = DQNode.create({variable: variable.id, x, y});
-    self.addNode(node);
+    self.insertNode(variable, {x, y});
   },
 
   setVariablesAPI(variablesAPI: VariablesAPI) {
