@@ -4,6 +4,8 @@ import { VariableType } from "../diagram";
 export const useSelectMultipleVariables = () => {
   const [selectedVariables, setSelectedVariables] = useState<VariableType[]>([]);
 
+  const clearSelectedVariables = () => setSelectedVariables([]);
+
   const toggleVariable = (variable: VariableType) => {
     let found = false;
     const newSV = [];
@@ -18,5 +20,5 @@ export const useSelectMultipleVariables = () => {
     setSelectedVariables(newSV);
   };
 
-  return { selectedVariables, toggleVariable };
+  return { clearSelectedVariables, selectedVariables, toggleVariable };
 };
