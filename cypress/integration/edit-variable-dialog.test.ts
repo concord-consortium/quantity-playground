@@ -58,8 +58,6 @@ context("Test Edit Variable Dialog", () => {
       // Save changes and make sure the correct values have been saved
       editVariableOkButton().click();
       nodeToEdit().find(".name").should("have.value", nameNoSpaces);
-      // We have to select and deselect the value field for the undefined value to show up
-      nodeToEdit().find(".value").click().blur();
       nodeToEdit().find(".value").should("have.value", "");
       nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });

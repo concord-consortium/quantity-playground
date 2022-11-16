@@ -77,7 +77,7 @@ describe("Quantity Node", () => {
 
     //verify entering a non-number does not change the value
     await userEvent.type(valueTextBox, "letter");
-    expect(variable.value).toBe(undefined);
+    expect(variable.value).toBe(45);
     expect(valueTextBox.className.split(" ")).toContain("invalid");
 
     // Notes are limited to kMaxNotesCharacters
