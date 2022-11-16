@@ -42,7 +42,6 @@ context("Test Diagram interaction", () => {
 
       // Enter a value with characters (last legal value should be accepted)
       const illegalValue = ".1a2b";
-      const finalValue = "0.1";
       valueField().clear();
       valueField().type(illegalValue);
       valueField().should("have.class", "invalid");
@@ -54,12 +53,14 @@ context("Test Diagram interaction", () => {
       notesField().type(longNotes);
 
       // After the value field has been blurred, it should switch to the legal value
-      valueField().should("have.value", finalValue);
+      valueField().should("have.value", "");
 
       // Save changes and make sure the correct values have been saved
       editVariableOkButton().click();
       nodeToEdit().find(".name").should("have.value", nameNoSpaces);
-      nodeToEdit().find(".value").should("have.value", finalValue);
+      // We have to select and deselect the value field for the undefined value to show up
+      nodeToEdit().find(".value").click().blur();
+      nodeToEdit().find(".value").should("have.value", "");
       nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });
   });
