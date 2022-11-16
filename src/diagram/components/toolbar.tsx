@@ -4,13 +4,14 @@ import { observer } from "mobx-react-lite";
 import { DQRootType } from "../models/dq-root";
 
 interface IProps {
+  deleteCard?: () => void;
   dqRoot: DQRootType;
   getDiagramExport?: () => unknown;
   showEditVariableDialog?: () => void;
   showUnusedVariableDialog?: () => void;
 }
 
-export const ToolBar: React.FC<IProps> = observer(function ToolBar({ dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog }) {
+export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard, dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog }) {
     const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData("application/reactflow", "quantity");
         event.dataTransfer.effectAllowed = "move";
@@ -48,6 +49,15 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ dqRoot, get
             onClick={showUnusedVariableDialog}
           >
             Unused Variables
+          </button>
+        }
+        { deleteCard &&
+          <button
+            className="delete-card-button"
+            disabled={!dqRoot.selectedNode}
+            onClick={deleteCard}
+          >
+            Delete Card
           </button>
         }
       </div>

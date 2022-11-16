@@ -14,14 +14,6 @@ import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } f
 
 import "./quantity-node.scss";
 
-const DeleteIcon = () =>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">
-    <path d="M5.41,4,7.93,1.49a.27.27,0,0,0,0-.36L6.87.07a.27.27,0,0,0-.36,0L4,2.59,1.49.07a.27.27,
-0,0,0-.36,0L.07,1.13a.27.27,0,0,0,0,.36L2.59,4,.07,6.51a.27.27,0,0,0,0,.36L1.13,7.93a.27.27,0,0,
-0,.36,0L4,5.41,6.51,7.93a.27.27,0,0,0,.36,0L7.93,6.87a.27.27,0,0,0,0-.36Z"/>
-  </svg>
-;
-
 const EditIcon = () =>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
     <path d="M12.06,4,10.94,5.16a.3.3,0,0,1-.41,0L7.84,2.47a.3.3,0,0,1,0-.41L9,.94a1.16,1.16,0,0,1,1.64,0L12.06,2.4A1.16,1.16,0,0,1,12.06,4ZM6.88,3,.52,9.38,0,12.32A.58.58,0,0,0,.68,13l2.95-.51L10,6.12a.31.31,0,0,0,0-.42L7.3,3a.29.29,0,0,0-.42,0ZM3,8.83a.33.33,0,0,1,0-.48L6.73,4.62a.34.34,0,0,1,.48,0,.33.33,0,0,1,0,.48L3.48,8.83a.33.33,0,0,1-.47,0Zm-.88,2H3.29v.88L1.73,12,1,11.27,1.25,9.7h.88Z" />
@@ -65,11 +57,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const hasExpression = variable.numberOfInputs > 0;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
-
-  const handleRemoveNode = () => {
-    const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
-    data.dqRoot.removeNode(nodeToRemove);
-  };
 
   const handleEditExpression = (show: boolean) => {
     setShowExpressionEditor(show);
@@ -134,9 +121,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   });
   return (
     <div className={classnames} style={{background:variable.color}} data-testid="quantity-node">
-      <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
-        <DeleteIcon/>
-      </div>
       <div className="variable-info-container">
         <div className="variable-info-row">
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"

@@ -96,6 +96,7 @@ export const App = observer(() => {
       <Diagram
         dqRoot={appStore.diagram}
         {...{showNestedSet, getDiagramExport}}
+        showDeleteCardButton={true}
         showEditVariableDialog={() => setShowEditVariableDialog(true)}
         showUnusedVariableDialog={() => setShowUnusedVariableDialog(true)}
       />
