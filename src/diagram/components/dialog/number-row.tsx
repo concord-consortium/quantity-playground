@@ -10,7 +10,7 @@ interface INumberRow {
   inputId: string;
   label: string;
   realValue?: number;
-  setRealValue: (value: number) => void;
+  setRealValue: (value: number | undefined) => void;
   width?: number; // Width of text input
 }
 export const NumberRow = ({ inputId, label, realValue, setRealValue, width }: INumberRow) => {
