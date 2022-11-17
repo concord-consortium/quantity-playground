@@ -1,4 +1,4 @@
-import { Instance, types } from "mobx-state-tree";
+import { destroy, Instance, isValidReference, types } from "mobx-state-tree";
 import { Elements, FlowTransform } from "react-flow-renderer/nocss";
 import { DQNode, DQNodeType } from "./dq-node";
 import { VariableType } from "./variable";
@@ -18,6 +18,17 @@ export const DQRoot = types.model("DQRoot", {
   connectingVariable: undefined as VariableType | undefined,
   selectedNode: undefined as DQNodeType | undefined
 }))
+.actions(self => ({
+  afterCreate() {
+    // If any nodes reference non-existent variables, destroy them
+    self.nodes.forEach(node => {
+      if (!isValidReference(() => node.variable)) {
+        console.warn(`Found node with non-existent variable`, node);
+        destroy(node);
+      }
+    });
+  }
+}))
 .views(self => ({
   get reactFlowElements() {
     const elements: Elements = [];
@@ -35,7 +46,9 @@ export const DQRoot = types.model("DQRoot", {
   },
   get variables() {
     const variables: VariableType[] = [];
-    self.nodes.forEach(node => variables.push(node.variable));
+    self.nodes.forEach(node => {
+      variables.push(node.variable);
+    });
     return variables;
   }
 }))
