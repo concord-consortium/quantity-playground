@@ -48,7 +48,6 @@ describe("Quantity Node", () => {
     render(<Diagram dqRoot={root} />);
     expect(screen.getByTestId("diagram")).toBeInTheDocument();
     expect(screen.getByTestId("quantity-node")).toBeInTheDocument();
-    expect(screen.getByTestId("delete-node-button")).toBeInTheDocument();
   });
   it("quantity node entries should be saved", async () => {
     const variable = Variable.create({});
@@ -77,9 +76,8 @@ describe("Quantity Node", () => {
     expect(variable.description).toBe("a\ndescription");
 
     //verify entering a non-number does not change the value
-    const oldValue = variable.value;
     await userEvent.type(valueTextBox, "letter");
-    expect(variable.value).toBe(oldValue);
+    expect(variable.value).toBe(45);
     expect(valueTextBox.className.split(" ")).toContain("invalid");
 
     // Notes are limited to kMaxNotesCharacters

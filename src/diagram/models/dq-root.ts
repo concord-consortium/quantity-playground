@@ -6,6 +6,7 @@ import { VariableType } from "./variable";
 export interface VariablesAPI {
   createVariable: () => VariableType;
   removeVariable: (variable?: VariableType) => void;
+  getVariables: () => VariableType[];
 }
 
 export const DQRoot = types.model("DQRoot", {
@@ -39,6 +40,16 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
+  get unusedVariables() {
+    const variables = self.variablesAPI?.getVariables();
+    const unusedVariables: VariableType[] = [];
+    variables?.forEach(variable => {
+      if (!self.variables.includes(variable)) {
+        unusedVariables.push(variable);
+      }
+    });
+    return unusedVariables;
+  },
   getNodeFromVariableId(id: string) {
     return self.nodeFromVariableMap[id];
   }
@@ -56,7 +67,7 @@ export const DQRoot = types.model("DQRoot", {
     if (self.selectedNode === node) {
       self.selectedNode = undefined;
     }
-    variables.removeVariable(node.variable);
+    self.nodes.delete(node.id);
   },
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
@@ -66,14 +77,19 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .actions(self => ({
+  insertNode(variable: VariableType, {x,y}: {x: number, y: number}) {
+    const node = DQNode.create({ variable: variable.id, x, y});
+    self.addNode(node);
+  }
+}))
+.actions(self => ({
   createNode({x,y}: {x:number, y:number}) {
     const variables = self.variablesAPI;
     if (!variables) {
       throw new Error("Need variables before creating nodes");
     }
     const variable = variables.createVariable();
-    const node = DQNode.create({variable: variable.id, x, y});
-    self.addNode(node);
+    self.insertNode(variable, {x, y});
   },
 
   setVariablesAPI(variablesAPI: VariablesAPI) {

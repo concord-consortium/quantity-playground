@@ -7,7 +7,7 @@ interface INumberInput {
   isValid: (value: string) => boolean;
   otherProps?: Record<string, any>;
   realValue?: number;
-  setRealValue: (value: number) => void;
+  setRealValue: (value: number | undefined) => void;
 }
 export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
@@ -16,14 +16,18 @@ export const NumberInput = ({ className, dataTestId, isValid, otherProps, realVa
   }, [realValue]);
   
   const onChange = (e: any) => {
-    const val = e.target.value;
-    if (isValid(val)) {
-      setRealValue(+val);
-    }
-    setValue(val);
+    setValue(e.target.value);
   };
-  const onBlur = () => setValue(realValue?.toString() || "");
-  const invalid = !isValid(value);
+  const onBlur = () => {
+    if (value === "" || !isValid(value)) {
+      setRealValue(undefined);
+    } else {
+      setRealValue(+value);
+    }
+  };
+
+  // We explicitly make "" valid here because it represents a variable with no specified value
+  const invalid = value !== "" && !isValid(value);
 
   return <input className={classNames(className, { invalid })} data-testid={dataTestId} value={value} onChange={onChange} onBlur={onBlur} {...otherProps} />;
 };

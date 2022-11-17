@@ -6,12 +6,13 @@ import { VariableType } from "../../models/variable";
 import "./variable-chip-list.scss";
 
 interface IVariableChipList {
+  className?: string;
   nameOnly?: boolean;
   onClick?: (variable: VariableType) => void;
   selectedVariables?: VariableType | VariableType[];
   variables: VariableType[];
 }
-export const VariableChipList = ({ nameOnly, onClick, selectedVariables, variables }: IVariableChipList) => {
+export const VariableChipList = ({ className, nameOnly, onClick, selectedVariables, variables }: IVariableChipList) => {
   return (
     <div className="variable-chip-list">
       {
@@ -20,6 +21,7 @@ export const VariableChipList = ({ nameOnly, onClick, selectedVariables, variabl
             ? selectedVariables.includes(variable)
             : selectedVariables === variable;
           return <VariableChip
+            className={className}
             key={variable.id}
             nameOnly={nameOnly}
             onClick={onClick}

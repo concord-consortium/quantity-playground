@@ -3,6 +3,7 @@ import { isAlive } from "mobx-state-tree";
 import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
+import classNames from "classnames";
 
 import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
@@ -12,14 +13,6 @@ import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } from "../utils/validate";
 
 import "./quantity-node.scss";
-
-const DeleteIcon = () =>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">
-    <path d="M5.41,4,7.93,1.49a.27.27,0,0,0,0-.36L6.87.07a.27.27,0,0,0-.36,0L4,2.59,1.49.07a.27.27,
-0,0,0-.36,0L.07,1.13a.27.27,0,0,0,0,.36L2.59,4,.07,6.51a.27.27,0,0,0,0,.36L1.13,7.93a.27.27,0,0,
-0,.36,0L4,5.41,6.51,7.93a.27.27,0,0,0,.36,0L7.93,6.87a.27.27,0,0,0,0-.36Z"/>
-  </svg>
-;
 
 const EditIcon = () =>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
@@ -64,11 +57,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const hasExpression = variable.numberOfInputs > 0;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
-
-  const handleRemoveNode = () => {
-    const nodeToRemove = data.dqRoot.getNodeFromVariableId(variable.id);
-    data.dqRoot.removeNode(nodeToRemove);
-  };
 
   const handleEditExpression = (show: boolean) => {
     setShowExpressionEditor(show);
@@ -126,11 +114,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
 
+  const classnames = classNames({
+    node: true,
+    "expression-shown": hasExpression,
+    selected: data.dqRoot.selectedNode === data.node
+  });
   return (
-    <div className={`node ${hasExpression ? "expression-shown" : ""}`} style={{background:variable.color}} data-testid="quantity-node">
-      <div className="remove-node-button" onClick={handleRemoveNode} title={"Delete Node"} data-testid={"delete-node-button"}>
-        <DeleteIcon/>
-      </div>
+    <div className={classnames} style={{background:variable.color}} data-testid="quantity-node">
       <div className="variable-info-container">
         <div className="variable-info-row">
           <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"

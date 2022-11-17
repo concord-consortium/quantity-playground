@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Diagram } from "../diagram/components/diagram";
 import { VariableChipListContainer } from "../diagram/components/ui/variable-chip-list-container";
 import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
+import { UnusedVariableDialog } from "../diagram/components/dialog/unused-variable-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
 import defaultDiagram from "./default-diagram";
@@ -88,19 +89,27 @@ const getDiagramExport = () => {
 
 export const App = observer(() => {
   const [showEditVariableDialog, setShowEditVariableDialog] = useState(false);
+  const [showUnusedVariableDialog, setShowUnusedVariableDialog] = useState(false);
 
   return (
     <div className="app">
       <Diagram
         dqRoot={appStore.diagram}
         {...{showNestedSet, getDiagramExport}}
+        showDeleteCardButton={true}
         showEditVariableDialog={() => setShowEditVariableDialog(true)}
+        showUnusedVariableDialog={() => setShowUnusedVariableDialog(true)}
       />
       {showEditVariableDialog && appStore.diagram.selectedNode &&
         <EditVariableDialog
           onClose={() => setShowEditVariableDialog(false)}
           onSave={updateVariable}
           variable={appStore.diagram.selectedNode.variable}
+        />}
+      {showUnusedVariableDialog && appStore.diagram.unusedVariables.length > 0 &&
+        <UnusedVariableDialog
+          onClose={() => setShowUnusedVariableDialog(false)}
+          root={appStore.diagram}
         />}
       {showVariableList && <VariableChipListContainer variables={appStore.diagram.variables} />}
     </div>

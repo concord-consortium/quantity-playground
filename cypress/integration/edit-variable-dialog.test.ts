@@ -1,6 +1,6 @@
 import { kMaxNotesCharacters, processName } from "../../src/diagram/utils/validate";
 
-context("Test Diagram interaction", () => {
+context("Test Edit Variable Dialog", () => {
   before(() => {
     cy.visit("");
   });
@@ -40,9 +40,8 @@ context("Test Diagram interaction", () => {
       nameField().clear();
       nameField().type(nameSpaces);
 
-      // Enter a value with characters (last legal value should be accepted)
+      // Enter a value with characters (should save as undefined)
       const illegalValue = ".1a2b";
-      const finalValue = "0.1";
       valueField().clear();
       valueField().type(illegalValue);
       valueField().should("have.class", "invalid");
@@ -53,13 +52,13 @@ context("Test Diagram interaction", () => {
       notesField().clear();
       notesField().type(longNotes);
 
-      // After the value field has been blurred, it should switch to the legal value
-      valueField().should("have.value", finalValue);
+      // After the value field has been blurred, it should switch to undefined
+      valueField().should("have.value", "");
 
       // Save changes and make sure the correct values have been saved
       editVariableOkButton().click();
       nodeToEdit().find(".name").should("have.value", nameNoSpaces);
-      nodeToEdit().find(".value").should("have.value", finalValue);
+      nodeToEdit().find(".value").should("have.value", "");
       nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });
   });

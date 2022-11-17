@@ -27,11 +27,13 @@ const edgeTypes = {
 
 interface IProps {
   dqRoot: DQRootType;
+  showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
+  showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
@@ -140,6 +142,13 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
   const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
+  const deleteCard = showDeleteCardButton
+    ? () => {
+      const selectedNode = dqRoot.selectedNode;
+      if (selectedNode) dqRoot.removeNode(selectedNode);
+    }
+    : undefined;
+
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
@@ -163,7 +172,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showEditVariableDialog }: I
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{dqRoot, getDiagramExport, showEditVariableDialog}}/>
+          <ToolBar {...{deleteCard, dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
