@@ -27,15 +27,25 @@ const edgeTypes = {
 
 interface IProps {
   dqRoot: DQRootType;
+  externalReactFlowWrapper?: React.MutableRefObject<any>;
+  externalRfInstance?: any;
+  externalSetRfInstance?: (val: any) => void;
+  hideNewVariableButton?: boolean;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
   showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => {
-  const reactFlowWrapper = useRef<any>(null);
-  const [rfInstance, setRfInstance] = useState<any>();
+export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance, externalSetRfInstance, getDiagramExport,
+  hideNewVariableButton, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+{
+  const internalReactFlowWrapper = useRef<any>(null);
+  const [internalRfInstance, internalSetRfInstance] = useState<any>();
+  // Use external refs if they are provided so clients can make use of them
+  const reactFlowWrapper = externalReactFlowWrapper || internalReactFlowWrapper;
+  const rfInstance = externalRfInstance || internalRfInstance;
+  const setRfInstance = externalSetRfInstance || internalSetRfInstance;
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
     transform && dqRoot.setTransform(transform);
@@ -117,10 +127,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
     }
 
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const position = rfInstance.project({
+    const rawPosition = {
       x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
+      y: event.clientY - reactFlowBounds.top
+    };
+    const position = rfInstance.project(rawPosition);
 
     dqRoot.createNode({
       x: position.x,
@@ -172,7 +183,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
           <Controls />
-          <ToolBar {...{deleteCard, dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog}}/>
+          <ToolBar {...{deleteCard, dqRoot, getDiagramExport, hideNewVariableButton, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
