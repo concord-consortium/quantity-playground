@@ -30,6 +30,7 @@ interface IProps {
   externalReactFlowWrapper?: React.MutableRefObject<any>;
   externalRfInstance?: any;
   externalSetRfInstance?: (val: any) => void;
+  hideControls?: boolean;
   hideNewVariableButton?: boolean;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
@@ -38,7 +39,7 @@ interface IProps {
   getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance, externalSetRfInstance, getDiagramExport,
-  hideNewVariableButton, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+  hideControls, hideNewVariableButton, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const internalReactFlowWrapper = useRef<any>(null);
   const [internalRfInstance, internalSetRfInstance] = useState<any>();
@@ -182,7 +183,7 @@ export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance,
           onNodeDragStop={onNodeDragStop}
           onMoveEnd={handleChangeFlowTransform}>
           <MiniMap/>
-          <Controls />
+          {!hideControls && <Controls />}
           <ToolBar {...{deleteCard, dqRoot, getDiagramExport, hideNewVariableButton, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
