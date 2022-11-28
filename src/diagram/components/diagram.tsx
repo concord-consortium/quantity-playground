@@ -33,6 +33,7 @@ interface IProps {
   hideControls?: boolean;
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
+  interactionLocked?: boolean;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
@@ -40,7 +41,7 @@ interface IProps {
   getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance, externalSetRfInstance, getDiagramExport,
-  hideControls, hideNavigator, hideNewVariableButton, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+  hideControls, hideNavigator, hideNewVariableButton, interactionLocked, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const internalReactFlowWrapper = useRef<any>(null);
   const [internalRfInstance, internalSetRfInstance] = useState<any>();
@@ -161,6 +162,8 @@ export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance,
       if (selectedNode) dqRoot.removeNode(selectedNode);
     }
     : undefined;
+  
+  const interactive = !interactionLocked;
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
@@ -182,7 +185,12 @@ export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance,
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
-          onMoveEnd={handleChangeFlowTransform}>
+          onMoveEnd={handleChangeFlowTransform}
+          nodesDraggable={interactive}
+          nodesConnectable={interactive}
+          elementsSelectable={interactive}
+          selectNodesOnDrag={interactive}
+        >
           {!hideNavigator && <MiniMap/>}
           {!hideControls && <Controls />}
           <ToolBar {...{deleteCard, dqRoot, getDiagramExport, hideNewVariableButton, showEditVariableDialog, showUnusedVariableDialog}}/>
