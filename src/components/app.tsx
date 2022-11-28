@@ -13,7 +13,10 @@ import "./app.scss";
 
 const url = new URL(window.location.href);
 const showNestedSet = !(url.searchParams.get("nestedSet") == null);
+// Shows a list of all variables as chips.
 const showVariableList = !(url.searchParams.get("showVariableList") == null);
+// Hides the UI from the diagram. This is just used to test in quantity-playground, but clients might choose to hide some or all of the built-in UI.
+const hideUI = !(url.searchParams.get("hideUI") == null);
 
 const loadInitialState = () => {
   const urlDiagram = url.searchParams.get("diagram");
@@ -96,9 +99,12 @@ export const App = observer(() => {
       <Diagram
         dqRoot={appStore.diagram}
         {...{showNestedSet, getDiagramExport}}
-        showDeleteCardButton={true}
-        showEditVariableDialog={() => setShowEditVariableDialog(true)}
-        showUnusedVariableDialog={() => setShowUnusedVariableDialog(true)}
+        hideControls={hideUI}
+        hideNavigator={hideUI}
+        hideNewVariableButton={hideUI}
+        showDeleteCardButton={!hideUI}
+        showEditVariableDialog={hideUI ? undefined : () => setShowEditVariableDialog(true)}
+        showUnusedVariableDialog={hideUI ? undefined : () => setShowUnusedVariableDialog(true)}
       />
       {showEditVariableDialog && appStore.diagram.selectedNode &&
         <EditVariableDialog

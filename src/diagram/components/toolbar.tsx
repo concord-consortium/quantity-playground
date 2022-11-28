@@ -34,7 +34,7 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard,
     <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
       { getDiagramExport && <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button> }
       { !hideNewVariableButton &&
-        <div style={{border: "1px", borderStyle: "solid", textAlign: "center"}} onDragStart={(event) => onDragStart(event)} draggable>
+        <div className="add-variable-button" style={{border: "1px", borderStyle: "solid", textAlign: "center"}} onDragStart={(event) => onDragStart(event)} draggable>
             Drag to Add
         </div>
       }
