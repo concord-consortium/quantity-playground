@@ -107,7 +107,6 @@ describe("Quantity Node", () => {
     await userEvent.click(screen.getByTitle("#ffc7bf"));
     expect(variable.color).toBe("red");
   });
-
   it("Quantity node should have expression field when there are two inputs", async () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
     const inputB = Variable.create({id: "inputB", value: 111, unit: "m"});
@@ -208,5 +207,34 @@ describe("Quantity Node", () => {
     expect(screen.getByTestId("variable-expression")).toBeInTheDocument();
     await userEvent.type(screen.getByTestId("variable-expression"), "9+9{Enter}");
     expect(nodeExpressionVar.variable.expression).toBe("9+9");
+  });
+  it("expression editor should expand when a value over 20 characters is entered, and collapse when toggle button is clicked", async () => {
+    const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
+    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
+    const root = DQRoot.create();
+    const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
+    const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", value: 999, unit: "m"},
+        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
+      ]
+    });
+    root.addNode(nodeA);
+    root.addNode(nodeExpressionVar);
+    container.setRoot(root);
+    render(<Diagram dqRoot={root} />);
+
+    expect(screen.getByTestId("variable-expression")).toBeInTheDocument();
+    expect(screen.queryByTestId("variable-expression-toggle-button")).toBeNull();
+    await userEvent.type(screen.getByTestId("variable-expression"), "thisvalueisovertwentycharacterslong");
+    expect(screen.getByTestId("variable-expression-toggle-button")).toBeInTheDocument();
+    const variableExpressionToggleButton = screen.getByTestId("variable-expression-toggle-button");
+    expect(screen.getByTestId("variable-expression-row")).toHaveClass("expanded");
+    await userEvent.click(variableExpressionToggleButton);
+    expect(screen.getByTestId("variable-expression-row")).not.toHaveClass("expanded");
+    await userEvent.clear(screen.getByTestId("variable-expression"));
+    await userEvent.type(screen.getByTestId("variable-expression"), "shortervalue");
+    expect(screen.queryByTestId("variable-expression-toggle-button")).toBeNull();
   });
 });

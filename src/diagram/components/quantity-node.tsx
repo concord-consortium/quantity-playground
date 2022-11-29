@@ -198,7 +198,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           />
         </div>
         {hasExpression &&
-          <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })}>
+          <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })} data-testid="variable-expression-row">
             <TextareaAutosize
               autoComplete="off"
               className={classNames("variable-expression-area", { "invalid": variable.computedValueError || variable.computedUnitError })}
@@ -214,7 +214,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               onFocus={handleFieldFocus}
               onBlur={handleFieldBlur}
             />
-            {hasLongExpression && <button className="expand" onClick={handleShowExpression}><IconExpand /></button> }
+            {hasLongExpression &&
+              <button className="expand" onClick={handleShowExpression} data-testid="variable-expression-toggle-button">
+                <IconExpand />
+              </button>
+            }
           </div>
         }
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
