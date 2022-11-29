@@ -25,11 +25,8 @@ const edgeTypes = {
   floatingEdge: FloatingEdge,
 };
 
-interface IProps {
+export interface IProps {
   dqRoot: DQRootType;
-  externalReactFlowWrapper?: React.MutableRefObject<any>;
-  externalRfInstance?: any;
-  externalSetRfInstance?: (val: any) => void;
   hideControls?: boolean;
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
@@ -40,15 +37,11 @@ interface IProps {
   showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance, externalSetRfInstance, getDiagramExport,
+export const _Diagram = ({ dqRoot, getDiagramExport,
   hideControls, hideNavigator, hideNewVariableButton, interactionLocked, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
-  const internalReactFlowWrapper = useRef<any>(null);
-  const [internalRfInstance, internalSetRfInstance] = useState<any>();
-  // Use external refs if they are provided so clients can make use of them
-  const reactFlowWrapper = externalReactFlowWrapper || internalReactFlowWrapper;
-  const rfInstance = externalRfInstance || internalRfInstance;
-  const setRfInstance = externalSetRfInstance || internalSetRfInstance;
+  const reactFlowWrapper = useRef<any>(null);
+  const [rfInstance, setRfInstance] = useState<any>();
 
   const handleChangeFlowTransform = (transform?: FlowTransform) => {
     transform && dqRoot.setTransform(transform);
@@ -117,6 +110,12 @@ export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance,
     }
   };
 
+  const onLoad = (_rfInstance: any) => {
+    setRfInstance(_rfInstance);
+    dqRoot.setRfInstance(_rfInstance);
+    dqRoot.setReactFlowWrapper(reactFlowWrapper);
+  };
+
   const onDragOver = (event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -180,7 +179,7 @@ export const _Diagram = ({ dqRoot, externalReactFlowWrapper, externalRfInstance,
           onConnectEnd={onConnectEnd}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
-          onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
+          onLoad={onLoad}
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
