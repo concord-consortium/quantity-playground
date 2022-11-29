@@ -82,6 +82,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const handleExpressionKeyDown = (evt: any) => {
+    if (evt.key === "Enter" || evt.key === "Escape") {
+      evt.preventDefault();
+      evt.stopPropagation();
+      onExpressionChange(evt);
+    }
+  };
+
   const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     if (!evt.target.value) {
       variable.setDescription(undefined);
@@ -201,6 +209,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               onChange={onExpressionChange}
               placeholder={"expression"}
               value={variable.expression || ""}
+              onKeyDown={handleExpressionKeyDown}
               onMouseDown={handleFieldFocus}
               onFocus={handleFieldFocus}
               onBlur={handleFieldBlur}
