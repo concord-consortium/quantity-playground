@@ -21,11 +21,14 @@ interface IProps {
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
+  const variable = data.node.variable;
+
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showExpression, setShowExpression] = useState(false);
-
-  const variable = data.node.variable;
+  const [showFullValue, setShowFullValue] = useState(false);
+  const [showFullUnits, setShowFullUnits] = useState(false);
+  const [hasLongValue, setHasLongValue] = useState(variable?.value && variable.value.toString().length > 10);
 
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
@@ -34,9 +37,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       return null;
   }
 
-  const hasExpression = variable.numberOfInputs > 0;
-  const hasLongExpression = variable.expression && variable.expression.length > 20;
-  const hasError = variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage;
+  const hasExpression = !!(variable.numberOfInputs > 0);
+  const hasLongExpression = !!(variable.expression && variable.expression.length > 20);
+  const hasLongUnits = !!(variable.unit && variable.unit.length > 10);
+  const hasError = !!(variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage);
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
@@ -52,10 +56,26 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowExpression(!showExpression);
   };
 
-  const onUnitChange = (evt: ChangeEvent<HTMLInputElement>) => {
+  const handleShowFullValue = () => {
+    setShowFullValue(!showFullValue);
+  };
+
+  const handleShowFullUnits = () => {
+    setShowFullUnits(!showFullUnits);
+  };
+
+  const onValueChange = (value: string | undefined) => {
+    const valueIsLong = !!(value && value.length > 10);
+    setHasLongValue(valueIsLong);
+    setShowFullValue(valueIsLong);
+  };
+
+  const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     if (!evt.target.value) {
       variable.setUnit(undefined);
+      setShowFullUnits(false);
     } else {
+      setShowFullUnits(hasLongUnits);
       variable.setUnit(evt.target.value);
     }
   };
@@ -73,11 +93,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setExpression(undefined);
       setShowExpression(false);
     } else {
-      if (hasLongExpression) {
-        setShowExpression(true);
-      } else {
-        setShowExpression(false);
-      }
+      setShowExpression(hasLongExpression);
       variable.setExpression(evt.target.value);
     }
   };
@@ -111,36 +127,51 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const renderValueUnitInput = () => {
     return (
-      <div className="variable-info-row value-unit-row">
-        <NumberInput
-          className={classNames("variable-info value", {"invalid": variable.computedValueError})}
-          dataTestId="variable-value"
-          isValid={isValidNumber}
-          realValue={variable.value}
-          setRealValue={variable.setValue}
-          unsetSelectedNode={handleFieldBlur}
-          otherProps={{
-            placeholder: "value",
-            autoComplete: "off",
-            spellCheck: false,
-            maxLength: kMaxNameCharacters,
-            onMouseDown: handleFieldFocus,
-            onFocus: handleFieldFocus,
-          }}
-        />
-        <input
-          className={classNames("variable-info unit", {"invalid": variable.computedUnitError})}
-          type="text"
-          placeholder="unit"
-          autoComplete="off"
-          spellCheck="false"
-          value={shownUnit|| ""}
-          data-testid="variable-unit"
-          onChange={onUnitChange}
-          onMouseDown={handleFieldFocus}
-          onFocus={handleFieldFocus}
-          onBlur={handleFieldBlur}
-        />
+      <div className={classNames("variable-info-row", "value-unit-row", { "expanded": (hasLongValue && showFullValue) || (hasLongUnits && showFullUnits)})}>
+        <div className={classNames("value-container", {"long": hasLongValue, "expanded": showFullValue})}>
+          <NumberInput
+            className={classNames("variable-info value", {"invalid": variable.computedValueError})}
+            dataTestId="variable-value"
+            isValid={isValidNumber}
+            realValue={variable.value}
+            setRealValue={variable.setValue}
+            unsetSelectedNode={handleFieldBlur}
+            updateShowFullValue={onValueChange}
+            otherProps={{
+              placeholder: "value",
+              autoComplete: "off",
+              spellCheck: "false",
+              maxLength: kMaxNameCharacters,
+              onMouseDown: handleFieldFocus,
+              onFocus: handleFieldFocus,
+            }}
+          />
+          {hasLongValue &&
+            <button className="variable-info-value-toggle" onClick={handleShowFullValue} data-testid="variable-info-value-toggle-button">
+              <IconExpand />
+            </button>
+          }
+        </div>
+        <div className={classNames("unit-container", {"long": hasLongUnits, "expanded": showFullUnits})}>
+          <textarea
+            className={classNames("variable-info unit", {"invalid": variable.computedUnitError})}
+            placeholder="unit"
+            autoComplete="off"
+            spellCheck="false"
+            value={shownUnit|| ""}
+            data-testid="variable-unit"
+            maxLength={kMaxNameCharacters}
+            onChange={onUnitChange}
+            onMouseDown={handleFieldFocus}
+            onFocus={handleFieldFocus}
+            onBlur={handleFieldBlur}
+          />
+          {hasLongUnits &&
+            <button className="variable-info-unit-toggle" onClick={handleShowFullUnits} data-testid="variable-info-unit-toggle-button">
+              <IconExpand />
+            </button>
+          }
+        </div>
       </div>
     );
   };
@@ -176,7 +207,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeClasses = classNames(variable.color, "node", {
-    "expression-shown": hasExpression,
+    "expression-shown": hasExpression || showFullValue || showFullUnits,
     selected: data.dqRoot.selectedNode === data.node,
     expanded: showDescription || showExpression
   });
