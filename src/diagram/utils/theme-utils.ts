@@ -7,18 +7,18 @@ export enum Colors {
   Yellow = "yellow"
 }
 
-export interface IColors {
+export interface IColor {
   name: string;
   hex: string;
 }
 
-export interface ILegacyColors {
+export interface ILegacyColor {
   name: string;
   hex: string;
   replacement: string;
 }
 
-export const colorPalette: IColors[] = [
+export const colorPalette: IColor[] = [
   {name: "light-gray", hex: "#e6e6e6"},
   {name: "gray", hex: "#d4d4d4"},
   {name: "blue", hex: "#addef4"},
@@ -27,7 +27,7 @@ export const colorPalette: IColors[] = [
   {name: "red", hex: "#ffc7bf"}
 ];
 
-export const legacyColors: ILegacyColors[] = [
+export const legacyColors: ILegacyColor[] = [
   {name: "orange", hex: "#ff6900", replacement: "yellow"},
   {name: "light orange", hex: "#e98b42", replacement: "yellow"},
   {name: "light green", hex: "#7bdcb5", replacement: "green"},

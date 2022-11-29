@@ -3,6 +3,8 @@
 
 $node-width: 194px;
 $node-height: 98px;
+$node-expression-shown-height: $node-height + 32px;
+$node-expanded-expression-shown-height: $node-height + 52px;
 $node-inner-width: 164px;
 $input-half-width: calc(($node-inner-width/2) - 2px);
 $color-gray-dark: #3f3f3f;
@@ -38,11 +40,11 @@ $color-gray-dark: #3f3f3f;
   &.expanded {
     height: auto;
     &.expression-shown {
-      min-height: calc($node-height + 52px);
+      min-height: $node-expanded-expression-shown-height;
     }
   }
   &.expression-shown {
-    min-height: calc($node-height + 32px);
+    min-height: $node-expression-shown-height;
 
     .expression-row {
       &:after {
@@ -99,7 +101,7 @@ $color-gray-dark: #3f3f3f;
           margin-top: 0;
           padding-top: 5px;
 
-          button {
+          button.variable-description-toggle {
             cursor: pointer;
             margin-bottom: 3px;
             padding: 0;
@@ -107,7 +109,7 @@ $color-gray-dark: #3f3f3f;
           }
         }
 
-        button {
+        button.variable-description-toggle {
           background-color: theme-var($--theme-color-5);
           border: none;
           border-radius: 50%;
@@ -154,7 +156,6 @@ $color-gray-dark: #3f3f3f;
           overflow-y: scroll;
           padding: 3.5px 6px;
           resize: none;
-          text-align-last: left !important;
           width: 100%;
 
           &::placeholder { color: $color-light-gray-2; }
@@ -176,13 +177,13 @@ $color-gray-dark: #3f3f3f;
             text-indent: -15px;
             white-space: normal;
           }
-          button svg {
+          button.variable-expression-toggle svg {
             align-self: flex-start;
             margin-top: 3px;
             transform: rotate(180deg);
           }
         }
-        button {
+        button.variable-expression-toggle {
           background-color: white;
           border: none;
           border-top-right-radius: 5px;
@@ -220,7 +221,6 @@ $color-gray-dark: #3f3f3f;
           padding: 0 5px 3.5px 6px;
           position: relative;
           resize: none;
-          text-align-last: left !important;
           white-space: nowrap;
           width: 100%;
 
@@ -241,6 +241,7 @@ $color-gray-dark: #3f3f3f;
         align-items: center;
         border-radius: 5px;
         color: $default-fg-color;
+        display: flex;
         font-size: 14px;
         height: 26px;
         text-align: left;
@@ -302,7 +303,7 @@ $color-gray-dark: #3f3f3f;
     right: 4px;
     width: 20px;
 
-    button {
+    button.color-palette-toggle {
       background: theme-var($--theme-color-5);
       border: none;
       border-radius: 50%;
@@ -341,10 +342,13 @@ $color-gray-dark: #3f3f3f;
     }
   }
 
+  // TODO: Find a way to drop use of !important here.
+  // React Flow's Handle component doesn't seem to provide a way to set
+  // hover and active styling without interfering with its functionality.
   .flow-handle {
     &:hover {
       background-color: $hover-blue !important;
-      box-sizing: content-box !important;
+      box-sizing: content-box;
       cursor: pointer;
     }
     &:active {

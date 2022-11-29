@@ -6,12 +6,11 @@ import { Colors, colorPalette } from "../utils/theme-utils";
 import "./color-editor.scss";
 
 interface IProps {
-  themeColor: string;
   variable: VariableType
   onShowColorEditor: (show: boolean) => void;
 }
 
-export const ColorEditor = ({themeColor, variable, onShowColorEditor}: IProps) => {
+export const ColorEditor = ({variable, onShowColorEditor}: IProps) => {
   const colorsForPicker = colorPalette.map(c => c.hex);
   const selectedColorHex = colorPalette.find(c => c.name === variable.color)?.hex || "#e6e6e6";
 
@@ -22,7 +21,7 @@ export const ColorEditor = ({themeColor, variable, onShowColorEditor}: IProps) =
   };
 
   return (
-    <div className={`color-editor-dialog ${themeColor}`} title={"color picker"}>
+    <div className="color-editor-dialog" title="color picker">
       <div className="variable-info-row">
         <CirclePicker
           circleSize={14}

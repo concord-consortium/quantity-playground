@@ -31,7 +31,7 @@ export const Variable = types.model("Variable", {
   inputs: types.array(types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable)))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
   expression: types.maybe(types.string),
-  color: types.optional(types.string, "#e6e6e6")
+  color: types.optional(types.string, Colors.LightGray)
 })
 .preProcessSnapshot(sn => {
   // Make sure color value is valid.

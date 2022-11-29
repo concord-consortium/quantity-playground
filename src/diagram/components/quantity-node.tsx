@@ -160,7 +160,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     return (
       <>
         {variable.computedValueError && <p>Warning: {variable.computedValueError}</p>}
-        {variable.computedUnitError && variable.computedValueError !== variable.computedValueError &&
+        {variable.computedUnitError && variable.computedUnitError !== variable.computedValueError &&
           <p>Warning: {variable.computedUnitError}</p>
         }
         {variable.computedUnitMessage && <p>Warning: {variable.computedUnitMessage}</p>}
@@ -173,8 +173,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
-  const nodeClasses = classNames(`${variable.color}`, {
-    node: true,
+  const nodeClasses = classNames(variable.color, "node", {
     "expression-shown": hasExpression,
     selected: data.dqRoot.selectedNode === data.node,
     expanded: showDescription || showExpression
@@ -215,7 +214,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               onBlur={handleFieldBlur}
             />
             {hasLongExpression &&
-              <button className="expand" onClick={handleShowExpression} data-testid="variable-expression-toggle-button">
+              <button className="variable-expression-toggle" onClick={handleShowExpression} data-testid="variable-expression-toggle-button">
                 <IconExpand />
               </button>
             }
@@ -231,14 +230,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               minRows={1}
               maxLength={kMaxNotesCharacters}
               maxRows={3}
-              placeholder={"description"}
+              placeholder={"notes"}
               data-testid={"variable-description"}
               onMouseDown={handleFieldFocus}
               onFocus={handleFieldFocus}
               onBlur={handleFieldBlur}
             />
           }
-          <button className="expand" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
+          <button className="variable-description-toggle" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
             <IconExpand />
           </button>
         </div>
@@ -272,10 +271,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         title="drag to connect"
       />
       <div className="variable-info-floater">
-        <button className="edit-color-button" onClick={handleEditColor} title={"Edit Color"}  data-testid="color-edit-button">
+        <button className="color-palette-toggle" onClick={handleEditColor} title="Edit Color" data-testid="color-edit-button">
           <IconColorMenu />
         </button>
-        {showColorEditor && <ColorEditor themeColor={variable.color} variable={variable} onShowColorEditor={handleEditColor}/>}
+        {showColorEditor && <ColorEditor variable={variable} onShowColorEditor={handleEditColor}/>}
       </div>
     </div>
   );
