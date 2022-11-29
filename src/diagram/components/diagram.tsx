@@ -2,6 +2,8 @@ import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
+
+import { DiagramHelper, DiagramHelperType } from "../models/diagram-helper";
 import { DQRootType } from "../models/dq-root";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
@@ -31,14 +33,15 @@ export interface IProps {
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
   interactionLocked?: boolean;
+  setDiagramHelper?: (dh: DiagramHelperType) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
   showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport,
-  hideControls, hideNavigator, hideNewVariableButton, interactionLocked, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator, hideNewVariableButton, interactionLocked,
+  setDiagramHelper, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
@@ -112,8 +115,12 @@ export const _Diagram = ({ dqRoot, getDiagramExport,
 
   const onLoad = (_rfInstance: any) => {
     setRfInstance(_rfInstance);
-    dqRoot.setRfInstance(_rfInstance);
-    dqRoot.setReactFlowWrapper(reactFlowWrapper);
+    if (setDiagramHelper) {
+      const dh = DiagramHelper.create({});
+      dh.setRfInstance(_rfInstance);
+      dh.setReactFlowWrapper(reactFlowWrapper);
+      setDiagramHelper(dh);
+    }
   };
 
   const onDragOver = (event: any) => {

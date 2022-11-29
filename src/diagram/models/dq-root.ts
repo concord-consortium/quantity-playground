@@ -1,6 +1,6 @@
 import { destroy, Instance, isValidReference, types } from "mobx-state-tree";
 import { Elements, FlowTransform } from "react-flow-renderer/nocss";
-import { DQNode, DQNodeType, kDefaultNodeWidth, kDefaultNodeHeight } from "./dq-node";
+import { DQNode, DQNodeType } from "./dq-node";
 import { VariableType } from "./variable";
 
 export interface VariablesAPI {
@@ -16,9 +16,7 @@ export const DQRoot = types.model("DQRoot", {
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
   connectingVariable: undefined as VariableType | undefined,
-  selectedNode: undefined as DQNodeType | undefined,
-  rfInstance: undefined as any,
-  reactFlowWrapper: undefined as any
+  selectedNode: undefined as DQNodeType | undefined
 }))
 .actions(self => ({
   afterCreate() {
@@ -87,51 +85,8 @@ export const DQRoot = types.model("DQRoot", {
   setTransform(transform: FlowTransform) {
     self.flowTransform = transform;
   },
-  setRfInstance(_rfInstance: any) {
-    self.rfInstance = _rfInstance;
-  },
-  setReactFlowWrapper(_reactFlowWrapper: any) {
-    self.reactFlowWrapper = _reactFlowWrapper;
-  },
   setSelectedNode(node?: DQNodeType) {
     self.selectedNode = node;
-  }
-}))
-.actions(self => ({
-  zoomIn() {
-    self.rfInstance?.zoomIn();
-  },
-  zoomOut() {
-    self.rfInstance?.zoomOut();
-  },
-  fitView() {
-    self.rfInstance?.fitView();
-  }
-}))
-.views(self => ({
-  convertClientToDiagramPosition({x, y}: {x: number, y: number}) {
-    if (self.reactFlowWrapper?.current && self.rfInstance) {
-      const reactFlowBounds = self.reactFlowWrapper.current.getBoundingClientRect();
-      const rawPosition = {
-        x: x - reactFlowBounds.left,
-        y: y - reactFlowBounds.top
-      };
-      return self.rfInstance.project(rawPosition);
-    }
-    console.warn("Unable to convert point from client to diagram position");
-    return {x, y};
-  },
-  get newCardPosition() {
-    if (self.reactFlowWrapper?.current && self.rfInstance) {
-      const reactFlowBounds = self.reactFlowWrapper.current.getBoundingClientRect();
-      const rawPosition = {
-        x: (reactFlowBounds.width - kDefaultNodeWidth) / 2,
-        y: (reactFlowBounds.height - kDefaultNodeHeight) / 2
-      };
-      return self.rfInstance.project(rawPosition);
-    }
-    console.warn("Unable to convert point from client to diagram position");
-    return undefined;
   }
 }))
 .actions(self => ({
