@@ -198,13 +198,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         </div>
         {hasExpression &&
           <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })} data-testid="variable-expression-row">
-            <TextareaAutosize
+            <textarea
               autoComplete="off"
               className={classNames("variable-expression-area", { "invalid": variable.computedValueError || variable.computedUnitError })}
               data-testid={"variable-expression"}
               maxLength={kMaxNotesCharacters}
-              maxRows={2}
-              minRows={1}
               onChange={onExpressionChange}
               placeholder={"expression"}
               value={variable.expression || ""}

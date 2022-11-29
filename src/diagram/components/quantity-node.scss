@@ -170,7 +170,6 @@ $color-gray-dark: #3f3f3f;
 
           .variable-expression-area {
             line-height: normal;
-            max-height: 46px;
             min-height: 46px;
             overflow-y: scroll;
             padding: 3.5px 40px 3.5px 21px;
@@ -213,10 +212,8 @@ $color-gray-dark: #3f3f3f;
           border-radius: 5px;
           font-family: $default-font-family;
           font-size: 14px;
-          max-height: 26px;
           height: 26px;
           line-height: 26px;
-          min-height: 26px;
           overflow: hidden;
           padding: 0 5px 3.5px 6px;
           position: relative;
