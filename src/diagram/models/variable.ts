@@ -1,9 +1,9 @@
 import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-
 import { getMathUnit, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
+import { Colors, legacyColors } from "../utils/theme-utils";
 
 export enum Operation {
   Divide = "÷",
@@ -31,17 +31,25 @@ export const Variable = types.model("Variable", {
   inputs: types.array(types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable)))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
   expression: types.maybe(types.string),
-  color: types.optional(types.string, "#e98b42")
+  color: types.optional(types.string, "#e6e6e6")
 })
 .preProcessSnapshot(sn => {
+  // Make sure color value is valid.
+  const snClone = { ...sn };
+  const validColors = Object.values(Colors);
+  if (!validColors.includes(snClone.color as Colors)) {
+    const legacyColor = legacyColors.find(c => c.hex === snClone.color);
+    snClone.color = legacyColor ? legacyColor.replacement : Colors.LightGray;
+  }
+
   // null values have been encountered in the field.
   // It would be good to discover how these null values are being created, but until then we can
   // at least gracefully handle them.
-  if (sn.value == null) {
-    const { value, ...others } = sn;
+  if (snClone.value == null) {
+    const { value, ...others } = snClone;
     return others;
   }
-  return sn;
+  return snClone;
 })
 .views(self => ({
   get numberOfInputs() {

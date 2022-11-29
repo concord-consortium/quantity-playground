@@ -64,6 +64,8 @@ describe("Quantity Node", () => {
     const nameTextBox = screen.getByTestId("variable-name");
     const valueTextBox = screen.getByTestId("variable-value");
     const unitTextBox = screen.getByTestId("variable-unit");
+    const variableDescriptionToggleButton = screen.getByTestId("variable-description-toggle-button");
+    await userEvent.click(variableDescriptionToggleButton);
     const descriptionTextBox = screen.getByTestId("variable-description");
     const variableName = "my variable name";
     await userEvent.type(nameTextBox, variableName);
@@ -90,7 +92,7 @@ describe("Quantity Node", () => {
   });
   it("can edit a variable color", async () => {
     const variable = Variable.create({});
-    expect(variable.color).toBe("#e98b42");
+    expect(variable.color).toBe("light-gray");
     const root = DQRoot.create();
     const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
     root.addNode(node);
@@ -102,7 +104,7 @@ describe("Quantity Node", () => {
     const colorSelectButton = screen.getByTestId("color-edit-button");
     await userEvent.click(colorSelectButton);
     expect(screen.getByTitle("color picker")).toBeInTheDocument();
-    await userEvent.click(screen.getByTitle("#9900EF"));
-    expect(variable.color).toBe("#9900ef");
+    await userEvent.click(screen.getByTitle("#ffc7bf"));
+    expect(variable.color).toBe("red");
   });
 });

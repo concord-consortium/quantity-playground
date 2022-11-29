@@ -734,6 +734,7 @@ describe("Variable", () => {
     variable.setName("my variable");
     variable.setOperation(Operation.Add);
     variable.setDescription("This is my variable");
+    variable.setExpression("a+b");
 
     expect(getSnapshot(variable)).toEqual({
       id: expect.stringMatching(/^.{16}$/),
@@ -742,8 +743,9 @@ describe("Variable", () => {
       unit: "m",
       name: "my variable",
       operation: "+",
-      color: "#e98b42",
-      description: "This is my variable"
+      color: "light-gray",
+      description: "This is my variable",
+      expression: "a+b"
     });
   });
 
@@ -757,7 +759,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
-      color: "#e98b42",
+      color: "light-gray",
     });
 
     variable.setValue(Infinity);
@@ -771,7 +773,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
-      color: "#e98b42"
+      color: "light-gray"
     });
 
     // If someone finds a way to pass in null
@@ -786,7 +788,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
-      color: "#e98b42",
+      color: "light-gray",
     });
 
     // regular numbers can be set back to undefined
@@ -799,7 +801,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: 123.0,
-      color: "#e98b42",
+      color: "light-gray",
     });
 
     variable.setValue(undefined);
@@ -811,7 +813,7 @@ describe("Variable", () => {
       operation: undefined,
       unit: undefined,
       value: undefined,
-      color: "#e98b42",
+      color: "light-gray",
     });
 
   });
