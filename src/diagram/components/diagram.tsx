@@ -2,10 +2,12 @@ import { observer } from "mobx-react-lite";
 import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
+
 import { DQRootType } from "../models/dq-root";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
+import { DiagramHelper } from "../utils/diagram-helper";
 
 // We use the nocss version of RF so we can manually load
 // the CSS. This way we can override it.
@@ -25,15 +27,22 @@ const edgeTypes = {
   floatingEdge: FloatingEdge,
 };
 
-interface IProps {
+export interface IProps {
   dqRoot: DQRootType;
+  hideControls?: boolean;
+  hideNavigator?: boolean;
+  hideNewVariableButton?: boolean;
+  interactionLocked?: boolean;
+  setDiagramHelper?: (dh: DiagramHelper) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
   showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => {
+export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator, hideNewVariableButton, interactionLocked,
+  setDiagramHelper, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+{
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
@@ -104,6 +113,14 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
     }
   };
 
+  const onLoad = (_rfInstance: any) => {
+    setRfInstance(_rfInstance);
+    if (setDiagramHelper) {
+      const dh = new DiagramHelper(reactFlowWrapper, _rfInstance);
+      setDiagramHelper(dh);
+    }
+  };
+
   const onDragOver = (event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -117,10 +134,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
     }
 
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const position = rfInstance.project({
+    const rawPosition = {
       x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
+      y: event.clientY - reactFlowBounds.top
+    };
+    const position = rfInstance.project(rawPosition);
 
     dqRoot.createNode({
       x: position.x,
@@ -148,6 +166,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
       if (selectedNode) dqRoot.removeNode(selectedNode);
     }
     : undefined;
+  
+  const interactive = !interactionLocked;
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
@@ -164,15 +184,20 @@ export const _Diagram = ({ dqRoot, getDiagramExport, showDeleteCardButton, showE
           onConnectEnd={onConnectEnd}
           onElementsRemove={onElementsRemove}
           onSelectionChange={onSelectionChange}
-          onLoad={(_rfInstance) => setRfInstance(_rfInstance)}
+          onLoad={onLoad}
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
-          onMoveEnd={handleChangeFlowTransform}>
-          <MiniMap/>
-          <Controls />
-          <ToolBar {...{deleteCard, dqRoot, getDiagramExport, showEditVariableDialog, showUnusedVariableDialog}}/>
+          onMoveEnd={handleChangeFlowTransform}
+          nodesDraggable={interactive}
+          nodesConnectable={interactive}
+          elementsSelectable={interactive}
+          selectNodesOnDrag={interactive}
+        >
+          {!hideNavigator && <MiniMap/>}
+          {!hideControls && <Controls />}
+          <ToolBar {...{deleteCard, dqRoot, getDiagramExport, hideNewVariableButton, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
