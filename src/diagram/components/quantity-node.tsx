@@ -190,6 +190,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             autoComplete="off"
             value={variable.name || ""}
             data-testid="variable-name"
+            maxLength={kMaxNameCharacters}
             onChange={onNameChange}
             onMouseDown={handleFieldFocus}
             onFocus={handleFieldFocus}
