@@ -8,8 +8,10 @@ interface INumberInput {
   otherProps?: Record<string, any>;
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
+  unsetSelectedNode?: () => void;
 }
-export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue }: INumberInput) => {
+
+export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue, unsetSelectedNode }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
   useEffect(() => {
     setValue(realValue?.toString() || "");
@@ -23,6 +25,9 @@ export const NumberInput = ({ className, dataTestId, isValid, otherProps, realVa
       setRealValue(undefined);
     } else {
       setRealValue(+value);
+    }
+    if (unsetSelectedNode) {
+      unsetSelectedNode();
     }
   };
 

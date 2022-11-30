@@ -1,11 +1,56 @@
+@import "../../scss/vars.scss";
+@import "../../scss/mixins.scss";
+
 .color-editor-dialog {
-  width: 124px;
-  position: absolute;
-  top: 20px;
-  left: -60px;
-  background-color: white;
-  border-radius: 6px;
-  border: 1px solid #cdecf2;
-  padding: 10px;
+
+  &.blue { @include spread-map($theme-map-blue); }
+  &.gray { @include spread-map($theme-map-gray); }
+  &.green { @include spread-map($theme-map-green); }
+  &.light-gray { @include spread-map($theme-map-light-gray); }
+  &.red { @include spread-map($theme-map-red); }
+  &.yellow { @include spread-map($theme-map-yellow); }
+
+  align-items: center;
+  background-color: $workspace-teal-light;
+  border: solid 2px $workspace-teal;
+  border-radius: 5px;
+  border-top-left-radius: 0;
   box-sizing: border-box;
+  display: flex;
+  height: 30px;
+  left: -119px;
+  padding: 5px 0 6px 8px;
+  position: absolute;
+  top: 22px;
+  width: 143px;
+  z-index: 1;
+
+  // TODO: Find a way to drop use of !important here.
+  // React Color's Circle picker component uses inline style rules that we need
+  // to override. It may be possible to create a custom picker component that 
+  // doesn't use inline styles.
+  div[title="#{$color-blue-5}"] {
+    background-color: $color-blue-5 !important;
+    border: solid 1px $color-blue-2;
+  }
+  div[title="#{$color-gray-5}"] {
+    background: $color-gray-5 !important;
+    border: solid 1px $color-gray-2;
+  }
+  div[title="#{$color-light-gray-5}"] {
+    background: $color-light-gray-5 !important;
+    border: solid 1px $color-light-gray-2;
+  }
+  div[title="#{$color-green-5}"] {
+    background: $color-green-5 !important;
+    border: solid 1px $color-green-2;
+  }
+  div[title="#{$color-red-5}"] {
+    background: $color-red-5 !important;
+    border: solid 1px $color-red-2;
+  }
+  div[title="#{$color-yellow-5}"] {
+    background: $color-yellow-5 !important;
+    border: solid 1px $color-yellow-2;
+  }
 }

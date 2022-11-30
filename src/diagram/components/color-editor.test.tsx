@@ -98,7 +98,7 @@ describe("Color Editor", () => {
     expect(screen.getByTestId("color-edit-button")).toBeInTheDocument();
     await userEvent.click(screen.getByTestId("color-edit-button"));
     expect(screen.getByTitle("color picker")).toBeInTheDocument();
-    await userEvent.click(screen.getByTitle("#FF6900"));
+    await userEvent.click(screen.getByTitle("#e6e6e6"));
     expect(screen.queryByTitle("color picker")).toBeNull();
   });
 });

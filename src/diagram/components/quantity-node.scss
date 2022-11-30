@@ -1,167 +1,359 @@
-@use "../../scss/vars.scss";
+@import "../../scss/vars.scss";
+@import "../../scss/mixins.scss";
 
-$node-width: 180px;
-$node-height: 120px;
-$node-inner-width: 160px;
-$input-half-width: calc(($node-inner-width/2) - 8px);
-$color8:   #e98c42;
-$color8-1: #fefbf9;
-$color8-2: #f9e2d0;
-$color8-3: #f4c5a0;
-$color8-4: #fccb84;
-$color8-5: #da5d1d;
-$color8-hover: $color8-4;
-$color8-selected: $color8-5;
-$gray-mid: #bcbcbc;
+$node-width: 194px;
+$node-height: 98px;
+$node-expression-shown-height: $node-height + 32px;
+$node-expanded-expression-shown-height: $node-height + 52px;
+$node-inner-width: 164px;
+$input-half-width: calc(($node-inner-width/2) - 2px);
+$color-gray-dark: #3f3f3f;
 
 .node {
-  min-width: $node-width;
-  min-height: $node-height;
+  background: theme-var($--theme-color-5);
+  border: 2px solid theme-var($--theme-color-2);
   border-radius: 5px;
-  font-size: 11px;
   box-sizing: border-box;
-  color: #242424;
+  color: $default-fg-color;
+  font-family: $default-font-family;
+  font-size: 11px;
+  height: $node-height;
+  transition: height .25s;
+  width: $node-width;
   z-index: 4;
-  border: 2px solid $color8-4;
-  &.expression-shown {
-    height: calc($node-height + 30px);
-  }
 
-  &:hover {
-    outline: 2px solid vars.$hover-blue;
-  }
+  * { box-sizing: border-box; }
 
+  &.blue { @include spread-map($theme-map-blue); }
+  &.gray { @include spread-map($theme-map-gray); }
+  &.green { @include spread-map($theme-map-green); }
+  &.light-gray { @include spread-map($theme-map-light-gray); }
+  &.red { @include spread-map($theme-map-red); }
+  &.yellow { @include spread-map($theme-map-yellow); }
+
+  &:hover { outline: 2px solid $hover-blue; }
   &.selected {
-    outline: 2px solid vars.$select-blue;
-
-    &:hover {
-      outline-color: vars.$select-blue;
+    cursor: grabbing;
+    outline: 2px solid $select-blue;
+    &:hover { outline-color: $select-blue; }
+  }
+  &.expanded {
+    height: auto;
+    &.expression-shown {
+      min-height: $node-expanded-expression-shown-height;
     }
   }
+  &.expression-shown {
+    min-height: $node-expression-shown-height;
 
-  .variable-info-container {
-    display: flex;
-    flex-direction: column;
-    margin: 10px 10px;
-    border-radius: 5px;
-    position: absolute;
-    top: 5px;
-    box-sizing: border-box;
-
-    .variable-info-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      width: 100%;
-      .edit-expression-button, .edit-color-button {
-        width: 18px;
-        height: 18px;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        svg {
-          width: 24px;
-          height: 24px;
-          z-index: 1;
-          fill: $color8-1;
-          &:hover {
-            fill: $color8-hover;
-          }
-          &:active {
-            fill: $color8-selected
-          }
-        }
+    .expression-row {
+      &:after {
+        background-image: $input-overflow-gradient;
+        content: "";
+        display: block;
+        height: 100%;
+        pointer-events: none;
+        position: absolute;
+        right: 17px;
+        width: 30px;
+        z-index: 5;
       }
     }
-
-    .variable-info {
-      height: 24px;
-      box-sizing: border-box;
-      border-radius: 5px;
-      align-items: center;
-      margin: 3px;
-      text-align-last: right;
-      white-space: nowrap;
-      &.name {
-        min-width: 150px;
-      }
-      &.expression {
-        background-color: white;
-        min-width: 135px;
-        font-size: 14px;
-        line-height:24px;
-        padding-right: 5px;
-        cursor: pointer;
-        &:empty:before {
-          content: attr(placeholder);
-          color: gray;
-          font-size: 14px;
-          margin: 5px;
-        }
-      }
-      &.unit {
-        width: $input-half-width;
-      }
-      &.value {
-        width: $input-half-width;
-      }
-      &.static {
-        margin: 5px;
-        font-size: 14px;
-        height: 24px;
-        border-radius: 5px;
-        background-color: $color8-2;
-        text-align: center;
-        line-height: 24px;
-        padding-right: 5px;
-      }
-      &.no-value {
-        color: gray;
-      }
-      &.invalid {
-        outline: 2px solid vars.$invalid-red;
-      }
-    }
-    .error-message {
-      display: inline-block;
-      overflow-wrap: normal;
-      width: calc($input-half-width + 8px);
-      vertical-align: top;
-      margin-top: 3px;
-      margin-left: 3px;
-    }
-  }
-
-  .variable-info-floater {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    width: 18px;
-    height: 18px;
-  }
-  .variable-info-floater svg {
-    width: 18px;
-    height: 18px;
-    fill: white;
   }
 
   select, input {
     background-color: white;
+    border: none;
+    font-family: $default-font-family;
     padding: 2px 6px;
-    border: 0 solid #999;
   }
 
-  .variable-description-area {
-    resize: none;
-    width: 100%;
-    text-align-last:left!important;
+  .variable-info-container {
     border-radius: 5px;
-    border: none;
-    margin: 3px;
-    padding-left: .5em;
-    padding-right: .5em;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    margin: 12px 12px 0;
+
+    .variable-info-row {
+      align-items: center;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      height: 26px;
+      margin-bottom: 6px;
+      position: relative;
+
+      &.name-row { border: solid 2px white; }
+      &.value-unit-row { margin-bottom: 5px; }
+      &.description-row {
+        align-items: center;
+        border-radius: 0;
+        flex-direction: column;
+        height: 20px;
+        justify-content: center;
+        margin-top: -4px;
+        margin-bottom: 0;
+
+        &.expanded {
+          border-top: solid 2px theme-var($--theme-color-7);
+          height: auto;
+          margin-top: 0;
+          padding-top: 5px;
+
+          button.variable-description-toggle {
+            cursor: pointer;
+            margin-bottom: 3px;
+            padding: 0;
+            transform: rotate(180deg);
+          }
+        }
+
+        button.variable-description-toggle {
+          background-color: theme-var($--theme-color-5);
+          border: none;
+          border-radius: 50%;
+          cursor: pointer;
+          height: 20px;
+          padding: 1px 0 0 0;
+          position: relative;
+          transition: transform .25s;
+          width: 20px;
+          z-index: 5;
+
+          &:hover { background-color: theme-var($--theme-color-4); }
+          &:active {
+            background-color: theme-var($--theme-color-2);
+            svg {
+              .background {
+                fill: theme-var($--theme-color-5);
+                stroke: theme-var($--theme-color-5);
+              }
+              .foreground {
+                fill: white;
+                stroke: white;
+              }
+            }
+          }
+
+          svg {
+            .background {
+              fill: theme-var($--theme-color-5);
+              stroke: theme-var($--theme-color-5);
+            }
+            .foreground {
+              fill: theme-var($--theme-color-1);
+              stroke: theme-var($--theme-color-1);
+            }
+          }
+        }
+        .variable-description-area {
+          border: none;
+          border-radius: 5px;
+          font-family: $default-font-family;
+          font-size: 14px;
+          min-height: 26px;
+          overflow-y: scroll;
+          padding: 3.5px 6px;
+          resize: none;
+          width: 100%;
+
+          &::placeholder { color: $color-light-gray-2; }
+          &:hover { outline: 2px solid $hover-blue; }
+          &:focus { outline: 2px solid $select-blue; }
+        }
+      }
+
+      &.expression-row {
+        &.expanded {
+          height: auto;
+
+          .variable-expression-area {
+            line-height: normal;
+            min-height: 46px;
+            overflow-y: scroll;
+            padding: 3.5px 40px 3.5px 21px;
+            text-indent: -15px;
+            white-space: normal;
+          }
+          button.variable-expression-toggle svg {
+            align-self: flex-start;
+            margin-top: 3px;
+            transform: rotate(180deg);
+          }
+        }
+        button.variable-expression-toggle {
+          background-color: white;
+          border: none;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+          cursor: pointer;
+          display: flex;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          position: absolute;
+          right: 0;
+          width: 20px;
+          z-index: 10;
+
+          svg {
+            align-self: center;
+            transition: .25s;
+            .foreground {
+              fill: theme-var($--theme-color-1);
+              stroke: theme-var($--theme-color-1);
+            }
+          }
+        }
+        .variable-expression-area {
+          background-color: white;
+          border: none;
+          border-radius: 5px;
+          font-family: $default-font-family;
+          font-size: 14px;
+          height: 26px;
+          line-height: 26px;
+          overflow: hidden;
+          padding: 0 5px 3.5px 6px;
+          position: relative;
+          resize: none;
+          white-space: nowrap;
+          width: 100%;
+
+          &:empty:before {
+            content: attr(placeholder);
+            color: gray;
+            font-size: 14px;
+            margin: 5px;
+          }
+          &::placeholder { color: $color-light-gray-2; }
+          &:hover { outline: 2px solid $hover-blue; }
+          &:focus { outline: 2px solid $select-blue; }
+          &.invalid { outline: 2px solid $invalid-red; }
+        }
+      }
+
+      .variable-info {
+        align-items: center;
+        border-radius: 5px;
+        color: $default-fg-color;
+        display: flex;
+        font-size: 14px;
+        height: 26px;
+        text-align: left;
+        white-space: nowrap;
+
+        &::placeholder { color: $color-light-gray-2; }
+        &:hover { outline: 2px solid $hover-blue; }
+        &:focus { outline: 2px solid $select-blue; }
+        &.name {
+          background-color: theme-var($--theme-color-5);
+          border: solid 1px $default-fg-color;
+          border-radius: 3px;
+          height: 22px;
+          padding: 2px 4px;
+          width: 100%;
+        }
+        &.unit { width: $input-half-width; }
+        &.value {
+          text-align: right;
+          width: $input-half-width;
+        }
+        &.static {
+          background-color: theme-var($--theme-color-7);
+          padding: 3px 6px;
+          &:hover { outline: none; }
+        }
+        &.no-value { color: gray; }
+        &.invalid { outline: 2px solid $invalid-red; }
+      }
+    }
+
+    .error-icon {
+      bottom: 2.5px;
+      height: 20px;
+      left: 3px;
+      position: absolute;
+      width: 20px;
+    }
+    .error-message {
+      color: $invalid-red;
+      display: inline-block;
+      font-size: 12px;
+      height: auto;
+      left: 0;
+      overflow-wrap: normal;
+      position: absolute;
+      top: 100%;
+      width: 100%;
+
+      p { margin: 0; }
+    }
   }
+
+  .variable-info-floater {
+    bottom: 4px;
+    cursor: pointer;
+    height: 20px;
+    position: absolute;
+    right: 4px;
+    width: 20px;
+
+    button.color-palette-toggle {
+      background: theme-var($--theme-color-5);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: block;
+      height: 20px;
+      margin: 0;
+      padding: 0;
+      width: 20px;
+
+      &:hover { background-color: theme-var($--theme-color-4); }
+      &:active {
+        background-color: theme-var($--theme-color-2);
+        svg {
+          .background {
+            fill: theme-var($--theme-color-5);
+            stroke: theme-var($--theme-color-5);
+          }
+          .foreground {
+            fill: white;
+            stroke: white;
+          }
+        }
+      }
+
+      svg {
+        .background {
+          fill: theme-var($--theme-color-5);
+          stroke: theme-var($--theme-color-5);
+        }
+        .foreground {
+          fill: theme-var($--theme-color-1);
+          stroke: theme-var($--theme-color-1);
+        }
+      }
+    }
+  }
+
+  // TODO: Find a way to drop use of !important here.
+  // React Flow's Handle component doesn't seem to provide a way to set
+  // hover and active styling without interfering with its functionality.
+  .flow-handle {
+    &:hover {
+      background-color: $hover-blue !important;
+      box-sizing: content-box;
+      cursor: pointer;
+    }
+    &:active {
+      background-color: $select-blue !important;
+      cursor: grab;
+    }
+  }
+
   /* Make scrollbar always visible when active:
    * https://stackoverflow.com/questions/1202425/making-the-main-scrollbar-always-visible
    */

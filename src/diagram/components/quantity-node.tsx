@@ -1,40 +1,19 @@
+import React, { ChangeEvent, FocusEvent, MouseEvent, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
-import React, { useState } from "react";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
-
-import { ExpressionEditor } from "./expression-editor";
 import { ColorEditor } from "./color-editor";
 import { NumberInput } from "./ui/number-input";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } from "../utils/validate";
+import { IconColorMenu } from "./icon-color-menu";
+import { IconExpand } from "./icon-expand";
+import { IconWarning } from "./icon-warning";
 
 import "./quantity-node.scss";
-
-const EditIcon = () =>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
-    <path d="M12.06,4,10.94,5.16a.3.3,0,0,1-.41,0L7.84,2.47a.3.3,0,0,1,0-.41L9,.94a1.16,1.16,0,0,1,1.64,0L12.06,2.4A1.16,1.16,0,0,1,12.06,4ZM6.88,3,.52,9.38,0,12.32A.58.58,0,0,0,.68,13l2.95-.51L10,6.12a.31.31,0,0,0,0-.42L7.3,3a.29.29,0,0,0-.42,0ZM3,8.83a.33.33,0,0,1,0-.48L6.73,4.62a.34.34,0,0,1,.48,0,.33.33,0,0,1,0,.48L3.48,8.83a.33.33,0,0,1-.47,0Zm-.88,2H3.29v.88L1.73,12,1,11.27,1.25,9.7h.88Z" />
-  </svg>
-;
-
-const ColorPickerIcon = () =>
-    <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1"
-         preserveAspectRatio="xMidYMid meet"
-         xmlns="http://www.w3.org/2000/svg">
-      <title>color-picker-solid</title>
-      <path
-          d="M33.73,2.11a4.09,4.09,0,0,0-5.76.1L22.81,7.38a3.13,3.13,0,0,1-4.3.11L17.09,8.91,27,18.79l1.42-1.42A3.18,3.18,0,0,1,28.46,13l5.17-5.17A4.08,4.08,0,0,0,33.73,2.11Z"
-          className="clr-i-solid clr-i-solid-path-1">
-      </path>
-      <path
-          d="M22.18,16.79,7.46,31.51a2,2,0,1,1-2.82-2.83L19.35,14l-1.41-1.41L3.22,27.27a4,4,0,0,0-.68,4.8L1.06,33.55a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l1.44-1.44a3.93,3.93,0,0,0,2.09.6,4.06,4.06,0,0,0,2.88-1.2L23.6,18.21Z"
-          className="clr-i-solid clr-i-solid-path-2">
-      </path>
-    </svg>
-;
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
@@ -42,8 +21,9 @@ interface IProps {
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
-  const [showExpressionEditor, setShowExpressionEditor] = useState(false);
   const [showColorEditor, setShowColorEditor] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+  const [showExpression, setShowExpression] = useState(false);
 
   const variable = data.node.variable;
 
@@ -55,18 +35,24 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   }
 
   const hasExpression = variable.numberOfInputs > 0;
+  const hasLongExpression = variable.expression && variable.expression.length > 20;
+  const hasError = variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
-  const handleEditExpression = (show: boolean) => {
-    setShowExpressionEditor(show);
+  const handleEditColor = () => {
+    setShowColorEditor(!showColorEditor);
   };
 
-  const handleEditColor = (show: boolean) => {
-    setShowColorEditor(show);
+  const handleShowDescription = () => {
+    setShowDescription(!showDescription);
   };
 
-  const onUnitChange = (evt: any) => {
+  const handleShowExpression = () => {
+    setShowExpression(!showExpression);
+  };
+
+  const onUnitChange = (evt: ChangeEvent<HTMLInputElement>) => {
     if (!evt.target.value) {
       variable.setUnit(undefined);
     } else {
@@ -74,7 +60,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
-  const onNameChange = (evt: any) => {
+  const onNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
     if (!evt.target.value) {
       variable.setName(undefined);
     } else {
@@ -82,7 +68,29 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
-  const onDescriptionChange = (evt: any) => {
+  const onExpressionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!evt.target.value) {
+      variable.setExpression(undefined);
+      setShowExpression(false);
+    } else {
+      if (hasLongExpression) {
+        setShowExpression(true);
+      } else {
+        setShowExpression(false);
+      }
+      variable.setExpression(evt.target.value);
+    }
+  };
+
+  const handleExpressionKeyDown = (evt: any) => {
+    if (evt.key === "Enter" || evt.key === "Escape") {
+      evt.preventDefault();
+      evt.stopPropagation();
+      onExpressionChange(evt);
+    }
+  };
+
+  const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     if (!evt.target.value) {
       variable.setDescription(undefined);
     } else {
@@ -90,73 +98,157 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
+  const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
+    // Stopping propagation allows the user to select text in the input field without 
+    // inadvertently dragging the card/node.
+    evt.stopPropagation();
+    data.dqRoot.setSelectedNode(data.node);
+  };
+
+  const handleFieldBlur = () => {
+    data.dqRoot.setSelectedNode(undefined);
+  };
+
   const renderValueUnitInput = () => {
     return (
-      <div className="variable-info-row">
-        <NumberInput className="variable-info value" dataTestId="variable-value" isValid={isValidNumber} realValue={variable.value} setRealValue={variable.setValue}
-          otherProps={{ placeholder: "value", autoComplete: "off", maxLength: kMaxNameCharacters, onMouseDown: (e: any) => e.stopPropagation() }} />
-        <input className="variable-info unit" type="text" placeholder="unit" autoComplete="off" value={shownUnit|| ""} data-testid="variable-unit"
-          onChange={onUnitChange} onMouseDown={e => e.stopPropagation()} />
+      <div className="variable-info-row value-unit-row">
+        <NumberInput
+          className={classNames("variable-info value", {"invalid": variable.computedValueError})}
+          dataTestId="variable-value"
+          isValid={isValidNumber}
+          realValue={variable.value}
+          setRealValue={variable.setValue}
+          unsetSelectedNode={handleFieldBlur}
+          otherProps={{
+            placeholder: "value",
+            autoComplete: "off",
+            maxLength: kMaxNameCharacters,
+            onMouseDown: handleFieldFocus,
+            onFocus: handleFieldFocus,
+          }}
+        />
+        <input
+          className={classNames("variable-info unit", {"invalid": variable.computedUnitError})}
+          type="text"
+          placeholder="unit"
+          autoComplete="off"
+          value={shownUnit|| ""}
+          data-testid="variable-unit"
+          onChange={onUnitChange}
+          onMouseDown={handleFieldFocus}
+          onFocus={handleFieldFocus}
+          onBlur={handleFieldBlur}
+        />
       </div>
     );
   };
+
   const renderValueUnitUnEditable = () => {
     return (
-      <div className="variable-info-row">
-        <div className={`variable-info value static ${shownValue ? "" : "no-value"}`}>{shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}</div>
-        <div className={`variable-info unit static ${shownUnit ? "" : "no-value"}`}>{shownUnit || "unit"}</div>
+      <div className="variable-info-row value-unit-row">
+        <div className={classNames("variable-info value static", {"no-value": !shownValue, "invalid": variable.computedValueError})}>
+          {shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}
+        </div>
+        <div className={classNames("variable-info unit static", {"no-value": shownUnit, "invalid": variable.computedUnitError})}>
+          {shownUnit || "unit"}
+        </div>
       </div>
+    );
+  };
+
+  const renderExpressionErrorMessage = () => {
+    return (
+      <>
+        {variable.computedValueError && <p>Warning: {variable.computedValueError}</p>}
+        {variable.computedUnitError && variable.computedUnitError !== variable.computedValueError &&
+          <p>Warning: {variable.computedUnitError}</p>
+        }
+        {variable.computedUnitMessage && <p>Warning: {variable.computedUnitMessage}</p>}
+      </>
     );
   };
 
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
-  const sourceHandleStyle = {border: "1px solid white", borderRadius: "6px", width: "12px", height: "12px", background: "#bcbcbc"};
+  const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
-  const classnames = classNames({
-    node: true,
+  const nodeClasses = classNames(variable.color, "node", {
     "expression-shown": hasExpression,
-    selected: data.dqRoot.selectedNode === data.node
+    selected: data.dqRoot.selectedNode === data.node,
+    expanded: showDescription || showExpression
   });
+
   return (
-    <div className={classnames} style={{background:variable.color}} data-testid="quantity-node">
+    <div className={nodeClasses} data-testid="quantity-node">
       <div className="variable-info-container">
-        <div className="variable-info-row">
-          <input className="variable-info name" type="text" placeholder="name" autoComplete="off" value={variable.name || ""} data-testid="variable-name"
-            onMouseDown={e => e.stopPropagation()} onChange={onNameChange} />
+        <div className="variable-info-row name-row">
+          <input
+            className="variable-info name"
+            type="text"
+            placeholder="variable_name"
+            autoComplete="off"
+            value={variable.name || ""}
+            data-testid="variable-name"
+            onChange={onNameChange}
+            onMouseDown={handleFieldFocus}
+            onFocus={handleFieldFocus}
+            onBlur={handleFieldBlur}
+          />
         </div>
         {hasExpression &&
-          <div className="variable-info-row">
-            <div className="variable-info expression" placeholder="expression" data-testid="variable-expression" onClick={()=>handleEditExpression(true)} >
-              {variable.expression || ""}
-            </div>
-            <div className="edit-expression-button" onClick={()=>handleEditExpression(true)} title={"Edit Expression"}  data-testid="variable-expression-edit-button">
-              <EditIcon/>
-            </div>
+          <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })} data-testid="variable-expression-row">
+            <textarea
+              autoComplete="off"
+              className={classNames("variable-expression-area", { "invalid": variable.computedValueError || variable.computedUnitError })}
+              data-testid={"variable-expression"}
+              maxLength={kMaxNotesCharacters}
+              onChange={onExpressionChange}
+              placeholder={"expression"}
+              value={variable.expression || ""}
+              onKeyDown={handleExpressionKeyDown}
+              onMouseDown={handleFieldFocus}
+              onFocus={handleFieldFocus}
+              onBlur={handleFieldBlur}
+            />
+            {hasLongExpression &&
+              <button className="variable-expression-toggle" onClick={handleShowExpression} data-testid="variable-expression-toggle-button">
+                <IconExpand />
+              </button>
+            }
           </div>
         }
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
-        <div className="variable-info-row">
-          <TextareaAutosize className="variable-description-area" value={variable.description || ""}
-                            onChange={onDescriptionChange} minRows={1} maxLength={kMaxNotesCharacters}
-                            maxRows={4}  placeholder={"description"} data-testid={"variable-description"}/>
-        </div>
-        { variable.computedValueError &&
-          <div className="error-message">
-              ⚠️ {variable.computedValueError}
-          </div>
-        }
-        { variable.computedUnitError &&
-          <div className="error-message">
-              ⚠️ {variable.computedUnitError}
-          </div>
-        }
-        { variable.computedUnitMessage &&
-          <div className="error-message">
-              ⓘ {variable.computedUnitMessage}
-          </div>
+        <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
+          {showDescription && 
+            <TextareaAutosize
+              className="variable-description-area"
+              value={variable.description || ""}
+              onChange={onDescriptionChange}
+              minRows={1}
+              maxLength={kMaxNotesCharacters}
+              maxRows={3}
+              placeholder={"notes"}
+              data-testid={"variable-description"}
+              onMouseDown={handleFieldFocus}
+              onFocus={handleFieldFocus}
+              onBlur={handleFieldBlur}
+            />
           }
+          <button className="variable-description-toggle" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
+            <IconExpand />
+          </button>
+        </div>
+        {hasError &&
+          <>
+            <div className="error-icon">
+              <IconWarning />
+            </div>
+            <div className="error-message">
+              {renderExpressionErrorMessage()}
+            </div>
+          </>
+        }
       </div>
       {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
         <Handle
@@ -169,17 +261,17 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         />
       }
       <Handle
+        className="flow-handle"
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
         style={sourceHandleStyle}
         title="drag to connect"
       />
-      {showExpressionEditor && <ExpressionEditor variable={variable} onShowExpressionEditor={handleEditExpression}/>}
       <div className="variable-info-floater">
-        <div className="edit-color-button" onClick={()=>handleEditColor(!showColorEditor)} title={"Edit Color"}  data-testid="color-edit-button">
-          <ColorPickerIcon/>
-        </div>
+        <button className="color-palette-toggle" onClick={handleEditColor} title="Edit Color" data-testid="color-edit-button">
+          <IconColorMenu />
+        </button>
         {showColorEditor && <ColorEditor variable={variable} onShowColorEditor={handleEditColor}/>}
       </div>
     </div>

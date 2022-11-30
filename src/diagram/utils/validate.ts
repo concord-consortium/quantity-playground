@@ -1,4 +1,4 @@
-export const kMaxNameCharacters = 30;
+export const kMaxNameCharacters = 27;
 export const kMaxNotesCharacters = 255;
 
 // We specifically disallow "", which converts to 0 when cast as a number
