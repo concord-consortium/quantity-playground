@@ -3,11 +3,11 @@ import React, { useRef, useState } from "react";
 import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
   OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
 
-import { DiagramHelper, DiagramHelperType } from "../models/diagram-helper";
 import { DQRootType } from "../models/dq-root";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
+import { DiagramHelper } from "../utils/diagram-helper";
 
 // We use the nocss version of RF so we can manually load
 // the CSS. This way we can override it.
@@ -33,7 +33,7 @@ export interface IProps {
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
   interactionLocked?: boolean;
-  setDiagramHelper?: (dh: DiagramHelperType) => void;
+  setDiagramHelper?: (dh: DiagramHelper) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
   showNestedSet?: boolean;
@@ -116,9 +116,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const onLoad = (_rfInstance: any) => {
     setRfInstance(_rfInstance);
     if (setDiagramHelper) {
-      const dh = DiagramHelper.create({});
-      dh.setRfInstance(_rfInstance);
-      dh.setReactFlowWrapper(reactFlowWrapper);
+      const dh = new DiagramHelper(reactFlowWrapper, _rfInstance);
       setDiagramHelper(dh);
     }
   };
