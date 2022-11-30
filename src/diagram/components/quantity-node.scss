@@ -1,8 +1,10 @@
 @import "../../scss/vars.scss";
 @import "../../scss/mixins.scss";
 
+// Make sure to update kDefaultNodeWidth and kDefaultNodeHeight in models/dq-node.ts when you change these contants.
 $node-width: 194px;
 $node-height: 98px;
+
 $node-expression-shown-height: $node-height + 32px;
 $node-expanded-expression-shown-height: $node-height + 52px;
 $node-inner-width: 164px;

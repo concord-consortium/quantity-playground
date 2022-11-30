@@ -3,8 +3,8 @@ import { nanoid } from "nanoid";
 import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
 import { Variable, VariableType } from "./variable";
 
-export const kDefaultNodeWidth = 180;
-export const kDefaultNodeHeight = 120;
+export const kDefaultNodeWidth = 194;
+export const kDefaultNodeHeight = 98;
 
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),
