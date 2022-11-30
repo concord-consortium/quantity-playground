@@ -8,6 +8,7 @@ context("Test Edit Variable Dialog", () => {
   const editVariableButton = () => cy.get(".edit-variable-button");
   const editVariableDialog = () => cy.get(".qp-dialog");
   const editVariableOkButton = () => cy.get(".dialog-button").last();
+  const descriptionToggleButton = () => cy.get("[data-testid='variable-description-toggle-button']").first();
   const nodes = () => cy.get("[data-testid='quantity-node']");
   const nodeToEdit = () => nodes().first();
   const nameField = () => cy.get("#evd-name");
@@ -59,6 +60,7 @@ context("Test Edit Variable Dialog", () => {
       editVariableOkButton().click();
       nodeToEdit().find(".name").should("have.value", nameNoSpaces);
       nodeToEdit().find(".value").should("have.value", "");
+      descriptionToggleButton().click();
       nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });
   });

@@ -1,3 +1,118 @@
-$invalid-red: #b30000;
+$default-bg-color: #fff;
+$default-fg-color: #3f3f3f;
+$workspace-teal: #0592af;
+$workspace-teal-light: #f5fbfc;
+$hover-blue: #8dbefa;
 $select-blue: #0081ff;
-$hover-blue: rgba(0, 129, 255, .5);
+$invalid-red: #b30000;
+$input-overflow-gradient: linear-gradient(to left, rgba(255, 255, 255, 1) 10%, rgba(255, 255, 255, 0) 100%);
+
+$default-font-family: "PT Sans Narrow", Lato, Helvetica, Verdana, sans-serif;
+$default-font-size: 14px;
+
+$color-blue-1: #2887b1;
+$color-blue-2: #40a3cf;
+$color-blue-3: #5bbeea;
+$color-blue-4: #84cff0;
+$color-blue-5: #addef4;
+$color-blue-6: #d6effa;
+$color-blue-7: #eaf7fc;
+$color-gray-1: #5a5a5a;
+$color-gray-2: #858585;
+$color-gray-3: #aaaaaa;
+$color-gray-4: #bfbfbf;
+$color-gray-5: #d4d4d4;
+$color-gray-6: #e9e9e9;
+$color-gray-7: #f4f4f4;
+$color-green-1: #3d8701;
+$color-green-2: #4ca008;
+$color-green-3: #6fcd22;
+$color-green-4: #93da5a;
+$color-green-5: #b7e690;
+$color-green-6: #dbf2c8;
+$color-green-7: #ecf9e2;
+$color-light-gray-1: #707070;
+$color-light-gray-2: #949494;
+$color-light-gray-3: #cdcdcd;
+$color-light-gray-4: #dadada;
+$color-light-gray-5: #e6e6e6;
+$color-light-gray-6: #f2f2f2;
+$color-light-gray-7: #f9f9f9;
+$color-red-1: #b82a14;
+$color-red-2: #db4933;
+$color-red-3: #ff907f;
+$color-red-4: #ffac9f;
+$color-red-5: #ffc7bf;
+$color-red-6: #ffe3df;
+$color-red-7: #fff1ef;
+$color-yellow-1: #8b7300;
+$color-yellow-2: #ab8f07;
+$color-yellow-3: #f1cd20;
+$color-yellow-4: #f4da58;
+$color-yellow-5: #f7e58f;
+$color-yellow-6: #fbf2c7;
+$color-yellow-7: #fdf9e2;
+
+$--theme-color-1: --theme-color-1;
+$--theme-color-2: --theme-color-2;
+$--theme-color-3: --theme-color-3;
+$--theme-color-4: --theme-color-4;
+$--theme-color-5: --theme-color-5;
+$--theme-color-6: --theme-color-6;
+$--theme-color-7: --theme-color-7;
+
+// QuantityNode Color Themes
+$theme-map-blue: (
+  $--theme-color-1: $color-blue-1,
+  $--theme-color-2: $color-blue-2,
+  $--theme-color-3: $color-blue-3,
+  $--theme-color-4: $color-blue-4,
+  $--theme-color-5: $color-blue-5,
+  $--theme-color-6: $color-blue-6,
+  $--theme-color-7: $color-blue-7
+);
+$theme-map-gray: (
+  $--theme-color-1: $color-gray-1,
+  $--theme-color-2: $color-gray-2,
+  $--theme-color-3: $color-gray-3,
+  $--theme-color-4: $color-gray-4,
+  $--theme-color-5: $color-gray-5,
+  $--theme-color-6: $color-gray-6,
+  $--theme-color-7: $color-gray-7
+);
+$theme-map-green: (
+  $--theme-color-1: $color-green-1,
+  $--theme-color-2: $color-green-2,
+  $--theme-color-3: $color-green-3,
+  $--theme-color-4: $color-green-4,
+  $--theme-color-5: $color-green-5,
+  $--theme-color-6: $color-green-6,
+  $--theme-color-7: $color-green-7
+);
+$theme-map-light-gray: (
+  $--theme-color-1: $color-light-gray-1,
+  $--theme-color-2: $color-light-gray-2,
+  $--theme-color-3: $color-light-gray-3,
+  $--theme-color-4: $color-light-gray-4,
+  $--theme-color-5: $color-light-gray-5,
+  $--theme-color-6: $color-light-gray-6,
+  $--theme-color-7: $color-light-gray-7
+);
+$theme-map-red: (
+  $--theme-color-1: $color-red-1,
+  $--theme-color-2: $color-red-2,
+  $--theme-color-3: $color-red-3,
+  $--theme-color-4: $color-red-4,
+  $--theme-color-5: $color-red-5,
+  $--theme-color-6: $color-red-6,
+  $--theme-color-7: $color-red-7
+);
+$theme-map-yellow: (
+  $--theme-color-1: $color-yellow-1,
+  $--theme-color-2: $color-yellow-2,
+  $--theme-color-3: $color-yellow-3,
+  $--theme-color-4: $color-yellow-4,
+  $--theme-color-5: $color-yellow-5,
+  $--theme-color-6: $color-yellow-6,
+  $--theme-color-7: $color-yellow-7
+);
