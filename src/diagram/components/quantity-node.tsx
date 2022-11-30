@@ -122,6 +122,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           otherProps={{
             placeholder: "value",
             autoComplete: "off",
+            spellCheck: false,
             maxLength: kMaxNameCharacters,
             onMouseDown: handleFieldFocus,
             onFocus: handleFieldFocus,
@@ -132,6 +133,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           type="text"
           placeholder="unit"
           autoComplete="off"
+          spellCheck="false"
           value={shownUnit|| ""}
           data-testid="variable-unit"
           onChange={onUnitChange}
@@ -188,6 +190,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             type="text"
             placeholder="variable_name"
             autoComplete="off"
+            spellCheck="false"
             value={variable.name || ""}
             data-testid="variable-name"
             onChange={onNameChange}
@@ -200,6 +203,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })} data-testid="variable-expression-row">
             <textarea
               autoComplete="off"
+              spellCheck="false"
               className={classNames("variable-expression-area", { "invalid": variable.computedValueError || variable.computedUnitError })}
               data-testid={"variable-expression"}
               maxLength={kMaxNotesCharacters}
