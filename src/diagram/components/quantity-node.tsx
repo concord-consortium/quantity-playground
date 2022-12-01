@@ -5,15 +5,15 @@ import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
 import { ColorEditor } from "./color-editor";
-import { NumberInput } from "./ui/number-input";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
-import { kMaxNameCharacters, kMaxNotesCharacters, processName, isValidNumber } from "../utils/validate";
+import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/validate";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
 import { IconWarning } from "./icon-warning";
 
 import "./quantity-node.scss";
+import { ExpandableInput } from "./ui/expandable-input";
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
@@ -22,13 +22,17 @@ interface IProps {
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const variable = data.node.variable;
+  const kDefaultExpandLength = 10;
+  const kExpressionExpandLength = 18;
 
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [showExpression, setShowExpression] = useState(false);
+  const [showFullExpression, setShowFullExpression] = useState(false);
   const [showFullValue, setShowFullValue] = useState(false);
   const [showFullUnits, setShowFullUnits] = useState(false);
+  const [hasLongExpression, setHasLongExpression] = useState(variable.expression && variable.expression.length > 20);
   const [hasLongValue, setHasLongValue] = useState(variable?.value && variable.value.toString().length > 10);
+  const [hasLongUnits, setHasLongUnits] = useState(variable?.unit && variable.unit.length > 10);
 
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
@@ -38,8 +42,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   }
 
   const hasExpression = !!(variable.numberOfInputs > 0);
-  const hasLongExpression = !!(variable.expression && variable.expression.length > 20);
-  const hasLongUnits = !!(variable.unit && variable.unit.length > 10);
   const hasError = !!(variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage);
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
@@ -52,8 +54,8 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
-  const handleShowExpression = () => {
-    setShowExpression(!showExpression);
+  const handleShowFullExpression = () => {
+    setShowFullExpression(!showFullExpression);
   };
 
   const handleShowFullValue = () => {
@@ -64,18 +66,19 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowFullUnits(!showFullUnits);
   };
 
-  const onValueChange = (value: string | undefined) => {
-    const valueIsLong = !!(value && value.length > 10);
+  const onValueChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const valueIsLong = !!(evt.target.value && evt.target.value.length > kDefaultExpandLength);
     setHasLongValue(valueIsLong);
     setShowFullValue(valueIsLong);
   };
 
   const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const unitIsLong = !!(evt.target.value && evt.target.value.length > kDefaultExpandLength);
+    setHasLongUnits(unitIsLong);
+    setShowFullUnits(unitIsLong);
     if (!evt.target.value) {
       variable.setUnit(undefined);
-      setShowFullUnits(false);
     } else {
-      setShowFullUnits(hasLongUnits);
       variable.setUnit(evt.target.value);
     }
   };
@@ -89,11 +92,12 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const onExpressionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const expressionIsLong = !!(evt.target.value && evt.target.value.length > kExpressionExpandLength);
+    setHasLongExpression(expressionIsLong);
+    setShowFullExpression(expressionIsLong);
     if (!evt.target.value) {
       variable.setExpression(undefined);
-      setShowExpression(false);
     } else {
-      setShowExpression(hasLongExpression);
       variable.setExpression(evt.target.value);
     }
   };
@@ -128,50 +132,34 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitInput = () => {
     return (
       <div className={classNames("variable-info-row", "value-unit-row", { "expanded": (hasLongValue && showFullValue) || (hasLongUnits && showFullUnits)})}>
-        <div className={classNames("value-container", {"long": hasLongValue, "expanded": showFullValue})} data-testid="variable-info-value-container">
-          <NumberInput
-            className={classNames("variable-info value", {"invalid": variable.computedValueError})}
-            dataTestId="variable-value"
-            isValid={isValidNumber}
-            realValue={variable.value}
-            setRealValue={variable.setValue}
-            unsetSelectedNode={handleFieldBlur}
-            updateShowFullValue={onValueChange}
-            otherProps={{
-              placeholder: "value",
-              autoComplete: "off",
-              spellCheck: "false",
-              maxLength: kMaxNameCharacters,
-              onMouseDown: handleFieldFocus,
-              onFocus: handleFieldFocus,
-            }}
-          />
-          {hasLongValue &&
-            <button className="variable-info-value-toggle" onClick={handleShowFullValue} data-testid="variable-info-value-toggle-button">
-              <IconExpand />
-            </button>
-          }
-        </div>
-        <div className={classNames("unit-container", {"long": hasLongUnits, "expanded": showFullUnits})} data-testid="variable-info-unit-container">
-          <textarea
-            className={classNames("variable-info unit", {"invalid": variable.computedUnitError})}
-            placeholder="unit"
-            autoComplete="off"
-            spellCheck="false"
-            value={shownUnit|| ""}
-            data-testid="variable-unit"
-            maxLength={kMaxNameCharacters}
-            onChange={onUnitChange}
-            onMouseDown={handleFieldFocus}
-            onFocus={handleFieldFocus}
-            onBlur={handleFieldBlur}
-          />
-          {hasLongUnits &&
-            <button className="variable-info-unit-toggle" onClick={handleShowFullUnits} data-testid="variable-info-unit-toggle-button">
-              <IconExpand />
-            </button>
-          }
-        </div>
+        <ExpandableInput
+          error={!!(variable.computedValueError)}
+          inputType="number"
+          lengthToExpand={kDefaultExpandLength}
+          maxLength={kMaxNameCharacters}
+          placeholder="value"
+          title="value"
+          value={variable.value}
+          handleBlur={handleFieldBlur}
+          handleChange={onValueChange}
+          handleFocus={handleFieldFocus}
+          handleToggle={handleShowFullValue}
+          setRealValue={variable.setValue}
+        />
+        <ExpandableInput
+          error={!!(variable.computedUnitError)}
+          inputType="text"
+          lengthToExpand={kDefaultExpandLength}
+          maxLength={kMaxNameCharacters}
+          placeholder="unit"
+          title="unit"
+          value={shownUnit || ""}
+          handleBlur={handleFieldBlur}
+          handleChange={onUnitChange}
+          handleFocus={handleFieldFocus}
+          handleToggle={handleShowFullUnits}
+          setRealValue={variable.setValue}
+        />
       </div>
     );
   };
@@ -207,9 +195,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeClasses = classNames(variable.color, "node", {
-    "expression-shown": hasExpression || showFullValue || showFullUnits,
+    "expression-shown": hasExpression || showFullExpression,
     selected: data.dqRoot.selectedNode === data.node,
-    expanded: showDescription || showExpression
+    expanded: showDescription || showFullExpression || showFullValue || showFullUnits,
   });
 
   return (
@@ -232,26 +220,22 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           />
         </div>
         {hasExpression &&
-          <div className={classNames("variable-info-row", "expression-row", {"expanded": showExpression })} data-testid="variable-expression-row">
-            <textarea
-              autoComplete="off"
-              spellCheck="false"
-              className={classNames("variable-expression-area", { "invalid": variable.computedValueError || variable.computedUnitError })}
-              data-testid={"variable-expression"}
-              maxLength={kMaxNotesCharacters}
-              onChange={onExpressionChange}
-              placeholder={"expression"}
+          <div className={classNames("variable-info-row", "expression-row", {"expanded": (hasLongExpression && showFullExpression) })} data-testid="variable-expression-row">
+            <ExpandableInput
+              error={!!(variable.computedValueError || variable.computedUnitError)}
+              inputType="text"
+              lengthToExpand={kExpressionExpandLength}
+              maxLength={kMaxNameCharacters}
+              placeholder="expression"
+              title="expression"
               value={variable.expression || ""}
-              onKeyDown={handleExpressionKeyDown}
-              onMouseDown={handleFieldFocus}
-              onFocus={handleFieldFocus}
-              onBlur={handleFieldBlur}
+              handleBlur={handleFieldBlur}
+              handleChange={onExpressionChange}
+              handleFocus={handleFieldFocus}
+              handleKeyDown={handleExpressionKeyDown}
+              handleToggle={handleShowFullExpression}
+              setRealValue={variable.setValue}
             />
-            {hasLongExpression &&
-              <button className="variable-expression-toggle" onClick={handleShowExpression} data-testid="variable-expression-toggle-button">
-                <IconExpand />
-              </button>
-            }
           </div>
         }
         {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}

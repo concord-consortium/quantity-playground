@@ -9,7 +9,7 @@ interface INumberInput {
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
   unsetSelectedNode?: () => void;
-  updateShowFullValue?: (value: string | undefined) => void;
+  updateShowFullValue?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue, unsetSelectedNode, updateShowFullValue }: INumberInput) => {
@@ -21,7 +21,7 @@ export const NumberInput = ({ className, dataTestId, isValid, otherProps, realVa
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
     if (updateShowFullValue) {
-      updateShowFullValue(e.target.value);
+      updateShowFullValue(e);
     }
   };
 
