@@ -77,10 +77,36 @@ describe("Quantity Node", () => {
     expect(variable.unit).toBe("miles");
     expect(variable.description).toBe("a\ndescription");
 
-    //verify entering a non-number does not change the value
+    // verify entering a non-number does not change the value
     await userEvent.type(valueTextBox, "letter");
     expect(variable.value).toBe(45);
     expect(valueTextBox.className.split(" ")).toContain("invalid");
+
+    // entering a long value into the value field causes it to expand and a toggle button to appear
+    expect(screen.queryByTestId("variable-info-value-toggle-button")).toBeNull();
+    await userEvent.clear(valueTextBox);
+    await userEvent.type(valueTextBox, "123456789012345678901234567890");
+    expect(screen.getByTestId("variable-info-value-toggle-button")).toBeInTheDocument();
+    const variableInfoValueToggleButton = screen.getByTestId("variable-info-value-toggle-button");
+    expect(screen.getByTestId("variable-info-value-container")).toHaveClass("expanded");
+    await userEvent.click(variableInfoValueToggleButton);
+    expect(screen.getByTestId("variable-info-value-container")).not.toHaveClass("expanded");
+    await userEvent.clear(valueTextBox);
+    await userEvent.type(valueTextBox, "123");
+    expect(screen.queryByTestId("variable-info-value-toggle-button")).toBeNull();
+
+    // entering a long value into the units field causes it to expand and a toggle button to appear
+    expect(screen.queryByTestId("variable-info-unit-toggle-button")).toBeNull();
+    await userEvent.clear(unitTextBox);
+    await userEvent.type(unitTextBox, "thisvalueisovertwentycharacterslong");
+    expect(screen.getByTestId("variable-info-unit-toggle-button")).toBeInTheDocument();
+    const variableInfoUnitToggleButton = screen.getByTestId("variable-info-unit-toggle-button");
+    expect(screen.getByTestId("variable-info-unit-container")).toHaveClass("expanded");
+    await userEvent.click(variableInfoUnitToggleButton);
+    expect(screen.getByTestId("variable-info-unit-container")).not.toHaveClass("expanded");
+    await userEvent.clear(unitTextBox);
+    await userEvent.type(unitTextBox, "garns");
+    expect(screen.queryByTestId("variable-info-unit-toggle-button")).toBeNull();
 
     // Notes are limited to kMaxNotesCharacters
     const notesTextBox = screen.getByTestId("variable-description");

@@ -128,7 +128,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const renderValueUnitInput = () => {
     return (
       <div className={classNames("variable-info-row", "value-unit-row", { "expanded": (hasLongValue && showFullValue) || (hasLongUnits && showFullUnits)})}>
-        <div className={classNames("value-container", {"long": hasLongValue, "expanded": showFullValue})}>
+        <div className={classNames("value-container", {"long": hasLongValue, "expanded": showFullValue})} data-testid="variable-info-value-container">
           <NumberInput
             className={classNames("variable-info value", {"invalid": variable.computedValueError})}
             dataTestId="variable-value"
@@ -152,7 +152,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             </button>
           }
         </div>
-        <div className={classNames("unit-container", {"long": hasLongUnits, "expanded": showFullUnits})}>
+        <div className={classNames("unit-container", {"long": hasLongUnits, "expanded": showFullUnits})} data-testid="variable-info-unit-container">
           <textarea
             className={classNames("variable-info unit", {"invalid": variable.computedUnitError})}
             placeholder="unit"
