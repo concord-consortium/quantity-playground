@@ -25,7 +25,7 @@ export const VariableChip = observer(({ className, nameOnly, onClick, selected, 
   const showEquals = showValue && name;
   const wrapUnit = !showValue;
 
-  const classes = classNames("variable-chip", className, { selected });
+  const classes = classNames("variable-chip", className, variable.color, { selected });
 
   return (
     <span className={classes} onClick={e => onClick?.(variable)} >

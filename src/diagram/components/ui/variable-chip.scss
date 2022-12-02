@@ -1,10 +1,23 @@
-@use "../../../scss/vars.scss";
+@import "../../../scss/vars.scss";
+@import "../../../scss/mixins.scss";
 
 .variable-chip {
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 1px 3px;
-  margin: 0 1px;
+
+  &.blue { @include spread-map($theme-map-blue); }
+  &.gray { @include spread-map($theme-map-gray); }
+  &.green { @include spread-map($theme-map-green); }
+  &.light-gray { @include spread-map($theme-map-light-gray); }
+  &.red { @include spread-map($theme-map-red); }
+  &.yellow { @include spread-map($theme-map-yellow); }
+
+  background: theme-var($--theme-color-5);
+  border: 1px solid $default-fg-color;
+  border-radius: 3px;
+  color: $default-fg-color;
+  font-family: $default-font-family;
+  font-size: $default-font-size;
+  padding: 1px 2px;
+  margin: 0;
   user-select: none;
   white-space: nowrap;
 
@@ -20,12 +33,16 @@
     padding: 0 2px;
   }
 
+  .variable-unit {
+    padding: 0 2px;
+  }
+
   &.disabled {
     opacity: 35%;
   }
 
   &.selected {
-    outline: 2px solid vars.$select-blue;
+    outline: 2px solid $select-blue;
   }
 
   // So selection matches text selection in slate
