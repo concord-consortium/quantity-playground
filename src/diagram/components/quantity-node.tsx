@@ -8,12 +8,12 @@ import { ColorEditor } from "./color-editor";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/validate";
+import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
-import { IconWarning } from "./icon-warning";
 
 import "./quantity-node.scss";
-import { ExpandableInput } from "./ui/expandable-input";
+import { ErrorMessage } from "./error-message";
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
@@ -27,12 +27,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [showFullExpression, setShowFullExpression] = useState(false);
-  const [showFullValue, setShowFullValue] = useState(false);
-  const [showFullUnits, setShowFullUnits] = useState(false);
-  const [hasLongExpression, setHasLongExpression] = useState(variable.expression && variable.expression.length > 20);
-  const [hasLongValue, setHasLongValue] = useState(variable?.value && variable.value.toString().length > 10);
-  const [hasLongUnits, setHasLongUnits] = useState(variable?.unit && variable.unit.length > 10);
 
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
@@ -54,28 +48,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
-  const handleShowFullExpression = () => {
-    setShowFullExpression(!showFullExpression);
-  };
-
-  const handleShowFullValue = () => {
-    setShowFullValue(!showFullValue);
-  };
-
-  const handleShowFullUnits = () => {
-    setShowFullUnits(!showFullUnits);
-  };
-
-  const onValueChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    const valueIsLong = !!(evt.target.value && evt.target.value.length > kDefaultExpandLength);
-    setHasLongValue(valueIsLong);
-    setShowFullValue(valueIsLong);
-  };
-
   const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    const unitIsLong = !!(evt.target.value && evt.target.value.length > kDefaultExpandLength);
-    setHasLongUnits(unitIsLong);
-    setShowFullUnits(unitIsLong);
     if (!evt.target.value) {
       variable.setUnit(undefined);
     } else {
@@ -92,9 +65,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const onExpressionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    const expressionIsLong = !!(evt.target.value && evt.target.value.length > kExpressionExpandLength);
-    setHasLongExpression(expressionIsLong);
-    setShowFullExpression(expressionIsLong);
     if (!evt.target.value) {
       variable.setExpression(undefined);
     } else {
@@ -126,12 +96,16 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const handleFieldBlur = () => {
-    data.dqRoot.setSelectedNode(undefined);
+    // This ensures that when the user clicks on a node other than the parent of the 
+    // field they're blurring, that the parent node is deselected. This would be 
+    // unnecessary if handleFieldFocus didn't stop propagation and explicitly set the
+    // selected node.
+    data.dqRoot.setSelectedNode(data.dqRoot.selectedNode);
   };
 
   const renderValueUnitInput = () => {
     return (
-      <div className={classNames("variable-info-row", "value-unit-row", { "expanded": (hasLongValue && showFullValue) || (hasLongUnits && showFullUnits)})}>
+      <div className="variable-info-row value-unit-row">
         <ExpandableInput
           error={!!(variable.computedValueError)}
           inputType="number"
@@ -141,9 +115,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           title="value"
           value={variable.value}
           handleBlur={handleFieldBlur}
-          handleChange={onValueChange}
           handleFocus={handleFieldFocus}
-          handleToggle={handleShowFullValue}
           setRealValue={variable.setValue}
         />
         <ExpandableInput
@@ -157,8 +129,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           handleBlur={handleFieldBlur}
           handleChange={onUnitChange}
           handleFocus={handleFieldFocus}
-          handleToggle={handleShowFullUnits}
-          setRealValue={variable.setValue}
         />
       </div>
     );
@@ -177,27 +147,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
 
-  const renderExpressionErrorMessage = () => {
-    return (
-      <>
-        {variable.computedValueError && <p>Warning: {variable.computedValueError}</p>}
-        {variable.computedUnitError && variable.computedUnitError !== variable.computedValueError &&
-          <p>Warning: {variable.computedUnitError}</p>
-        }
-        {variable.computedUnitMessage && <p>Warning: {variable.computedUnitMessage}</p>}
-      </>
-    );
-  };
-
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeClasses = classNames(variable.color, "node", {
-    "expression-shown": hasExpression || showFullExpression,
-    selected: data.dqRoot.selectedNode === data.node,
-    expanded: showDescription || showFullExpression || showFullValue || showFullUnits,
+    selected: data.dqRoot.selectedNode === data.node
   });
 
   return (
@@ -220,12 +176,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           />
         </div>
         {hasExpression &&
-          <div className={classNames("variable-info-row", "expression-row", {"expanded": (hasLongExpression && showFullExpression) })} data-testid="variable-expression-row">
+          <div className="variable-info-row expression-row" data-testid="variable-expression-row">
             <ExpandableInput
               error={!!(variable.computedValueError || variable.computedUnitError)}
               inputType="text"
               lengthToExpand={kExpressionExpandLength}
-              maxLength={kMaxNameCharacters}
               placeholder="expression"
               title="expression"
               value={variable.expression || ""}
@@ -233,8 +188,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               handleChange={onExpressionChange}
               handleFocus={handleFieldFocus}
               handleKeyDown={handleExpressionKeyDown}
-              handleToggle={handleShowFullExpression}
-              setRealValue={variable.setValue}
             />
           </div>
         }
@@ -260,14 +213,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </button>
         </div>
         {hasError &&
-          <>
-            <div className="error-icon">
-              <IconWarning />
-            </div>
-            <div className="error-message">
-              {renderExpressionErrorMessage()}
-            </div>
-          </>
+          <ErrorMessage
+            unitError={variable.computedUnitError}
+            unitMessage={variable.computedUnitMessage}
+            valueError={variable.computedValueError}
+          />
         }
       </div>
       {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&

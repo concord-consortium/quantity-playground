@@ -9,10 +9,10 @@ interface INumberInput {
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
   unsetSelectedNode?: () => void;
-  updateShowFullValue?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
+  onValueChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue, unsetSelectedNode, updateShowFullValue }: INumberInput) => {
+export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue, unsetSelectedNode, onValueChange }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
   useEffect(() => {
     setValue(realValue?.toString() || "");
@@ -20,9 +20,7 @@ export const NumberInput = ({ className, dataTestId, isValid, otherProps, realVa
   
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
-    if (updateShowFullValue) {
-      updateShowFullValue(e);
-    }
+    onValueChange?.(e);
   };
 
   const onBlur = () => {

@@ -82,32 +82,6 @@ describe("Quantity Node", () => {
     expect(variable.value).toBe(45);
     expect(valueTextBox.className.split(" ")).toContain("invalid");
 
-    // entering a long value into the value field causes it to expand and a toggle button to appear
-    expect(screen.queryByTestId("variable-info-value-toggle-button")).toBeNull();
-    await userEvent.clear(valueTextBox);
-    await userEvent.type(valueTextBox, "123456789012345678901234567890");
-    expect(screen.getByTestId("variable-info-value-toggle-button")).toBeInTheDocument();
-    const variableInfoValueToggleButton = screen.getByTestId("variable-info-value-toggle-button");
-    expect(screen.getByTestId("variable-info-value-container")).toHaveClass("expanded");
-    await userEvent.click(variableInfoValueToggleButton);
-    expect(screen.getByTestId("variable-info-value-container")).not.toHaveClass("expanded");
-    await userEvent.clear(valueTextBox);
-    await userEvent.type(valueTextBox, "123");
-    expect(screen.queryByTestId("variable-info-value-toggle-button")).toBeNull();
-
-    // entering a long value into the units field causes it to expand and a toggle button to appear
-    expect(screen.queryByTestId("variable-info-unit-toggle-button")).toBeNull();
-    await userEvent.clear(unitTextBox);
-    await userEvent.type(unitTextBox, "thisvalueisovertwentycharacterslong");
-    expect(screen.getByTestId("variable-info-unit-toggle-button")).toBeInTheDocument();
-    const variableInfoUnitToggleButton = screen.getByTestId("variable-info-unit-toggle-button");
-    expect(screen.getByTestId("variable-info-unit-container")).toHaveClass("expanded");
-    await userEvent.click(variableInfoUnitToggleButton);
-    expect(screen.getByTestId("variable-info-unit-container")).not.toHaveClass("expanded");
-    await userEvent.clear(unitTextBox);
-    await userEvent.type(unitTextBox, "garns");
-    expect(screen.queryByTestId("variable-info-unit-toggle-button")).toBeNull();
-
     // Notes are limited to kMaxNotesCharacters
     const notesTextBox = screen.getByTestId("variable-description");
     const typedNotes = "a".repeat(kMaxNotesCharacters + 5);
@@ -233,34 +207,5 @@ describe("Quantity Node", () => {
     expect(screen.getByTestId("variable-expression")).toBeInTheDocument();
     await userEvent.type(screen.getByTestId("variable-expression"), "9+9{Enter}");
     expect(nodeExpressionVar.variable.expression).toBe("9+9");
-  });
-  it("expression editor should expand when a value over 20 characters is entered, and collapse when toggle button is clicked", async () => {
-    const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
-    const expressionVar = Variable.create({id: "expressionVar", inputs: ["inputA"]});
-    const root = DQRoot.create();
-    const nodeA = DQNode.create({ variable: inputA.id, x: 0, y: 0 });
-    const nodeExpressionVar = DQNode.create({ variable: expressionVar.id, x: 10, y: 10 });
-    const container = GenericContainer.create({
-      items: [
-        {id: "inputA", value: 999, unit: "m"},
-        {id: "expressionVar", value: 123.5, inputs: ["inputA"]}
-      ]
-    });
-    root.addNode(nodeA);
-    root.addNode(nodeExpressionVar);
-    container.setRoot(root);
-    render(<Diagram dqRoot={root} />);
-
-    expect(screen.getByTestId("variable-expression")).toBeInTheDocument();
-    expect(screen.queryByTestId("variable-expression-toggle-button")).toBeNull();
-    await userEvent.type(screen.getByTestId("variable-expression"), "thisvalueisovertwentycharacterslong");
-    expect(screen.getByTestId("variable-expression-toggle-button")).toBeInTheDocument();
-    const variableExpressionToggleButton = screen.getByTestId("variable-expression-toggle-button");
-    expect(screen.getByTestId("variable-expression-row")).toHaveClass("expanded");
-    await userEvent.click(variableExpressionToggleButton);
-    expect(screen.getByTestId("variable-expression-row")).not.toHaveClass("expanded");
-    await userEvent.clear(screen.getByTestId("variable-expression"));
-    await userEvent.type(screen.getByTestId("variable-expression"), "shortervalue");
-    expect(screen.queryByTestId("variable-expression-toggle-button")).toBeNull();
   });
 });

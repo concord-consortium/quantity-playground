@@ -14,24 +14,22 @@ interface IProps {
   placeholder?: string;
   title: string;
   value?: string | number;
-  handleBlur: () => void;
+  handleBlur?: () => void;
   handleChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
-  handleFocus: (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => void;
+  handleFocus?: (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => void;
   handleKeyDown?: (evt: React.KeyboardEvent) => void;
-  handleToggle: () => void;
-  setRealValue: (value: number | undefined) => void;
+  setRealValue?: (value: number | undefined) => void;
 }
 
 export const ExpandableInput = ({
   error, inputType, lengthToExpand, maxLength, placeholder, title, value, handleBlur,
-  handleChange, handleFocus, handleKeyDown, handleToggle, setRealValue
+  handleChange, handleFocus, handleKeyDown, setRealValue
 }: IProps) => {
   const [hasLongValue, setHasLongValue] = useState(!!(value && value.toString().length >= lengthToExpand));
   const [showFullValue, setShowFullValue] = useState(hasLongValue);
 
   const handlToggleFullValue = () => {
     setShowFullValue(!showFullValue);
-    handleToggle();
   };
 
   const onChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
@@ -44,7 +42,9 @@ export const ExpandableInput = ({
   };
 
   const getInputElement = () => {
-    if (inputType === "number") {
+    // NumberInput performs special handling of the entered value before 
+    // saving it. setRealValue is required for this.
+    if (inputType === "number" && setRealValue) {
       return (
         <NumberInput
           className={inputClasses}
@@ -53,7 +53,7 @@ export const ExpandableInput = ({
           realValue={value ? +value : undefined}
           setRealValue={setRealValue}
           unsetSelectedNode={handleBlur}
-          updateShowFullValue={onChange}
+          onValueChange={onChange}
           otherProps={{
             placeholder: "value",
             autoComplete: "off",

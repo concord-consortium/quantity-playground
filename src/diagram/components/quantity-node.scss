@@ -5,8 +5,6 @@
 $node-width: 194px;
 $node-height: 98px;
 
-$node-expression-shown-height: $node-height + 32px;
-$node-expanded-expression-shown-height: $node-height + 52px;
 $node-inner-width: 164px;
 $input-half-width: calc(($node-inner-width/2) - 2px);
 $color-gray-dark: #3f3f3f;
@@ -19,7 +17,8 @@ $color-gray-dark: #3f3f3f;
   color: $default-fg-color;
   font-family: $default-font-family;
   font-size: 11px;
-  height: $node-height;
+  height: auto;
+  min-height: $node-height;
   transition: height .25s;
   width: $node-width;
   z-index: 4;
@@ -37,15 +36,6 @@ $color-gray-dark: #3f3f3f;
   &.selected {
     outline: 2px solid $select-blue;
     &:active { cursor: grabbing; }
-  }
-  &.expanded {
-    height: auto;
-    &.expression-shown {
-      min-height: $node-expanded-expression-shown-height;
-    }
-  }
-  &.expression-shown {
-    min-height: $node-expression-shown-height;
   }
 
   select, input {
@@ -102,27 +92,6 @@ $color-gray-dark: #3f3f3f;
   display: flex;
   flex-direction: column;
   margin: 12px 12px 0;
-
-  .error-icon {
-    bottom: 2.5px;
-    height: 20px;
-    left: 3px;
-    position: absolute;
-    width: 20px;
-  }
-  .error-message {
-    color: $invalid-red;
-    display: inline-block;
-    font-size: 12px;
-    height: auto;
-    left: 0;
-    overflow-wrap: normal;
-    position: absolute;
-    top: 100%;
-    width: 100%;
-
-    p { margin: 0; }
-  }
 }
 
 .variable-info-row {
@@ -130,19 +99,13 @@ $color-gray-dark: #3f3f3f;
   display: flex;
   flex-direction: row;
   gap: 6px;
-  height: 26px;
+  height: auto;
   margin-bottom: 6px;
+  min-height: 26px;
   position: relative;
 
   &.name-row { border: solid 2px white; }
-  &.value-unit-row {
-    margin-bottom: 5px;
-
-    &.expanded {
-      align-items: flex-start;
-      height: 46px;
-    }
-  }
+  &.value-unit-row { margin-bottom: 5px; }
   &.description-row {
     align-items: center;
     border-radius: 0;
@@ -217,12 +180,6 @@ $color-gray-dark: #3f3f3f;
       &::placeholder { color: $color-light-gray-2; }
       &:hover { outline: 2px solid $hover-blue; }
       &:focus { outline: 2px solid $select-blue; }
-    }
-  }
-
-  &.expression-row {
-    &.expanded {
-      height: auto;
     }
   }
 
