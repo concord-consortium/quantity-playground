@@ -22,16 +22,14 @@ export const ColorEditor = ({variable, onShowColorEditor}: IProps) => {
 
   return (
     <div className="color-editor-dialog" title="color picker">
-      <div className="variable-info-row">
-        <CirclePicker
-          circleSize={14}
-          circleSpacing={8}
-          color={selectedColorHex}
-          colors={colorsForPicker}
-          width={"132px"}
-          onChange={handleColorChange}
-        />
-      </div>
+      <CirclePicker
+        circleSize={14}
+        circleSpacing={8}
+        color={selectedColorHex}
+        colors={colorsForPicker}
+        width={"132px"}
+        onChange={handleColorChange}
+      />
     </div>
   );
 };
