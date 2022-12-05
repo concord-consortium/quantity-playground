@@ -141,19 +141,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
 
-  // const renderValueUnitUnEditable = () => {
-  //   return (
-  //     <div className="variable-info-row value-unit-row">
-  //       <div className={classNames("variable-info value static", {"no-value": !shownValue, "invalid": variable.computedValueError})}>
-  //         {shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}
-  //       </div>
-  //       <div className={classNames("variable-info unit static", {"no-value": shownUnit, "invalid": variable.computedUnitError})}>
-  //         {shownUnit || "unit"}
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
