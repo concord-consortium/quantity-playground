@@ -103,22 +103,29 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     data.dqRoot.setSelectedNode(data.dqRoot.selectedNode);
   };
 
-  const renderValueUnitInput = () => {
+  const renderValueUnitInput = (params: {disabled: boolean}) => {
+    const { disabled } = params;
+    const staticValue = shownValue !== undefined
+                          ? variable.computedValueWithSignificantDigits
+                          : undefined;
+
     return (
       <div className="variable-info-row value-unit-row">
         <ExpandableInput
+          disabled={disabled}
           error={!!(variable.computedValueError)}
           inputType="number"
           lengthToExpand={kDefaultExpandLength}
           maxLength={kMaxNameCharacters}
           placeholder="value"
           title="value"
-          value={variable.value}
+          value={!disabled ? variable.value : staticValue}
           handleBlur={handleFieldBlur}
           handleFocus={handleFieldFocus}
           setRealValue={variable.setValue}
         />
         <ExpandableInput
+          disabled={disabled}
           error={!!(variable.computedUnitError)}
           inputType="text"
           lengthToExpand={kDefaultExpandLength}
@@ -134,18 +141,18 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
 
-  const renderValueUnitUnEditable = () => {
-    return (
-      <div className="variable-info-row value-unit-row">
-        <div className={classNames("variable-info value static", {"no-value": !shownValue, "invalid": variable.computedValueError})}>
-          {shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}
-        </div>
-        <div className={classNames("variable-info unit static", {"no-value": shownUnit, "invalid": variable.computedUnitError})}>
-          {shownUnit || "unit"}
-        </div>
-      </div>
-    );
-  };
+  // const renderValueUnitUnEditable = () => {
+  //   return (
+  //     <div className="variable-info-row value-unit-row">
+  //       <div className={classNames("variable-info value static", {"no-value": !shownValue, "invalid": variable.computedValueError})}>
+  //         {shownValue !== undefined ? variable.computedValueWithSignificantDigits : "value"}
+  //       </div>
+  //       <div className={classNames("variable-info unit static", {"no-value": shownUnit, "invalid": variable.computedUnitError})}>
+  //         {shownUnit || "unit"}
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
@@ -191,7 +198,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             />
           </div>
         }
-        {hasExpression ? renderValueUnitUnEditable() : renderValueUnitInput()}
+        {hasExpression ? renderValueUnitInput({disabled: true}) : renderValueUnitInput({disabled: false})}
         <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
           {showDescription && 
             <TextareaAutosize

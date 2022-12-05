@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 import { NumberInput } from "./number-input";
 import { isValidNumber } from "../../utils/validate";
@@ -7,6 +7,7 @@ import { IconExpand } from "../icon-expand";
 import "./expandable-input.scss";
 
 interface IProps {
+  disabled?: boolean;
   error?: boolean;
   inputType: "text" | "number";
   lengthToExpand: number;
@@ -22,7 +23,7 @@ interface IProps {
 }
 
 export const ExpandableInput = ({
-  error, inputType, lengthToExpand, maxLength, placeholder, title, value, handleBlur,
+  error, disabled, inputType, lengthToExpand, maxLength, placeholder, title, value, handleBlur,
   handleChange, handleFocus, handleKeyDown, setRealValue
 }: IProps) => {
   const [hasLongValue, setHasLongValue] = useState(!!(value && value.toString().length >= lengthToExpand));
@@ -42,9 +43,16 @@ export const ExpandableInput = ({
   };
 
   const getInputElement = () => {
+    const inputClasses = classNames(
+      "variable-info variable-expression-area",
+      title,
+      {"invalid": !disabled && error}
+    );
+
     // NumberInput performs special handling of the entered value before 
-    // saving it. setRealValue is required for this.
-    if (inputType === "number" && setRealValue) {
+    // saving it which requires setRealValue. NumberInput should not be
+    // used for disabled value fields since their value may be a string.
+    if (!disabled && inputType === "number" && setRealValue) {
       return (
         <NumberInput
           className={inputClasses}
@@ -70,6 +78,7 @@ export const ExpandableInput = ({
           autoComplete="off"
           className={inputClasses}
           data-testid={`variable-${title}`}
+          disabled={disabled}
           maxLength={maxLength}
           onBlur={handleBlur}
           onChange={onChange}
@@ -84,15 +93,16 @@ export const ExpandableInput = ({
     }
   };
 
+  useEffect(() => {
+    if (disabled && value) {
+      setHasLongValue(!!(value.toString().length >= lengthToExpand));
+    }
+  }, [disabled, lengthToExpand, value]);
+
   const containerClasses = classNames(
     "expandable-input-container",
     {"expanded": hasLongValue && showFullValue},
     {"long": hasLongValue}
-  );
-  const inputClasses = classNames(
-    "variable-info variable-expression-area",
-    title,
-    {"invalid": error}
   );
 
   return (

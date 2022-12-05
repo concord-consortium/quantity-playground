@@ -12,7 +12,10 @@ interface INumberInput {
   onValueChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export const NumberInput = ({ className, dataTestId, isValid, otherProps, realValue, setRealValue, unsetSelectedNode, onValueChange }: INumberInput) => {
+export const NumberInput = ({
+  className, dataTestId, isValid, otherProps, realValue,
+  setRealValue, unsetSelectedNode, onValueChange
+}: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
   useEffect(() => {
     setValue(realValue?.toString() || "");
