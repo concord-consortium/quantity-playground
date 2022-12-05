@@ -86,14 +86,14 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   };
 
   const onElementsRemove = (elementsToRemove: Elements) => {
-    for(const element of elementsToRemove) {
+    for (const element of elementsToRemove) {
       if (isEdge((element as any))) {
         const edge = element as Edge;
         const { source, target } = edge;
         const targetModel = dqRoot.getNodeFromVariableId(target);
         const sourceModel = dqRoot.getNodeFromVariableId(source);
         // sourceModel gets removed first when a node is selected to be deleted, otherwise, just remove the connection
-        sourceModel.tryVariable && targetModel.removeInput(sourceModel.variable);
+        sourceModel?.tryVariable && targetModel.removeInput(sourceModel.variable);
       } else {
         // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
