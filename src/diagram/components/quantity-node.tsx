@@ -92,15 +92,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     // Stopping propagation allows the user to select text in the input field without 
     // inadvertently dragging the card/node.
     evt.stopPropagation();
-    data.dqRoot.setSelectedNode(data.node);
-  };
-
-  const handleFieldBlur = () => {
-    // This ensures that when the user clicks on a node other than the parent of the 
-    // field they're blurring, that the parent node is deselected. This would be 
-    // unnecessary if handleFieldFocus didn't stop propagation and explicitly set the
-    // selected node.
-    data.dqRoot.setSelectedNode(data.dqRoot.selectedNode);
   };
 
   const renderValueUnitInput = (params: {disabled: boolean}) => {
@@ -120,7 +111,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           placeholder="value"
           title="value"
           value={!disabled ? variable.value : staticValue}
-          handleBlur={handleFieldBlur}
           handleFocus={handleFieldFocus}
           setRealValue={variable.setValue}
         />
@@ -133,7 +123,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           placeholder="unit"
           title="unit"
           value={shownUnit || ""}
-          handleBlur={handleFieldBlur}
           handleChange={onUnitChange}
           handleFocus={handleFieldFocus}
         />
@@ -166,7 +155,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             onChange={onNameChange}
             onMouseDown={handleFieldFocus}
             onFocus={handleFieldFocus}
-            onBlur={handleFieldBlur}
           />
         </div>
         {hasExpression &&
@@ -178,7 +166,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               placeholder="expression"
               title="expression"
               value={variable.expression || ""}
-              handleBlur={handleFieldBlur}
               handleChange={onExpressionChange}
               handleFocus={handleFieldFocus}
               handleKeyDown={handleExpressionKeyDown}
@@ -199,7 +186,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
               data-testid={"variable-description"}
               onMouseDown={handleFieldFocus}
               onFocus={handleFieldFocus}
-              onBlur={handleFieldBlur}
             />
           }
           <button className="variable-description-toggle" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
