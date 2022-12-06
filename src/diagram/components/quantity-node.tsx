@@ -185,7 +185,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             />
           </div>
         }
-        {hasExpression ? renderValueUnitInput({disabled: true}) : renderValueUnitInput({disabled: false})}
+        {renderValueUnitInput({disabled: hasExpression})}
         <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
           {showDescription && 
             <TextareaAutosize

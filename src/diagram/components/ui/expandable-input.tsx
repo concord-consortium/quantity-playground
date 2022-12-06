@@ -26,7 +26,7 @@ export const ExpandableInput = ({
   error, disabled, inputType, lengthToExpand, maxLength, placeholder, title, value, handleBlur,
   handleChange, handleFocus, handleKeyDown, setRealValue
 }: IProps) => {
-  const [hasLongValue, setHasLongValue] = useState(!!(value && value.toString().length >= lengthToExpand));
+  const [hasLongValue, setHasLongValue] = useState(value && value.toString().length >= lengthToExpand);
   const [showFullValue, setShowFullValue] = useState(hasLongValue);
 
   const handlToggleFullValue = () => {
@@ -34,7 +34,7 @@ export const ExpandableInput = ({
   };
 
   const onChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    const isLongValue = !!(evt.target.value && evt.target.value.length >= lengthToExpand);
+    const isLongValue = evt.target.value && evt.target.value.length >= lengthToExpand;
     setHasLongValue(isLongValue);
     setShowFullValue(isLongValue);
     if (handleChange) {
@@ -95,7 +95,7 @@ export const ExpandableInput = ({
 
   useEffect(() => {
     if (disabled && value) {
-      setHasLongValue(!!(value.toString().length >= lengthToExpand));
+      setHasLongValue(value.toString().length >= lengthToExpand);
     }
   }, [disabled, lengthToExpand, value]);
 
