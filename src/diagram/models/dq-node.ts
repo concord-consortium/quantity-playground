@@ -9,7 +9,6 @@ export const kDefaultNodeHeight = 98;
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),
   variable: types.reference(Variable),
-  draggable: types.optional(types.boolean, true),
 
   // The x and y values are required when initializing the react flow
   // component. However the react flow component ignores them after this.
@@ -18,6 +17,9 @@ export const DQNode = types.model("DQNode", {
   x: types.number,
   y: types.number
 })
+.volatile(self => ({
+  draggable: true,
+}))
 .views(self => ({
   get tryVariable() {
     return tryReference(() => self.variable);
