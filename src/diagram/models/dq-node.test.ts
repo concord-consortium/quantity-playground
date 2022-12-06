@@ -52,4 +52,18 @@ describe("DQNode", () => {
     expect(node.x).toBe(100);
     expect(node.y).toBe(50);
   });
+
+  it("has a draggable property that can be set to true or false", () => {
+    const variable = Variable.create({});
+    const node = DQNode.create({ variable: variable.id, x: 0, y: 0 });
+
+    // references have to be within the same tree so we need some container
+    const container = GenericContainer.create();
+    container.add(variable);
+    container.add(node);
+
+    expect(node.draggable).toBe(true);
+    node.setDraggable(false);
+    expect(node.draggable).toBe(false);
+  });
 });

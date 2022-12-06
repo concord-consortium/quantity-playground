@@ -8,24 +8,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -34,12 +38,14 @@ Array [
         },
       },
       "node": Object {
+        "draggable": true,
         "id": "1",
         "variable": "a",
         "x": 100,
         "y": 100,
       },
     },
+    "draggable": true,
     "id": "a",
     "position": Object {
       "x": 100,
@@ -53,24 +59,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -79,12 +89,14 @@ Array [
         },
       },
       "node": Object {
+        "draggable": true,
         "id": "2",
         "variable": "b",
         "x": 100,
         "y": 300,
       },
     },
+    "draggable": true,
     "id": "b",
     "position": Object {
       "x": 100,
@@ -98,24 +110,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -124,12 +140,14 @@ Array [
         },
       },
       "node": Object {
+        "draggable": true,
         "id": "3",
         "variable": "c",
         "x": 550,
         "y": 150,
       },
     },
+    "draggable": true,
     "id": "c",
     "position": Object {
       "x": 550,
@@ -144,24 +162,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -170,6 +192,7 @@ Array [
         },
       },
     },
+    "draggable": true,
     "id": "ea-targetc-a",
     "source": "a",
     "target": "c",
@@ -182,24 +205,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -208,6 +235,7 @@ Array [
         },
       },
     },
+    "draggable": true,
     "id": "ed-targetc-a",
     "source": "d",
     "target": "c",
@@ -220,24 +248,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -246,6 +278,7 @@ Array [
         },
       },
     },
+    "draggable": true,
     "id": "eb-targetc-a",
     "source": "b",
     "target": "c",
@@ -257,24 +290,28 @@ Array [
         "flowTransform": undefined,
         "nodes": Object {
           "1": Object {
+            "draggable": true,
             "id": "1",
             "variable": "a",
             "x": 100,
             "y": 100,
           },
           "2": Object {
+            "draggable": true,
             "id": "2",
             "variable": "b",
             "x": 100,
             "y": 300,
           },
           "3": Object {
+            "draggable": true,
             "id": "3",
             "variable": "c",
             "x": 550,
             "y": 150,
           },
           "4": Object {
+            "draggable": true,
             "id": "4",
             "variable": "d",
             "x": 150,
@@ -283,12 +320,14 @@ Array [
         },
       },
       "node": Object {
+        "draggable": true,
         "id": "4",
         "variable": "d",
         "x": 150,
         "y": 500,
       },
     },
+    "draggable": true,
     "id": "d",
     "position": Object {
       "x": 150,

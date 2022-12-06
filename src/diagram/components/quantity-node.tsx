@@ -89,18 +89,15 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-    // Stopping propagation allows the user to select text in the input field without 
-    // inadvertently dragging the card/node.
-    evt.stopPropagation();
-    data.dqRoot.setSelectedNode(data.node);
+    // Setting draggable to false allows the user to select text in the input field
+    // without inadvertently dragging the card/node.
+    data.node.setDraggable(false);
   };
 
   const handleFieldBlur = () => {
-    // This ensures that when the user clicks on a node other than the parent of the 
-    // field they're blurring, that the parent node is deselected. This would be 
-    // unnecessary if handleFieldFocus didn't stop propagation and explicitly set the
-    // selected node.
-    data.dqRoot.setSelectedNode(data.dqRoot.selectedNode);
+    // Ensure the parent node is made draggable after the user has finished editing
+    // the input field.
+    data.node.setDraggable(true);
   };
 
   const renderValueUnitInput = () => {

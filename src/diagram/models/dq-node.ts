@@ -9,6 +9,7 @@ export const kDefaultNodeHeight = 98;
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),
   variable: types.reference(Variable),
+  draggable: types.optional(types.boolean, true),
 
   // The x and y values are required when initializing the react flow
   // component. However the react flow component ignores them after this.
@@ -41,6 +42,7 @@ export const DQNode = types.model("DQNode", {
       type: "quantityNode",
       data: { node: self, dqRoot },
       position: { x: self.x, y: self.y },
+      draggable: self.draggable,
     });
 
     const variable = self.tryVariable;
@@ -55,6 +57,7 @@ export const DQNode = types.model("DQNode", {
             arrowHeadType: ArrowHeadType.ArrowClosed,
             type: "floatingEdge",
             data: { dqRoot },
+            draggable: self.draggable,
           });
         }
       });
@@ -71,7 +74,9 @@ export const DQNode = types.model("DQNode", {
     self.x = x;
     self.y = y;
   },
-
+  setDraggable(draggable: boolean) {
+    self.draggable = draggable;
+  },
   addInput(newInput: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.addInput((newInput as any)?.variable);
   },
