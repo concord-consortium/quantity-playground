@@ -8,13 +8,12 @@ interface INumberInput {
   otherProps?: Record<string, any>;
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
-  unsetSelectedNode?: () => void;
   onValueChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const NumberInput = ({
   className, dataTestId, isValid, otherProps, realValue,
-  setRealValue, unsetSelectedNode, onValueChange
+  setRealValue, onValueChange
 }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
   useEffect(() => {
@@ -31,9 +30,6 @@ export const NumberInput = ({
       setRealValue(undefined);
     } else {
       setRealValue(+value);
-    }
-    if (unsetSelectedNode) {
-      unsetSelectedNode();
     }
   };
 
