@@ -209,9 +209,8 @@ $color-gray-dark: #3f3f3f;
       text-align: right;
       width: $input-half-width;
     }
-    &.static {
+    &:disabled {
       background-color: theme-var($--theme-color-7);
-      padding: 3px 6px;
       &:hover { outline: none; }
     }
     &.no-value { color: gray; }

@@ -129,6 +129,12 @@ describe("Quantity Node", () => {
     render(<Diagram dqRoot={root} />);
     expect(screen.getByTestId("diagram")).toBeInTheDocument();
     expect(screen.getByTestId("variable-expression")).toBeInTheDocument();
+    const valueFields = screen.getAllByTestId("variable-value");
+    expect(valueFields.length).toEqual(3);
+    expect(valueFields[2]).toBeDisabled();
+    const unitFields = screen.getAllByTestId("variable-unit");
+    expect(unitFields.length).toEqual(3);
+    expect(unitFields[2]).toBeDisabled();
   });
   it("quantity node entries should have expression field when there is only one input", () => {
     const inputA = Variable.create({id: "inputA", value: 999, unit: "m"});
