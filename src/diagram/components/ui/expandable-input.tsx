@@ -30,6 +30,7 @@ export const ExpandableInput = ({
     return val && val.toString().length >= length;
   };
 
+  const isValidValue = !(value === "NaN" && disabled);
   const [hasLongValue, setHasLongValue] = useState(isLongValue(value, lengthToExpand));
   const [showFullValue, setShowFullValue] = useState(hasLongValue);
 
@@ -89,7 +90,7 @@ export const ExpandableInput = ({
           onMouseDown={handleFocus}
           placeholder={placeholder}
           spellCheck="false"
-          value={value}
+          value={isValidValue ? value : ""}
         />
       );
     }
