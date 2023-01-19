@@ -85,25 +85,48 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     }
   };
 
+  const deleteEdge = (edge: Edge) => {
+    const { source, target } = edge;
+    const targetModel = dqRoot.getNodeFromVariableId(target);
+    const sourceModel = dqRoot.getNodeFromVariableId(source);
+    sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
+  };
+
+  const deleteAllNodesEdges = (variableId: string) => {
+    const nodesEdges = dqRoot.reactFlowElements.filter((e) => {
+      return isEdge(e) && (e.source === variableId || e.target === variableId);
+    });
+    for (const edge of nodesEdges as Edge[]) {
+      deleteEdge(edge);
+    }
+  };
+
+  // onElementsRemove is called when the user's keyboard Delete key is pressed
+  // to delete a selected card or a selected connecting arrow (aka "edge").
   const onElementsRemove = (elementsToRemove: Elements) => {
     for (const element of elementsToRemove) {
       if (isEdge((element as any))) {
         const edge = element as Edge;
-        const { source, target } = edge;
-        const targetModel = dqRoot.getNodeFromVariableId(target);
-        const sourceModel = dqRoot.getNodeFromVariableId(source);
-        // sourceModel gets removed first when a node is selected to be deleted, otherwise, just remove the connection
-        sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
+        deleteEdge(edge);
       } else {
-        // If this is the selected node we need to remove it from the state too
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        if (dqRoot.selectedNode === nodeToRemove) {
-          dqRoot.setSelectedNode(undefined);
-        }
+        deleteAllNodesEdges(element.id);
         dqRoot.removeNode(nodeToRemove);
       }
     }
   };
+
+  // deleteCard is called when the UI's Delete Card button is clicked to
+  // delete a selected card.
+  const deleteCard = showDeleteCardButton
+  ? () => {
+    const selectedNode = dqRoot.selectedNode;
+    if (selectedNode) {
+      deleteAllNodesEdges(selectedNode.variable.id);
+      dqRoot.removeNode(selectedNode);
+    }
+  }
+  : undefined;
 
   const onSelectionChange = (selectedElements: Elements | null) => {
     if (selectedElements?.[0]?.type === "quantityNode" ) {
@@ -160,13 +183,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
   const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
 
-  const deleteCard = showDeleteCardButton
-    ? () => {
-      const selectedNode = dqRoot.selectedNode;
-      if (selectedNode) dqRoot.removeNode(selectedNode);
-    }
-    : undefined;
-  
   const interactive = !interactionLocked;
 
   return (
