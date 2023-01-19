@@ -92,7 +92,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
   };
 
-  const deleteAllNodesEdges = (variableId: string) => {
+  const deleteAllEdgesOfNode = (variableId: string) => {
     const nodesEdges = dqRoot.reactFlowElements.filter((e) => {
       return isEdge(e) && (e.source === variableId || e.target === variableId);
     });
@@ -110,7 +110,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
         deleteEdge(edge);
       } else {
         const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        deleteAllNodesEdges(element.id);
+        deleteAllEdgesOfNode(element.id);
         dqRoot.removeNode(nodeToRemove);
       }
     }
@@ -122,7 +122,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   ? () => {
     const selectedNode = dqRoot.selectedNode;
     if (selectedNode) {
-      deleteAllNodesEdges(selectedNode.variable.id);
+      deleteAllEdgesOfNode(selectedNode.variable.id);
       dqRoot.removeNode(selectedNode);
     }
   }
