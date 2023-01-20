@@ -76,8 +76,8 @@ export const ExpandableInput = ({
         />
       );
     } else {
-      // Don't output NaN as a computed value.
-      const displayValue = value === "NaN" && inputType === "number" && disabled ? "" : value;
+      // Don't output NaN or Infinity as a computed value.
+      const displayValue = !isFinite(value as number) && inputType === "number" && disabled ? "" : value;
       return (
         <textarea
           autoComplete="off"
