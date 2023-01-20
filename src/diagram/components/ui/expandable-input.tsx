@@ -67,8 +67,6 @@ export const ExpandableInput = ({
           onValueChange={onChange}
           otherProps={{
             placeholder: "value",
-            autoComplete: "off",
-            spellCheck: "false",
             maxLength,
             onMouseDown: handleFocus,
             onFocus: handleFocus,

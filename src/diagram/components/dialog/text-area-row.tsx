@@ -13,12 +13,17 @@ interface ITextAreaRow {
   maxCharacters?: number;
   rows: number;
   setValue: (value: string) => void;
+  spellCheck?: boolean;
   value: string;
 }
-export const TextAreaRow = ({ cols, inputId, invalid, label, maxCharacters, rows, setValue, value }: ITextAreaRow) => {
+export const TextAreaRow = ({
+  cols, inputId, invalid, label, maxCharacters, rows, setValue, spellCheck,
+  value
+}: ITextAreaRow) => {
   const classes = classNames("dialog-input", { invalid }, "dialog-textarea");
   const content = (
     <textarea
+      autoComplete="off"
       className={classes}
       id={inputId}
       maxLength={maxCharacters}
@@ -26,6 +31,7 @@ export const TextAreaRow = ({ cols, inputId, invalid, label, maxCharacters, rows
       onChange={e => setValue(e.target.value)}
       cols={cols}
       rows={rows}
+      spellCheck={spellCheck}
     />
   );
   return <DialogRow content={content} inputId={inputId} label={label} />;

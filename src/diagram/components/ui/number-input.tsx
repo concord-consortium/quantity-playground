@@ -36,5 +36,16 @@ export const NumberInput = ({
   // We explicitly make "" valid here because it represents a variable with no specified value
   const invalid = value !== "" && !isValid(value);
 
-  return <textarea className={classNames(className, { invalid })} data-testid={dataTestId} value={value} onChange={onChange} onBlur={onBlur} {...otherProps} />;
+  return (
+    <textarea
+      className={classNames(className, { invalid })}
+      data-testid={dataTestId}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      {...otherProps}
+      autoComplete="off"
+      spellCheck={false}
+    />
+  );
 };
