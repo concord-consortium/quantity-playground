@@ -30,14 +30,6 @@ export const ExpandableInput = ({
     return val && val.toString().length >= length;
   };
 
-  const isValidValue = () => {
-    // Don't output NaN as a computed value.
-    if (value === "NaN" && placeholder === "value" && disabled) {
-      return false;
-    }
-    return true;
-  };
-
   const [hasLongValue, setHasLongValue] = useState(isLongValue(value, lengthToExpand));
   const [showFullValue, setShowFullValue] = useState(hasLongValue);
 
@@ -84,6 +76,8 @@ export const ExpandableInput = ({
         />
       );
     } else {
+      // Don't output NaN as a computed value.
+      const displayValue = value === "NaN" && inputType === "number" && disabled ? "" : value;
       return (
         <textarea
           autoComplete="off"
@@ -97,7 +91,7 @@ export const ExpandableInput = ({
           onMouseDown={handleFocus}
           placeholder={placeholder}
           spellCheck="false"
-          value={isValidValue() ? value : ""}
+          value={displayValue}
         />
       );
     }
