@@ -176,6 +176,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
           {showDescription && 
             <TextareaAutosize
+              autoComplete="off"
               className="variable-description-area"
               value={variable.description || ""}
               onChange={onDescriptionChange}

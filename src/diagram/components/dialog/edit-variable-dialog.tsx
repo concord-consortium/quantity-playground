@@ -36,6 +36,7 @@ export const EditVariableDialogContent = observer(({ variable }: IEditVariableDi
         maxCharacters={kMaxNotesCharacters}
         rows={2}
         setValue={variable.setDescription}
+        spellCheck={true}
         value={variable.description || ""}
       />
       <TextRow inputId="evd-units" label="Units" value={variable.unit || ""} setValue={variable.setUnit} width={230} />

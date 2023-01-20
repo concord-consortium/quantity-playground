@@ -17,6 +17,7 @@ export const TextRow = ({ inputId, invalid, label, maxCharacters, setValue, valu
   const classes = classNames("dialog-input", { invalid }, "dialog-text");
   const content = (
     <input
+      autoComplete="off"
       className={classes}
       id={inputId}
       type="text"
@@ -25,6 +26,7 @@ export const TextRow = ({ inputId, invalid, label, maxCharacters, setValue, valu
       onChange={e => setValue(e.target.value)}
       dir="auto"
       style={style}
+      spellCheck={false}
     />
   );
   return <DialogRow content={content} inputId={inputId} label={label} />;
