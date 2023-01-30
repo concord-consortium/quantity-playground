@@ -11,9 +11,9 @@ import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/v
 import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
+import { ErrorMessage } from "./error-message";
 
 import "./quantity-node.scss";
-import { ErrorMessage } from "./error-message";
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
@@ -69,6 +69,12 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       variable.setExpression(undefined);
     } else {
       variable.setExpression(evt.target.value);
+    }
+    const inputs = variable.inputs as any;
+    // remove and reconnect input nodes
+    for (const input of inputs) {
+      variable.removeInput(input);
+      variable.addInput(input);
     }
   };
 

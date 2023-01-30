@@ -1,3 +1,5 @@
+@import "../../scss/vars.scss";
+
 // .react-flow__node.selected {
 //   border: 1px solid black;
 //   border-radius: 5px;
@@ -9,8 +11,29 @@
 // change colors when the path is selected
 // A general SVG workground for this is described here:
 // https://stackoverflow.com/questions/16664584/changing-an-svg-markers-color-css/50189360
+//
+// The marker end IDs used here are defined in the diagram component.
+//
 .react-flow__edge-path {
-  stroke-width: 2.5;
+  marker-end: url("#custom-arrow");
+  stroke: $color-light-gray-2;
+  stroke-dasharray: 0, 10;
+  stroke-linecap: round;
+  stroke-width: 3;
+
+  &.disconnected {
+    marker-end: url("#custom-arrow__drag");
+    stroke: $select-blue;
+  }
+}
+
+.source-used-in-target-expression {
+  .react-flow__edge-path {
+    marker-end: url("#custom-arrow__in-expression");
+    stroke: $color-gray-1;
+    stroke-dasharray: 0;
+    stroke-width: 2;
+  }
 }
 
 .nested-set-node {

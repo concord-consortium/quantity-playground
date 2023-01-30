@@ -126,8 +126,7 @@ export const Variable = types.model("Variable", {
       }
 
       // TODO: you can make an expression that only uses one input and the other
-      // input is connected but not used. In that case the unused input should
-      // should be skipped.
+      // input is connected but not used. In that case the unused input should be skipped.
       //
       // Currently if an unused input doesn't have a value, the output will show
       // NaN because of the validation below.

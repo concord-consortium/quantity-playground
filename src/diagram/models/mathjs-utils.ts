@@ -29,19 +29,8 @@ export const getMathUnit = (value: number, unitString: string): math.Unit | unde
   }
 };
 
-// 1. use string replace of the inputNames with backticks
-// 2. then find all symbols and look for matches in those symbols
-// 3. if they match replace them 
 export const replaceInputNames = (expression: string, inputNames: (string | undefined)[]) => {
-  let localExpression = expression;
-
-  inputNames.forEach((name, index) => {
-    if (!name) {
-      return;
-    }
-    // A RegExp is used so all matches are replaced not just the first one
-    localExpression = localExpression.replace(RegExp("`" + name + "`", "g"), `input_${index}`);
-  });
+  const localExpression = expression;
 
   try {
     const expressionNode = parse(localExpression);
