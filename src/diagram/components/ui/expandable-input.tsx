@@ -75,10 +75,10 @@ export const ExpandableInput = ({
       );
     } else {
       // Don't output NaN or Infinity as a computed value.
-      // Before checking for NaN or Infinity, make sure to remove any commas in a value
-      // that is a string. Otherwise, a string value like "1,000" will be considered NaN.
-      const possibleNumberValue = typeof value === "string" ? value.replace(/,/g, "") : value;
-      const displayValue = !isFinite(Number(possibleNumberValue)) && inputType === "number" ? "" : value;
+      // Note that parseFloat will convert a string value like "1,000" to the number 1000,
+      // Number("1,000") will return NaN.
+      const possibleNumberValue = value && typeof value === "string" ? parseFloat(value) : Number(value);
+      const displayValue = !isFinite(possibleNumberValue) && inputType === "number" ? "" : value;
       return (
         <textarea
           autoComplete="off"
