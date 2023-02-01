@@ -12,6 +12,7 @@ import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
 import { ErrorMessage } from "./error-message";
+import { VariableType } from "../models/variable";
 
 import "./quantity-node.scss";
 
@@ -70,8 +71,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     } else {
       variable.setExpression(evt.target.value);
     }
-    const inputs = variable.inputs as any;
-    // remove and reconnect input nodes
+    // The appearance of the edges coming from input nodes changes based on
+    // whether they are used in the expression. To ensure their appearance
+    // is updated when the expression changes, remove and re-connect the
+    // inputs which forces the edges to re-render.
+    const inputs = variable.inputs as unknown as VariableType[];
     for (const input of inputs) {
       variable.removeInput(input);
       variable.addInput(input);
