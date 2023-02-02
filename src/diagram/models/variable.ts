@@ -1,7 +1,7 @@
 import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { getMathUnit, replaceInputNames } from "./mathjs-utils";
+import { getMathUnit, getUsedInputs, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
@@ -71,6 +71,13 @@ export const Variable = types.model("Variable", {
       // Then view reverses this. This way it will update when the nodes
       // change.
       return replaceInputNames(self.expression, self.inputNames);
+    }
+  }
+}))
+.views(self => ({
+  get inputsInExpression() {
+    if (self.expression) {
+      return getUsedInputs(self.expression, self.inputNames);
     }
   }
 }))

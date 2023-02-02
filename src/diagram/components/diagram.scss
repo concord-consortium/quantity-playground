@@ -5,35 +5,41 @@
 //   border-radius: 5px;
 // }
 
-// The stroke-width affects the marker
-// Color settings on the path do not affect the marker
-// Because colors don't affect this means the arrows do not
-// change colors when the path is selected
-// A general SVG workground for this is described here:
-// https://stackoverflow.com/questions/16664584/changing-an-svg-markers-color-css/50189360
-//
-// The marker end IDs used here are defined in the diagram component.
-//
-.react-flow__edge-path {
-  marker-end: url("#custom-arrow");
-  stroke: $color-light-gray-2;
-  stroke-dasharray: 0, 10;
-  stroke-linecap: round;
-  stroke-width: 3;
+// While some stroke settings affect the path markers (arrowheads), stroke color
+// settings do not. To support different colored arrowheads, we define custom SVG
+// markers in the Diagram component and set marker-end properties to the custom 
+// markers' IDs in the style rules below. 
+.react-flow__edge {
+  &.used-in-expression {
+    .react-flow__edge-path {
+      marker-end: url("#custom-arrow__selected-or-used");
+      stroke: $color-gray-1;
+      stroke-dasharray: 0;
+      stroke-width: 2;
+    }
+  }
 
-  &.disconnected {
-    marker-end: url("#custom-arrow__drag");
-    stroke: $select-blue;
+  &.selected {
+    .react-flow__edge-path {
+      marker-end: url("#custom-arrow__selected-or-used");
+    }
+  }
+
+  .react-flow__edge-path {
+    marker-end: url("#custom-arrow");
+    stroke: $color-light-gray-2;
+    stroke-dasharray: 0, 10;
+    stroke-linecap: round;
+    stroke-width: 3;
   }
 }
 
-.source-used-in-target-expression {
-  .react-flow__edge-path {
-    marker-end: url("#custom-arrow__in-expression");
-    stroke: $color-gray-1;
-    stroke-dasharray: 0;
-    stroke-width: 2;
-  }
+.react-flow__connection-path {
+  marker-end: url("#custom-arrow__dragging");
+  stroke: $select-blue;
+  stroke-dasharray: 0, 10;
+  stroke-linecap: round;
+  stroke-width: 3;
 }
 
 .nested-set-node {

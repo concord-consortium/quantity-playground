@@ -196,8 +196,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
                 color as needed. See default.scss for usage. If we upgrade to a newer version
                 of React Flow, there may be a cleaner way to change the arrow colors. */}
             <MarkerEnd markerId="custom-arrow" markerColor="#949494" />
-            <MarkerEnd markerId="custom-arrow__drag" markerColor="#0081ff" />
-            <MarkerEnd markerId="custom-arrow__in-expression" markerColor="#5a5a5a" />
+            <MarkerEnd markerId="custom-arrow__selected-or-used" markerColor="#5a5a5a" />
+            <MarkerEnd markerId="custom-arrow__dragging" markerColor="#0081ff" />
           </defs>
         </svg>
         <ReactFlow

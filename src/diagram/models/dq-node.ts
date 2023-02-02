@@ -46,8 +46,10 @@ export const DQNode = types.model("DQNode", {
     const variable = self.tryVariable;
     if (variable) {
       const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
+      const usedInputs = self.variable.inputsInExpression;
       inputs?.forEach((input) => {
         if (input) {
+          const usedInExpression = input.name && usedInputs?.includes(input.name);
           elements.push({
             id: `e${input.id}-target${id}-a`,
             source: input.id,
@@ -55,6 +57,7 @@ export const DQNode = types.model("DQNode", {
             arrowHeadType: ArrowHeadType.ArrowClosed,
             type: "floatingEdge",
             data: { dqRoot },
+            className: usedInExpression ? "used-in-expression" : "",
           });
         }
       });

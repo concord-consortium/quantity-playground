@@ -9,9 +9,9 @@ interface IProps {
 
 export const ConnectionLine: React.FC<IProps> = ({ sourceX, sourceY, targetX, targetY }) =>  {
   return (
-    <g className="react-flow__connection disconnected">
+    <g className="react-flow__connection">
       <path
-        className="react-flow__edge-path react-flow__edgeupdater disconnected"
+        className="react-flow__connection-path"
         data-testid="connection-line"
         fill="none"
         stroke="#0081ff"
