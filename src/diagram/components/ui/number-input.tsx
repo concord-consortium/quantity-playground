@@ -4,6 +4,7 @@ import classNames from "classnames";
 interface INumberInput {
   className?: string;
   dataTestId?: string;
+  disabled?: boolean;
   isValid: (value: string) => boolean;
   otherProps?: Record<string, any>;
   realValue?: number;
@@ -12,7 +13,7 @@ interface INumberInput {
 }
 
 export const NumberInput = ({
-  className, dataTestId, isValid, otherProps, realValue,
+  className, dataTestId, disabled, isValid, otherProps, realValue,
   setRealValue, onValueChange
 }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
@@ -40,6 +41,7 @@ export const NumberInput = ({
     <textarea
       className={classNames(className, { invalid })}
       data-testid={dataTestId}
+      disabled={disabled}
       value={value}
       onChange={onChange}
       onBlur={onBlur}

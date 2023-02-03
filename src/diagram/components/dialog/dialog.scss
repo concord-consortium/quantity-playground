@@ -1,43 +1,82 @@
 @use "../../../scss/vars.scss";
+@use "../../../scss/mixins.scss";
 
 $invalid-outline: .5px solid vars.$invalid-red;
 
-.qp-dialog {
-  position: absolute;
-  left: 50px;
-  top: 50px;
+.blue { @include mixins.spread-map(vars.$theme-map-blue); }
+.gray { @include mixins.spread-map(vars.$theme-map-gray); }
+.green { @include mixins.spread-map(vars.$theme-map-green); }
+.light-gray { @include mixins.spread-map(vars.$theme-map-light-gray); }
+.red { @include mixins.spread-map(vars.$theme-map-red); }
+.yellow { @include mixins.spread-map(vars.$theme-map-yellow); }
 
-  padding: 15px;
+.qp-dialog {
   background-color: white;
-  border-radius: 3px;
-  border: 2px solid #999;
+  border-radius: 8px;
+  border: 2px solid vars.$workspace-teal;
+  left: 50%;
+  overflow: hidden;
+  padding: 5px 20px 20px;
+  position: absolute;
+  top: 50px;
+  transform: translate(-50%, 0);
+  width: 475px;
 }
 
 .dialog-content {
+  box-sizing: content-box;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 20px;
+  padding-top: 15px;
+  position: relative;
+
+  .dialog-content__col {
+    overflow: hidden;
+
+    &.dialog-content__col-1 { width: 170px; }
+    &.dialog-content__col-2 { width: 285px; }
+
+    &.is-output-variable {
+      .dialog-row.disabled { opacity: 1; }
+      .dialog-input {
+        border: none;
+        max-width: calc(100% - 12px);
+        &#evd-expression, &#evd-calculation {
+          background: mixins.theme-var(vars.$theme-color-7);
+        }
+      }
+      #evd-units, #evd-value {
+        background: mixins.theme-var(vars.$theme-color-7);
+      }
+    }
+  }
 }
 
 .dialog-row {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  margin: 0 0 7px;
+
+  &.disabled { opacity: .35; }
 }
 
 .dialog-label {
-  width: 82px;
-  text-align: right;
-  font-size: 12px;
+  display: block;
+  font-size: 14px;
   font-weight: normal;
+  margin-bottom: 4px;
 }
 
 .dialog-input {
+  border: 1.5px solid vars.$color-light-gray-2;
   border-radius: 5px;
-  border: 1.5px solid #949494;
-  padding: 3.5px 6px;
-  font-family: PTSans-Narrow, sans-serif;
+  color: vars.$default-fg-color;
+  display: block;
+  font-family: vars.$default-font-family;
   font-size: 14px;
+  height: 14px;
+  line-height: 1;
+  max-width: calc(100% - 15px);
+  overflow-y: scroll;
+  padding: 3.5px 6px;
 
   &.invalid {
     border: 1.5px solid vars.$invalid-red;
@@ -47,15 +86,84 @@ $invalid-outline: .5px solid vars.$invalid-red;
       outline: $invalid-outline;
     }
   }
+
+  &#evd-name {
+    background: mixins.theme-var(vars.$theme-color-5);
+    height: 14px;
+  }
+  &#evd-notes { height: 210px; }
+  &#evd-expression, &#evd-calculation { height: 58px; }
+  &#evd-units { height: 41px; }
+  &#evd-value {
+    box-sizing: content-box;
+    height: 15px;
+    resize: none;
+    text-align: right;
+    width: 70px;
+  }
 }
 
 .dialog-textarea {
   resize: none;
+  width: calc(100% - 12px);
+}
+
+.dialog-error-messages {
+  align-items: flex-start;
+  color: vars.$dialog-error-purple;
+  display: flex;
+  font-size: 14px;
+  gap: 4px;
+  height: 51px;
+  margin-bottom: 20;
+  position: relative;
+
+  .error-icon {
+    bottom: auto;
+    left: 0;
+    position: relative;
+  }
+  .error-message {
+    color: vars.$dialog-error-purple;
+    display: block;
+    font-size: 14px;
+    left: 0;
+    position: relative;
+    top: 0;
+    width: auto;
+  }
 }
 
 .dialog-button-row {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  margin-top: 8px;
+  gap: 10px;
+
+  .dialog-button {
+    background: #eee;
+    border: solid 1.5px vars.$color-light-gray-2;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 6px 10px;
+
+    &.cancel { background: #fff; }
+    &:hover { background: vars.$workspace-teal-light-4; }
+    &:active { background: vars.$workspace-teal-light-3; }
+  }
+}
+
+.variable-type-icon {
+  height: 24px;
+  position: absolute;
+  right: 0;
+  top: 7px;
+  width: 60px;
+
+  svg {
+    height: 24px;
+    width: 60px;
+
+    .background { fill: mixins.theme-var(vars.$theme-color-5); }
+    .border { fill: mixins.theme-var(vars.$theme-color-2); }
+  }
 }

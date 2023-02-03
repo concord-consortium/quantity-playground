@@ -10,7 +10,7 @@
   &.red { @include spread-map($theme-map-red); }
   &.yellow { @include spread-map($theme-map-yellow); }
 
-  background: theme-var($--theme-color-5);
+  background: theme-var($theme-color-5);
   border: 1px solid $default-fg-color;
   border-radius: 3px;
   color: $default-fg-color;
