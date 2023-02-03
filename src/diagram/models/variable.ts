@@ -1,7 +1,7 @@
 import { evaluate, isUnit } from "../custom-mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { getMathUnit, replaceInputNames } from "./mathjs-utils";
+import { getMathUnit, getUsedInputs, replaceInputNames } from "./mathjs-utils";
 import math from "mathjs";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
@@ -75,6 +75,13 @@ export const Variable = types.model("Variable", {
   }
 }))
 .views(self => ({
+  get inputsInExpression() {
+    if (self.expression) {
+      return getUsedInputs(self.expression, self.inputNames);
+    }
+  }
+}))
+.views(self => ({
   get mathValue() {
     const selfComputedUnit = this.computedUnitIncludingMessageAndError.unit;
     const selfComputedValue = this.computedValueIncludingMessageAndError.value;
@@ -126,8 +133,7 @@ export const Variable = types.model("Variable", {
       }
 
       // TODO: you can make an expression that only uses one input and the other
-      // input is connected but not used. In that case the unused input should
-      // should be skipped.
+      // input is connected but not used. In that case the unused input should be skipped.
       //
       // Currently if an unused input doesn't have a value, the output will show
       // NaN because of the validation below.

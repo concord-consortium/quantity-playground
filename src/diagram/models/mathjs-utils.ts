@@ -29,19 +29,9 @@ export const getMathUnit = (value: number, unitString: string): math.Unit | unde
   }
 };
 
-// 1. use string replace of the inputNames with backticks
-// 2. then find all symbols and look for matches in those symbols
-// 3. if they match replace them 
-export const replaceInputNames = (expression: string, inputNames: (string | undefined)[]) => {
-  let localExpression = expression;
-
-  inputNames.forEach((name, index) => {
-    if (!name) {
-      return;
-    }
-    // A RegExp is used so all matches are replaced not just the first one
-    localExpression = localExpression.replace(RegExp("`" + name + "`", "g"), `input_${index}`);
-  });
+export const parseExpression = (expression: string, inputNames: (string | undefined)[]) => {
+  const localExpression = expression;
+  const inputsInExpression: string[] = [];
 
   try {
     const expressionNode = parse(localExpression);
@@ -50,12 +40,21 @@ export const replaceInputNames = (expression: string, inputNames: (string | unde
       inputNames.forEach((name, index) => {
         if (symbol.name === name) {
           symbol.name = `input_${index}`;
+          inputsInExpression.push(name);
         }
       });
     }
-    return expressionNode.toString();
+    return { expression: expressionNode.toString(), inputsInExpression };
   } catch (e) {
-    // if there is parse error just return the expression for now
-    return localExpression;
+    // if there is parse error, return the original expression for now
+    return { expression: localExpression, inputsInExpression };
   }
+};
+
+export const replaceInputNames = (expression: string, inputNames: (string | undefined)[]) => {
+  return parseExpression(expression, inputNames).expression;
+};
+
+export const getUsedInputs = (expression: string, inputNames: (string | undefined)[]) => {
+  return parseExpression(expression, inputNames).inputsInExpression;
 };

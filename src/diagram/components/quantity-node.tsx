@@ -11,9 +11,9 @@ import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/v
 import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
+import { ErrorMessage } from "./error-message";
 
 import "./quantity-node.scss";
-import { ErrorMessage } from "./error-message";
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};

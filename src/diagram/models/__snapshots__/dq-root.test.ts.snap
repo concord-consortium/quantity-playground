@@ -139,6 +139,7 @@ Array [
   },
   Object {
     "arrowHeadType": "arrowclosed",
+    "className": "",
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -177,6 +178,7 @@ Array [
   },
   Object {
     "arrowHeadType": "arrowclosed",
+    "className": "",
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -215,6 +217,7 @@ Array [
   },
   Object {
     "arrowHeadType": "arrowclosed",
+    "className": "",
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
