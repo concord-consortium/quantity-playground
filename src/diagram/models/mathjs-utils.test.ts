@@ -1,4 +1,4 @@
-import {getMathUnit, replaceInputNames} from "./mathjs-utils";
+import {getMathUnit, replaceInputNames, getUsedInputs} from "./mathjs-utils";
 
 describe("mathjs-utils", () => {
   describe("getMathUnit", () => {
@@ -55,6 +55,16 @@ describe("mathjs-utils", () => {
       expect(replaceInputNames("var 2 * var",inputs)).toBe("input_1 2 * input_1");
       expect(replaceInputNames("var-foo",inputs)).toBe("input_1 - input_0");
       expect(replaceInputNames("-var",inputs)).toBe("-input_1");
+    });
+  });
+  describe("getUsedInputs", () => {
+    it("returns the names of available input variables used in a valid expression", () => {
+      const result = getUsedInputs("var1+var2", ["var1", "var2", "var3"]);
+      expect(result).toStrictEqual(["var1", "var2"]);
+    });
+    it("returns the names of available input variables used in an invalid expression", () => {
+      const result = getUsedInputs("var1+var2+", ["var1", "var2", "var3"]);
+      expect(result).toStrictEqual(["var1", "var2"]);
     });
   });
 });
