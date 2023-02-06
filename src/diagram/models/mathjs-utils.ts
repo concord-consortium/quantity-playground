@@ -46,7 +46,15 @@ export const parseExpression = (expression: string, inputNames: (string | undefi
     }
     return { expression: expressionNode.toString(), inputsInExpression };
   } catch (e) {
-    // if there is parse error, return the original expression for now
+    // If there is parse error, return the original expression for now and
+    // use a regex to find the input names in the expression.
+    // Note there are slightly different subtract signs we need to handle.
+    inputNames.forEach((name) => {
+      const variableRegex = new RegExp(`(^|[÷,×,+,-,-,/,*,),(,^])${name}([÷,×,+,-,-,/,*,(,),^]|$)`);
+      if (name && variableRegex.test(localExpression)) {
+        inputsInExpression.push(name);
+      }
+    });
     return { expression: localExpression, inputsInExpression };
   }
 };
