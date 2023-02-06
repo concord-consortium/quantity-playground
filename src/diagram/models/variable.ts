@@ -1,8 +1,10 @@
-import { evaluate, isUnit } from "../custom-mathjs";
+import math from "mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
+
 import { getMathUnit, getUsedInputs, replaceInputNames } from "./mathjs-utils";
-import math from "mathjs";
+import { evaluate, isUnit } from "../custom-mathjs";
+import { getCompactErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
 export enum Operation {
@@ -217,7 +219,8 @@ export const Variable = types.model("Variable", {
         // want to. When supporting generic expressions we probably will want to.
         return {error: "incompatible units"};
       } else {
-        return {error: `unknown error: ${e.message}`};
+        return getCompactErrorMessage(e.message);
+        // return {error: `unknown error: ${e.message}`};
       }
     }
   },
@@ -312,7 +315,8 @@ export const Variable = types.model("Variable", {
         // We return the unit for consistency with the error above.
         return {unit: self.unit, error: "incompatible units"};
       } else {
-        return {error: `unknown error: ${e.message}`};
+        return getCompactErrorMessage(e.message);
+        // return {error: `unknown error: ${e.message}`};
       }
     }
   }
