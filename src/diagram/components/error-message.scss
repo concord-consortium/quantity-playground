@@ -9,15 +9,16 @@
   width: 20px;
 }
 .error-message {
-  color: $invalid-red;
+  color: $warning-purple;
   display: inline-block;
   font-size: 12px;
   height: auto;
   left: 0;
   overflow-wrap: normal;
   position: absolute;
-  top: 100%;
+  padding: 12px 4px 4px;
+  top: calc(100% - 8px);
   width: 100%;
 
-  p { margin: 0; }
+  p { margin: 0 2px; }
 }
