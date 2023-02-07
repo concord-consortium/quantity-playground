@@ -140,13 +140,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     selected: data.dqRoot.selectedNode === data.node
   });
 
+  const errorMessage = variable.computedUnitError ?? variable.computedUnitMessage ?? variable.computedValueError;
+
   return (
     <div className={nodeContainerClasses} >
       {hasError &&
         <ErrorMessageComponent
-          unitError={variable.computedUnitError}
-          unitMessage={variable.computedUnitMessage}
-          valueError={variable.computedValueError}
+          errorMessage={errorMessage}
         />
       }
       <div className={nodeClasses} data-testid="quantity-node">

@@ -5,10 +5,11 @@ import { basicErrorMessage } from "../utils/error";
 
 describe("Expandable Input", () => {
   it ("renders an icon and message when passed the proper values", () => {
+    const errorMessage = basicErrorMessage("invalid unit")
+      ?? basicErrorMessage("this is a unit message")
+      ?? basicErrorMessage("invalid value");
     render(<ErrorMessageComponent
-      unitError={basicErrorMessage("invalid unit")}
-      unitMessage={basicErrorMessage("this is a unit message")}
-      valueError={basicErrorMessage("invalid value")}
+      errorMessage={errorMessage}
     />);
     expect(screen.getByTestId("error-icon")).toBeInTheDocument();
     expect(screen.getByTestId("error-message")).toBeInTheDocument();
