@@ -29,6 +29,10 @@ $color-gray-dark: #3f3f3f;
     border-bottom: 1px solid theme-var($--theme-color-2);
     border-right: 1px solid theme-var($--theme-color-2);
     z-index: 3;
+
+    .error-bottom {
+      border-top: 1px solid theme-var($--theme-color-2);
+    }
   }
 
   .node {

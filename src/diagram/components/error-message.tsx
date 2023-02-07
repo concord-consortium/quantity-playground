@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { ErrorMessage } from "../utils/error";
 
@@ -11,6 +11,8 @@ interface IProps {
 }
 
 export const ErrorMessageComponent = ({ errorMessage }: IProps) => {
+  const [showExpanded/*, setShowExpanded*/] = useState(true);
+
   if (!errorMessage) {
     return null;
   }
@@ -29,6 +31,11 @@ export const ErrorMessageComponent = ({ errorMessage }: IProps) => {
             {errorMessage.short}
           </div>
         </div>
+        { errorMessage.expanded && showExpanded &&
+          <div className="error-bottom">
+            {errorMessage.expanded}
+          </div>
+        }
       </div>
     </>
   );
