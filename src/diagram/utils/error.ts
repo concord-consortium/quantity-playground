@@ -1,43 +1,38 @@
 // Contains data about different types of known errors and messages to display when they are encountered
 
-enum VariableErrors {
-  incomplete = "incomplete",
-  unknown = "unknown"
-}
-
 export interface IErrorMessage {
   errorMessage: string;
   variableName?: string;
 }
 export interface ErrorMessage {
   emoji?: string;
-  short: (args: IErrorMessage) => string;
-  expanded?: (args: IErrorMessage) => string;
+  short: string;
+  expanded?: string;
 }
 
-export const errorMessages = {
-  [VariableErrors.incomplete]: {
-    emoji: ":face_with_diagonal_mouth:",
-    short: (args: IErrorMessage) => "Um, still working?",
-    expanded: (args: IErrorMessage) => "Check for anything missing or extra in the expression"
-  },
-  [VariableErrors.unknown]: {
-    emoji: "",
-    short: (args: IErrorMessage) => "Unknown error",
-    expanded: (args: IErrorMessage) => args.errorMessage
-  }
-};
+// 🤔😮
+const getIncompleteErrorMessage = (args: IErrorMessage) => ({
+  emoji: "🫤",
+  short: "Um, still working?",
+  expanded: "Check for anything missing or extra in the expression"
+});
+const getUnknownErrorMessage = ({ errorMessage }: IErrorMessage) => ({
+  emoji: "",
+  short: `Unknown error: ${errorMessage}`,
+  expanded: errorMessage
+});
 
-export function getErrorMessage(originalMessage: string) {
-  if (originalMessage.startsWith("Unexpected end of expression")) {
-    return errorMessages[VariableErrors.incomplete];
-  } else if (originalMessage.startsWith("Function unaryPlus missing in provided namespace")) {
-    return errorMessages[VariableErrors.incomplete];
-  }
-  return errorMessages[VariableErrors.unknown];
+export function basicErrorMessage(originalMessage: string) {
+  return {
+    short: `Warning: ${originalMessage}`
+  };
 }
 
-export function getCompactErrorMessage(originalMessage: string) {
-  const error = getErrorMessage(originalMessage);
-  return {error: `${error.emoji} ${error.short({ errorMessage: originalMessage })}`};
+export function getErrorMessage(args: IErrorMessage) {
+  if (args.errorMessage.startsWith("Unexpected end of expression")) {
+    return getIncompleteErrorMessage(args);
+  } else if (args.errorMessage.startsWith("Function unaryPlus missing in provided namespace")) {
+    return getIncompleteErrorMessage(args);
+  }
+  return getUnknownErrorMessage(args);
 }

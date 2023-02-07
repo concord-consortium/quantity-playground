@@ -16,9 +16,24 @@
   left: 0;
   overflow-wrap: normal;
   position: absolute;
-  padding: 12px 4px 4px;
+  padding-top: 12px;
   top: calc(100% - 8px);
   width: 100%;
 
-  p { margin: 0 2px; }
+  .error-top {
+    display: flex;
+    margin: 0 6px 4px 4px;
+
+    .error-emoji {
+      font-size: 14px;
+      height: 100%;
+      text-align: center;
+      width: 18px;
+    }
+
+    .error-short {
+      margin: 1px 0 0 2px;
+    }
+  }
+  // p { margin: 0 2px; }
 }

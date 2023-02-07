@@ -11,7 +11,7 @@ import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/v
 import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icon-color-menu";
 import { IconExpand } from "./icon-expand";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessageComponent } from "./error-message";
 
 import "./quantity-node.scss";
 
@@ -143,7 +143,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   return (
     <div className={nodeContainerClasses} >
       {hasError &&
-        <ErrorMessage
+        <ErrorMessageComponent
           unitError={variable.computedUnitError}
           unitMessage={variable.computedUnitMessage}
           valueError={variable.computedValueError}

@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 
 import { getMathUnit, getUsedInputs, replaceInputNames } from "./mathjs-utils";
 import { evaluate, isUnit } from "../custom-mathjs";
-import { getCompactErrorMessage } from "../utils/error";
+import { basicErrorMessage, ErrorMessage, getErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
 export enum Operation {
@@ -113,7 +113,7 @@ export const Variable = types.model("Variable", {
     }
   },
 
-  get computedValueIncludingMessageAndError(): {value?:number, error?:string, message?: string} {
+  get computedValueIncludingMessageAndError(): {value?: number, error?: ErrorMessage, message?: ErrorMessage} {
     const nodeInputs = self.inputs as IVariable[];
     if (self.numberOfInputs === 0) {
       return {value: self.value};
@@ -124,7 +124,7 @@ export const Variable = types.model("Variable", {
       // If there is just one input the expression will be the label of the
       // input. So we should never get here. If the there are 2 inputs then the
       // expression will only be available if the operation is set.
-      return {error: "no expression"};
+      return {error: basicErrorMessage("no expression")};
     }
 
     // Validate the inputs
@@ -157,7 +157,7 @@ export const Variable = types.model("Variable", {
         // If we add this kind of check we need to add Jest tests which can trigger
         // the error in both environments so we will know if MobX changes these strings
         console.warn("error reading input.mathValue", error);
-        return {error: "cycles or loops between cards is not supported"};
+        return {error: basicErrorMessage("cycles or loops between cards is not supported")};
       }
 
       // If the input mathValue is undefined then we can't compute the result.
@@ -167,7 +167,7 @@ export const Variable = types.model("Variable", {
         // If the mathValue is undefined but the computedValue is valid,
         // that should mean there is an error in the units.
         // Provide a generic error message for now
-        return {message: "cannot compute value from inputs"};
+        return {message: basicErrorMessage("cannot compute value from inputs")};
       } else {
         // If mathValue and computedValue are undefined,
         // the input node/card might be showing an error or message itself.
@@ -202,7 +202,7 @@ export const Variable = types.model("Variable", {
         // In theory math.js can return other kinds of results arrays, big
         // numbers, ...  With the current code that shouldn't be possible
         // but when we allow expressions it will be more likely to happen
-        return {error: `unknown result type: ${resultType}`};
+        return {error: basicErrorMessage(`unknown result type: ${resultType}`)};
       }
     } catch (e: any) {
       // TODO: we should find a way to handle this without throwing an
@@ -212,22 +212,21 @@ export const Variable = types.model("Variable", {
       // errors MathJS provides a data property on the error that includes
       // the character location and more info about the error.
       if (e.message?.startsWith("Units do not match")) {
-        return {error: "incompatible units"};
+        return {error: basicErrorMessage("incompatible units")};
       } else if (e.message?.startsWith("Unexpected type of argument")) {
         // This can happen when a unit-less value is added or subtracted from a
         // value with a unit. We could provide more information about this if we
         // want to. When supporting generic expressions we probably will want to.
-        return {error: "incompatible units"};
+        return {error: basicErrorMessage("incompatible units")};
       } else {
-        return getCompactErrorMessage(e.message);
-        // return {error: `unknown error: ${e.message}`};
+        return {error: getErrorMessage({ errorMessage: e.message })};
       }
     }
   },
 
   // If there are two inputs then units can't be changed
   // otherwise current node units override previous node units
-  get computedUnitIncludingMessageAndError(): {unit?: string, error?: string, message?: string} {
+  get computedUnitIncludingMessageAndError(): {unit?: string, error?: ErrorMessage, message?: ErrorMessage} {
     const nodeInputs = self.inputs as IVariable[];
     if (self.numberOfInputs === 0) {
       // Just return the current unit.
@@ -259,13 +258,13 @@ export const Variable = types.model("Variable", {
           // return the value if there is no unit, the only reason the
           // mathValueWithValueOr1 should be undefined is if there is an error with the
           // input unit.
-          return {error: "invalid input units"};
+          return {error: basicErrorMessage("invalid input units")};
         }
       } catch (error) {
         // TODO: this can happen when there is a cycle, perhaps it can happen in other cases too?
         // See the TODO comment about cycles above for more info.
         console.warn("error reading input.mathValueWithValueOr1", error);
-        return {error: "cycles or loops between cards is not supported"};
+        return {error: basicErrorMessage("cycles or loops between cards is not supported")};
       }
     }
 
@@ -283,7 +282,7 @@ export const Variable = types.model("Variable", {
           // This seems to be unreachable currently, but it is possible for
           // MathJS to return the empty string in some cases. See the test
           // "...units cancel on manually created unit"
-          return {message: "units cancel"};
+          return {message: basicErrorMessage("units cancel")};
         } else {
           return {unit: unitString};
         }
@@ -291,7 +290,7 @@ export const Variable = types.model("Variable", {
         if (nodeInputs.some(input => input?.computedUnit)) {
           // If one of the inputs has units and the result is not a Unit
           // that should mean the units have canceled
-          return {message: "units cancel"};
+          return {message: basicErrorMessage("units cancel")};
         } else {
           // If neither input has a unit then this is unit-less math so it has
           // no unit and it isn't an error.
@@ -307,16 +306,15 @@ export const Variable = types.model("Variable", {
       // property on the error that includes the character location and more
       // info about the error.
       if (e.message?.startsWith("Units do not match")) {
-        return {unit: self.unit, error: "incompatible units"};
+        return {unit: self.unit, error: basicErrorMessage("incompatible units")};
       } else if (e.message?.startsWith("Unexpected type of argument")) {
         // This can happen when a unit-less value is added or subtracted from a
         // value with a unit. We could provide more information about this if we
         // want to. When supporting generic expressions we probably will want to.
         // We return the unit for consistency with the error above.
-        return {unit: self.unit, error: "incompatible units"};
+        return {unit: self.unit, error: basicErrorMessage("incompatible units")};
       } else {
-        return getCompactErrorMessage(e.message);
-        // return {error: `unknown error: ${e.message}`};
+        return {error: getErrorMessage({ errorMessage: e.message })};
       }
     }
   }

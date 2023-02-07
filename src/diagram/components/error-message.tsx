@@ -1,15 +1,30 @@
 import React from "react";
+
+import { ErrorMessage } from "../utils/error";
+
 import { IconWarning } from "./icon-warning";
 
 import "./error-message.scss";
 
 interface IProps {
-  unitError?: string;
-  unitMessage?: string;
-  valueError?: string;
+  unitError?: ErrorMessage;
+  unitMessage?: ErrorMessage;
+  valueError?: ErrorMessage;
 }
 
-export const ErrorMessage = ({ unitError, unitMessage, valueError }: IProps) => {
+interface IErrorTop { errorMessage: ErrorMessage }
+const ErrorTop = ({ errorMessage }: IErrorTop) => (
+  <div className="error-top">
+    <div className="error-emoji">
+      {errorMessage.emoji}
+    </div>
+    <div className="error-short">
+      {errorMessage.short}
+    </div>
+  </div>
+);
+
+export const ErrorMessageComponent = ({ unitError, unitMessage, valueError }: IProps) => {
   if (!unitError && !valueError && !unitMessage) {
     return null;
   }
@@ -20,9 +35,11 @@ export const ErrorMessage = ({ unitError, unitMessage, valueError }: IProps) => 
         <IconWarning />
       </div>
       <div className="error-message" data-testid="error-message">
-        {valueError && <p>Warning: {valueError}</p>}
-        {unitError && unitError !== valueError && <p>Warning: {unitError}</p>}
-        {unitMessage && <p>Warning: {unitMessage}</p>}
+        {valueError && <ErrorTop errorMessage={valueError} />}
+        {unitError && unitError !== valueError && 
+          <ErrorTop errorMessage={unitError} />
+        }
+        {unitMessage && <ErrorTop errorMessage={unitMessage} />}
       </div>
     </>
   );
