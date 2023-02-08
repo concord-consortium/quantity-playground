@@ -9,6 +9,11 @@
   width: 20px;
 }
 .error-message {
+  background-color: rgba(255, 255, 255, .5);
+  border-radius: 5px;
+  border-left: 1px solid theme-var($--theme-color-2);
+  border-bottom: 1px solid theme-var($--theme-color-2);
+  border-right: 1px solid theme-var($--theme-color-2);
   color: $warning-purple;
   display: inline-block;
   font-size: 12px;
@@ -19,6 +24,7 @@
   padding-top: 12px;
   top: calc(100% - 8px);
   width: 100%;
+  z-index: 3;
 
   .error-top {
     display: flex;
@@ -34,9 +40,33 @@
     .error-short {
       margin: 1px 0 0 2px;
     }
+
+    .more-prompt-button {
+      align-items: center;
+      border: none;
+      bottom: 2px;
+      cursor: pointer;
+      display: flex;
+      height: 20px;
+      justify-content: center;
+      outline: none;
+      padding: 0;
+      position: absolute;
+      right: 6px;
+      width: 20px;
+
+      .more-prompt-oval {
+        fill: theme-var($--theme-color-5);
+      }
+  
+      .more-prompt-circles {
+        fill: #3f3f3f;
+      }
+    }
   }
 
   .error-bottom {
+    border-top: 1px solid theme-var($--theme-color-2);
     padding: 3px 6px 4px;
   }
 }
