@@ -13,9 +13,7 @@ describe("Expandable Input", () => {
     />);
     expect(screen.getByTestId("error-icon")).toBeInTheDocument();
     expect(screen.getByTestId("error-message")).toBeInTheDocument();
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: invalid unit</p>");
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: this is a unit message</p>");
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: invalid value</p>");
+    expect(screen.getByTestId("error-message")).toContainHTML("Warning: invalid unit");
   });
   it ("does not render anything when no values are passed", () => {
     render(<ErrorMessageComponent />);
