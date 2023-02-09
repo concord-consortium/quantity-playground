@@ -55,6 +55,11 @@ export const Variable = types.model("Variable", {
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
     return validInputs.length;
+  }
+}))
+.views(self => ({
+  get hasInputs() {
+    return self.numberOfInputs > 0;
   },
 }))
 .views(self => ({
@@ -72,16 +77,12 @@ export const Variable = types.model("Variable", {
       // change.
       return replaceInputNames(self.expression, self.inputNames);
     }
-  }
-}))
-.views(self => ({
+  },
   get inputsInExpression() {
     if (self.expression) {
       return getUsedInputs(self.expression, self.inputNames);
     }
-  }
-}))
-.views(self => ({
+  },
   get calculationString() {
     // The calculation string is a representation of the expression with
     // the variable names replaced by their associated values and units.
@@ -372,6 +373,14 @@ export const Variable = types.model("Variable", {
   },
   get computedUnitMessage() {
     return self.computedUnitIncludingMessageAndError.message;
+  },
+}))
+.views(self => ({
+  get displayValue() {
+    return self.hasInputs ? self.computedValue : self.value;
+  },
+  get displayUnit() {
+    return self.hasInputs ? self.computedUnit : self.unit;
   }
 }))
 .actions(self => ({

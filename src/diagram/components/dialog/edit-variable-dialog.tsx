@@ -13,31 +13,29 @@ import { ErrorMessage } from "../error-message";
 
 import "./dialog.scss";
 
-interface IEditVariableDialogContent {
-  calculationString?: string;
-  errorMessage?: string;
-  hasInputs?: boolean;
-  variable: VariableType;
+export interface IEditVariableDialogContent {
+  variable?: VariableType;
+  variableClone: VariableType;
 }
 
-export const EditVariableDialogContent = observer(({
-  calculationString, errorMessage, hasInputs, variable
-}: IEditVariableDialogContent) => {
-  const displayValue = hasInputs ? variable.computedValue : variable.value;
-  const displayUnit = hasInputs ? variable.computedUnit : variable.unit;
-  const calculation = hasInputs ? calculationString : "";
+export const EditVariableDialogContent = observer(({ variable, variableClone }: IEditVariableDialogContent) => {
+  // Because variableClone was created from a snapshot, we will not be able to access 
+  // computed values related to the original variable's inputs. We need to get those values
+  // from the original variable.
+  const errorMessage = variable?.computedValueError || variable?.computedUnitError || variable?.computedUnitMessage;
+  const isExpressionVariable = variable?.hasInputs;
 
   const updateName = (newName: string) => {
-    variable.setName(processName(newName));
+    variableClone.setName(processName(newName));
   };
   
   return (
-    <div className={classNames("dialog-content", variable.color)}>
+    <div className={classNames("dialog-content", variableClone.color)}>
       <div className="dialog-content__col dialog-content__col-1">
         <TextRow
           inputId="evd-name"
           label="Variable Name"
-          value={variable.name || ""}
+          value={variableClone.name || ""}
           setValue={updateName}
           maxCharacters={kMaxNameCharacters}
         />
@@ -47,44 +45,44 @@ export const EditVariableDialogContent = observer(({
           label="Notes"
           maxCharacters={kMaxNotesCharacters}
           rows={2}
-          setValue={variable.setDescription}
+          setValue={variableClone.setDescription}
           spellCheck={true}
-          value={variable.description || ""}
+          value={variableClone.description || ""}
         />
       </div>
-      <div className={classNames("dialog-content__col dialog-content__col-2", { "is-output-variable": hasInputs })}>
+      <div className={classNames("dialog-content__col dialog-content__col-2", { "is-expression-variable": isExpressionVariable })}>
         <TextAreaRow
           disabled={true}
           inputId="evd-expression"
           label="Expression"
-          value={variable.expression || ""}
+          value={variableClone.expression || ""}
         />
         <TextAreaRow
           disabled={true}
           inputId="evd-calculation"
           label="Calculation"
-          value={calculation || ""}
+          value={isExpressionVariable ? variable.calculationString || "" : ""}
         />
         <TextAreaRow
-          disabled={hasInputs}
+          disabled={isExpressionVariable}
           inputId="evd-units"
           label="Unit"
-          value={displayUnit || ""}
-          setValue={variable.setUnit}
+          value={isExpressionVariable ? variable.displayUnit || "" : variableClone.unit || ""}
+          setValue={variableClone.setUnit}
         />
         <NumberRow
-          disabled={hasInputs}
+          disabled={isExpressionVariable}
           inputId="evd-value"
           label="Value"
-          realValue={displayValue}
-          setRealValue={variable.setValue}
+          realValue={variable?.displayValue}
+          setRealValue={variableClone.setValue}
         />
         <div className="dialog-error-messages">
           { errorMessage && <ErrorMessage valueError={errorMessage} /> }
         </div>
       </div>
       <div className="variable-type-icon">
-        { hasInputs ? <IconOutputCard /> : <IconInputCard /> }
+        { isExpressionVariable ? <IconOutputCard /> : <IconInputCard /> }
       </div>
     </div>
   );
@@ -109,20 +107,6 @@ interface IEditVariableDialog {
 
 export const EditVariableDialog = ({ onClose, variable }: IEditVariableDialog) => {
   const variableClone = useMemo(() => Variable.create(getSnapshot(variable)), [variable]);
-  const hasInputs = variable.numberOfInputs > 0;
-  const hasExpression = !!variableClone.expression;
-
-  // Because variableClone was created from a snapshot, we will not be able to access 
-  // computed values related to the original variable's inputs. We need to get those values
-  // from the original variable and either update variableClone or pass the values to the
-  // EditVariableDialogContent component separately.
-  const calculationString = variable.calculationString;
-  const errorMessage = variable?.computedValueError || variable?.computedUnitError || variable?.computedUnitMessage;
-  if (hasExpression) {
-    const value = variable.computedValue ? variable.computedValue : variable.computedValueWithSignificantDigits;
-    variableClone.setValue(Number(value));
-    variableClone.setUnit(variable.computedUnit);
-  }
 
   const handleOK = () => {
     updateVariable(variable, variableClone);
@@ -131,12 +115,7 @@ export const EditVariableDialog = ({ onClose, variable }: IEditVariableDialog) =
 
   return (
     <div className={classNames("qp-dialog", variable.color)}>
-      <EditVariableDialogContent
-        calculationString={calculationString}
-        errorMessage={errorMessage}
-        hasInputs={hasInputs}
-        variable={variableClone}
-      />
+      <EditVariableDialogContent variable={variable} variableClone={variableClone} />
       <div className="dialog-button-row">
         <button className="dialog-button cancel" onClick={onClose}>Cancel</button>
         <button className="dialog-button save" onClick={handleOK}>Save</button>

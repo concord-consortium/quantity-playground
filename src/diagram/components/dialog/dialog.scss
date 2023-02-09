@@ -36,7 +36,7 @@ $invalid-outline: .5px solid vars.$invalid-red;
     &.dialog-content__col-1 { width: 170px; }
     &.dialog-content__col-2 { width: 285px; }
 
-    &.is-output-variable {
+    &.is-expression-variable {
       .dialog-row.disabled { opacity: 1; }
       .dialog-input {
         border: none;
