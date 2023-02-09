@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 @import "../../scss/vars.scss";
 @import "../../scss/mixins.scss";
 
@@ -16,7 +17,8 @@
   border-right: 1px solid theme-var($--theme-color-2);
   color: $warning-purple;
   display: inline-block;
-  font-size: 12px;
+  font-family: $default-font-family;
+  font-size: 14px;
   height: auto;
   left: 0;
   overflow-wrap: normal;
@@ -31,14 +33,15 @@
     margin: 0 6px 4px 4px;
 
     .error-emoji {
-      font-size: 14px;
+      font-family: 'Noto Color Emoji', sans-serif;
+      font-size: 16px;
       height: 16px;
       text-align: center;
       width: 18px;
     }
 
     .error-short {
-      margin: 1px 0 0 2px;
+      margin: 1px 0 0 3px;
     }
 
     .more-prompt-button {
@@ -61,6 +64,21 @@
   
       .more-prompt-circles {
         fill: #3f3f3f;
+      }
+
+      &:hover {
+        .more-prompt-oval {
+          fill: theme-var($--theme-color-2)
+        }
+      }
+      &:active {
+        .more-prompt-oval {
+          fill: theme-var($--theme-color-1)
+        }
+
+        .more-prompt-circles {
+          fill: #ffffff;
+        }
       }
     }
   }
