@@ -28,6 +28,9 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
   const updateName = (newName: string) => {
     variableClone.setName(processName(newName));
   };
+  const updateValue = (newValue: number | undefined) => {
+    variableClone.setValue(newValue);
+  };
   
   return (
     <div className={classNames("dialog-content", variableClone.color)}>
@@ -74,8 +77,8 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
           disabled={isExpressionVariable}
           inputId="evd-value"
           label="Value"
-          realValue={variable?.displayValue}
-          setRealValue={variableClone.setValue}
+          realValue={isExpressionVariable ? variable?.displayValue : variableClone.value}
+          setRealValue={updateValue}
         />
         <div className="dialog-error-messages">
           { errorMessage && <ErrorMessage valueError={errorMessage} /> }
