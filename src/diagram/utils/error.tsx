@@ -7,7 +7,7 @@ export interface IErrorMessage {
 }
 export interface ErrorMessage {
   emoji?: string;
-  short: JSX.Element;
+  short: string | JSX.Element;
   expanded?: string;
 }
 
@@ -16,7 +16,7 @@ export const incompleteShort = "Um, still working?";
 export const incompleteExpanded = "Check for anything missing or extra in the expression";
 const getIncompleteErrorMessage = () => ({
   emoji: incompleteEmoji,
-  short: <span>{incompleteShort}</span>,
+  short: incompleteShort,
   expanded: incompleteExpanded
 });
 
@@ -41,13 +41,13 @@ const getUnknownSymbolErrorMessage = (symbol: string) => ({
 
 const getUnknownErrorMessage = (errorMessage: string) => ({
   emoji: "",
-  short: <span>{`Unknown error`}</span>,
+  short: `Unknown error`,
   expanded: errorMessage
 });
 
 export function basicErrorMessage(originalMessage: string) {
   return {
-    short: <span>{`Warning: ${originalMessage}`}</span>
+    short: `Warning: ${originalMessage}`
   };
 }
 
