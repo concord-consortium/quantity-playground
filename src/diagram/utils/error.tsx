@@ -1,0 +1,64 @@
+// Contains data about different types of known errors and messages to display when they are encountered
+import React from "react";
+
+export interface IErrorMessage {
+  errorMessage: string;
+  variableName?: string;
+}
+export interface ErrorMessage {
+  emoji?: string;
+  short: JSX.Element;
+  expanded?: string;
+}
+
+export const incompleteEmoji = "🫤";
+export const incompleteShort = "Um, still working?";
+export const incompleteExpanded = "Check for anything missing or extra in the expression";
+const getIncompleteErrorMessage = () => ({
+  emoji: incompleteEmoji,
+  short: <span>{incompleteShort}</span>,
+  expanded: incompleteExpanded
+});
+
+const unknownSymbolMessageStart = "Undefined symbol ";
+export const unknownSymbolEmoji = "🤔";
+export const unknownSymbolShort = "Hmm, what is ";
+export const unknownSymbolExpanded = "If it's a variable, create and link it to this card";
+const getUnknownSymbolErrorMessage = (symbol: string) => ({
+  emoji: unknownSymbolEmoji,
+  short: <span>{unknownSymbolShort}<strong>{symbol}</strong>?</span>,
+  expanded: unknownSymbolExpanded
+});
+
+// export const incompatibleUnitsEmoji = "😮";
+// export const incompatibleUnitsShort = "Oh, unit trouble?";
+// export const incompatibleUnitsExpanded = "Adjust the units and/or operations to make them compatible";
+// const getIncompatibleUnitsErrorMessage = (args: IErrorMessage) => ({
+//   emoji: incompatibleUnitsEmoji,
+//   short: incompatibleUnitsShort,
+//   expanded: incompatibleUnitsExpanded
+// });
+
+const getUnknownErrorMessage = (errorMessage: string) => ({
+  emoji: "",
+  short: <span>{`Unknown error`}</span>,
+  expanded: errorMessage
+});
+
+export function basicErrorMessage(originalMessage: string) {
+  return {
+    short: <span>{`Warning: ${originalMessage}`}</span>
+  };
+}
+
+export function getErrorMessage(args: IErrorMessage) {
+  if (args.errorMessage.startsWith("Unexpected end of expression")) {
+    return getIncompleteErrorMessage();
+  } else if (args.errorMessage.startsWith("Function unaryPlus missing in provided namespace")) {
+    return getIncompleteErrorMessage();
+  } else if (args.errorMessage.startsWith(unknownSymbolMessageStart)) {
+    const symbol = args.errorMessage.split(unknownSymbolMessageStart)[1];
+    return getUnknownSymbolErrorMessage(symbol);
+  }
+  return getUnknownErrorMessage(args.errorMessage);
+}
