@@ -205,7 +205,7 @@ export const Variable = types.model("Variable", {
         return {error: basicErrorMessage(`unknown result type: ${resultType}`)};
       }
     } catch (e: any) {
-      // console.log(`computedValue.getMathValues`, e.message);
+      console.log(`computedValue.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
       //
@@ -299,7 +299,7 @@ export const Variable = types.model("Variable", {
         }
       }
     } catch (e: any) {
-      // console.log(`computedUnit.getMathValues`, e.message);
+      console.log(`computedUnit.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
       //
