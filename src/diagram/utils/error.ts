@@ -11,14 +11,17 @@ export interface ErrorMessage {
 }
 
 // 🤔😮
+export const incompleteEmoji = "🫤";
+export const incompleteShort = "Um, still working?";
+export const incompleteExpanded = "Check for anything missing or extra in the expression";
 const getIncompleteErrorMessage = (args: IErrorMessage) => ({
-  emoji: "🫤",
-  short: "Um, still working?",
-  expanded: "Check for anything missing or extra in the expression"
+  emoji: incompleteEmoji,
+  short: incompleteShort,
+  expanded: incompleteExpanded
 });
 const getUnknownErrorMessage = ({ errorMessage }: IErrorMessage) => ({
   emoji: "",
-  short: `Unknown error: ${errorMessage}`,
+  short: `Unknown error`,
   expanded: errorMessage
 });
 
