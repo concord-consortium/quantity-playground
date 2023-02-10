@@ -30,14 +30,14 @@ const getUnknownSymbolErrorMessage = (symbol: string) => ({
   expanded: unknownSymbolExpanded
 });
 
-// export const incompatibleUnitsEmoji = "😮";
-// export const incompatibleUnitsShort = "Oh, unit trouble?";
-// export const incompatibleUnitsExpanded = "Adjust the units and/or operations to make them compatible";
-// const getIncompatibleUnitsErrorMessage = (args: IErrorMessage) => ({
-//   emoji: incompatibleUnitsEmoji,
-//   short: incompatibleUnitsShort,
-//   expanded: incompatibleUnitsExpanded
-// });
+export const incompatibleUnitsEmoji = "😮";
+export const incompatibleUnitsShort = "Oh, unit trouble?";
+export const incompatibleUnitsExpanded = "Adjust the units and/or operations to make them compatible";
+const getIncompatibleUnitsErrorMessage = () => ({
+  emoji: incompatibleUnitsEmoji,
+  short: incompatibleUnitsShort,
+  expanded: incompatibleUnitsExpanded
+});
 
 const getUnknownErrorMessage = (errorMessage: string) => ({
   emoji: "",
@@ -59,6 +59,13 @@ export function getErrorMessage(args: IErrorMessage) {
   } else if (args.errorMessage.startsWith(unknownSymbolMessageStart)) {
     const symbol = args.errorMessage.split(unknownSymbolMessageStart)[1];
     return getUnknownSymbolErrorMessage(symbol);
+  } else if (args.errorMessage.startsWith("Units do not match")) {
+    // Old comment from models/variable.ts
+    // If we have to throw an exception we should update MathJS to provide
+    // more information here. For other errors, MathJS provides a data
+    // property on the error that includes the character location and more
+    // info about the error.
+    return getIncompatibleUnitsErrorMessage();
   }
   return getUnknownErrorMessage(args.errorMessage);
 }

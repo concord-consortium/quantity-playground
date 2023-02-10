@@ -1,6 +1,7 @@
 import { getSnapshot } from "mobx-state-tree";
 import { GenericContainer } from "./test-utils";
 import { Operation, Variable, VariableType } from "./variable";
+import { incompatibleUnitsShort } from "../utils/error";
 
 describe("Variable", () => {
   it("Can be created", () => {
@@ -225,7 +226,7 @@ describe("Variable", () => {
 
     expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     // TODO: this case should be checked with project leaders: do we want to
     // pass the unit through to future nodes that depend on this one when there
     // is an error like this?
@@ -235,12 +236,12 @@ describe("Variable", () => {
     // Reason not to pass it through:
     //   If the user is only looking at the final output they might notice they
     //   have an error in their units further up the chain
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
-    expect(variable.computedValueError?.short).toBe("Warning: incompatible units");
+    expect(variable.computedValueError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnit).toBeUndefined();
-    expect(variable.computedUnitError?.short).toBe("Warning: incompatible units");
+    expect(variable.computedUnitError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnitMessage).toBeUndefined();
 
   });
@@ -258,12 +259,12 @@ describe("Variable", () => {
     expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
     expect(variable.computedValueError).toBeUndefined();
     expect(variable.computedUnit).toBeUndefined();
-    expect(variable.computedUnitError?.short).toBe("Warning: incompatible units");
+    expect(variable.computedUnitError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnitMessage).toBeUndefined();
 
   });
@@ -358,9 +359,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("with 2 inputs with matching units and operation subtract it returns result", () => {
@@ -392,9 +393,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("with 2 inputs with units, operation Multiply, " +

@@ -208,13 +208,7 @@ export const Variable = types.model("Variable", {
       console.log(`computedValue.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
-      //
-      // We should update MathJS to provide more information here. For other
-      // errors MathJS provides a data property on the error that includes
-      // the character location and more info about the error.
-      if (e.message?.startsWith("Units do not match")) {
-        return {error: basicErrorMessage("incompatible units")};
-      } else if (e.message?.startsWith("Unexpected type of argument")) {
+      if (e.message?.startsWith("Unexpected type of argument")) {
         // This can happen when a unit-less value is added or subtracted from a
         // value with a unit. We could provide more information about this if we
         // want to. When supporting generic expressions we probably will want to.
@@ -302,21 +296,15 @@ export const Variable = types.model("Variable", {
       console.log(`computedUnit.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
-      //
-      // If we have to throw an exception we should update MathJS to provide
-      // more information here. For other errors, MathJS provides a data
-      // property on the error that includes the character location and more
-      // info about the error.
-      if (e.message?.startsWith("Units do not match")) {
-        return {unit: self.unit, error: basicErrorMessage("incompatible units")};
-      } else if (e.message?.startsWith("Unexpected type of argument")) {
+      if (e.message?.startsWith("Unexpected type of argument")) {
         // This can happen when a unit-less value is added or subtracted from a
         // value with a unit. We could provide more information about this if we
         // want to. When supporting generic expressions we probably will want to.
         // We return the unit for consistency with the error above.
         return {unit: self.unit, error: basicErrorMessage("incompatible units")};
       } else {
-        return {error: getErrorMessage({ errorMessage: e.message })};
+        // TODO: self.unit was not included here previously. Will it cause problems to include it?
+        return {unit: self.unit, error: getErrorMessage({ errorMessage: e.message })};
       }
     }
   }
