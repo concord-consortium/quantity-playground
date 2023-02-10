@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import { applySnapshot, getSnapshot, IAnyComplexType, Instance } from "mobx-state-tree";
+import classNames from "classnames";
+
 import { NumberRow } from "./number-row";
 import { TextRow } from "./text-row";
 import { TextAreaRow } from "./text-area-row";
 import { Variable, VariableType } from "../../models/variable";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../../utils/validate";
-import classNames from "classnames";
 import { IconInputCard } from "./icon-input-card";
 import { IconOutputCard } from "./icon-output-card";
 import { ErrorMessage } from "../error-message";
@@ -19,17 +20,15 @@ export interface IEditVariableDialogContent {
 }
 
 export const EditVariableDialogContent = observer(({ variable, variableClone }: IEditVariableDialogContent) => {
-  // Because variableClone was created from a snapshot, we will not be able to access 
-  // computed values related to the original variable's inputs. We need to get those values
-  // from the original variable.
+  // We use a clone of the variable for the form so the user can modify its properties, but those
+  // changes won't be saved unless the Save button is pushed. However, because variableClone was created
+  // from a snapshot, we will not be able to access any computed values related to the original variable's
+  // inputs. We need to get those values from the original variable.
   const errorMessage = variable?.computedValueError || variable?.computedUnitError || variable?.computedUnitMessage;
   const isExpressionVariable = variable?.hasInputs;
 
   const updateName = (newName: string) => {
     variableClone.setName(processName(newName));
-  };
-  const updateValue = (newValue: number | undefined) => {
-    variableClone.setValue(newValue);
   };
   
   return (
@@ -78,7 +77,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
           inputId="evd-value"
           label="Value"
           realValue={isExpressionVariable ? variable?.displayValue : variableClone.value}
-          setRealValue={updateValue}
+          setRealValue={variableClone.setValue}
         />
         <div className="dialog-error-messages">
           { errorMessage && <ErrorMessage valueError={errorMessage} /> }
@@ -93,7 +92,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
 
 // Copies data from copyVariable into variable
 export const updateVariable = (variable: VariableType, copyVariable: VariableType) => {
-  // Because copyVariabe is created from a snapshot, it will not have any of the inputs 
+  // Because copyVariable is created from a snapshot, it will not have any of the inputs 
   // that the original variable has. So we need to save the inputs, apply the snapshot,
   // and then re-attach the inputs.
   const inputs = [...variable.inputs];

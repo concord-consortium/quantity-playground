@@ -1,8 +1,9 @@
 import React from "react";
+import classNames from "classnames";
+
 import { DialogRow } from "./dialog-row";
 import { NumberInput } from "../ui/number-input";
 import { isValidNumber } from "../../utils/validate";
-import classNames from "classnames";
 
 import "./dialog.scss";
 
