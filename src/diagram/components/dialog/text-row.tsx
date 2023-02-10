@@ -4,26 +4,31 @@ import classNames from "classnames";
 import { DialogRow } from "./dialog-row";
 
 interface ITextRow {
+  disabled?: boolean;
   inputId: string;
   invalid?: boolean;
   label: string;
   maxCharacters?: number;
-  setValue: (value: string) => void;
+  setValue?: (value: string) => void;
   value: string;
   width?: number; // Width of text input
 }
-export const TextRow = ({ inputId, invalid, label, maxCharacters, setValue, value, width }: ITextRow) => {
+export const TextRow = ({
+  disabled, inputId, invalid, label, maxCharacters, value, width,
+  setValue
+}: ITextRow) => {
   const style = { width };
-  const classes = classNames("dialog-input", { invalid }, "dialog-text");
+  const classes = classNames("dialog-input dialog-text", { invalid });
   const content = (
     <input
       autoComplete="off"
       className={classes}
+      disabled={disabled}
       id={inputId}
       type="text"
       maxLength={maxCharacters}
       value={value}
-      onChange={e => setValue(e.target.value)}
+      onChange={setValue ? e => setValue(e.target.value) : undefined}
       dir="auto"
       style={style}
       spellCheck={false}

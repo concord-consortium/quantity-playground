@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Diagram } from "../diagram/components/diagram";
 import { VariableChipListContainer } from "../diagram/components/ui/variable-chip-list-container";
-import { EditVariableDialog, updateVariable } from "../diagram/components/dialog/edit-variable-dialog";
+import { EditVariableDialog } from "../diagram/components/dialog/edit-variable-dialog";
 import { UnusedVariableDialog } from "../diagram/components/dialog/unused-variable-dialog";
 import { AppStore } from "./app-store";
 import codapInterface from "../lib/CodapInterface";
@@ -109,7 +109,6 @@ export const App = observer(() => {
       {showEditVariableDialog && appStore.diagram.selectedNode &&
         <EditVariableDialog
           onClose={() => setShowEditVariableDialog(false)}
-          onSave={updateVariable}
           variable={appStore.diagram.selectedNode.variable}
         />}
       {showUnusedVariableDialog && appStore.diagram.unusedVariables.length > 0 &&

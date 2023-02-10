@@ -1,5 +1,5 @@
 import React from "react";
-import { IconWarning } from "./icon-warning";
+import { IconNotification } from "./icon-notification";
 
 import "./error-message.scss";
 
@@ -17,7 +17,7 @@ export const ErrorMessage = ({ unitError, unitMessage, valueError }: IProps) => 
   return (
     <>
       <div className="error-icon" data-testid="error-icon">
-        <IconWarning />
+        <IconNotification />
       </div>
       <div className="error-message" data-testid="error-message">
         {valueError && <p>Warning: {valueError}</p>}

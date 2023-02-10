@@ -60,6 +60,8 @@ describe("Variable", () => {
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0});
     expect(variable.computedValue).toBe(0);
+    expect(variable.displayValue).toBe(0);
+    expect(variable.displayUnit).toBe(undefined);
 
   });
 
@@ -78,6 +80,7 @@ describe("Variable", () => {
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
+    expect(variable.calculationString).toBeUndefined();
   });
 
   it("with 2 inputs and no expression and a unit, it returns an error", () => {
@@ -133,6 +136,9 @@ describe("Variable", () => {
     expect(variable.computedUnit).toBe("mm");
     expect(variable.computedUnitError).toBeUndefined();
     expect(variable.computedUnitMessage).toBeUndefined();
+    expect(variable.calculationString).toBe("999.9 mm");
+    expect(variable.displayValue).toBe(999.9);
+    expect(variable.displayUnit).toBe("mm");
   });
 
   it("with only a unit'd inputA of 0 and no unit of its own it returns the input value and unit", () => {

@@ -1,10 +1,12 @@
+@use "./vars.scss";
+
 @mixin spread-map($map: ()) {
   @each $key, $value in $map {
     #{$key}: $value;
   }
 }
 
-@function theme-var($key, $fallback: null, $map: $theme-map-light-gray) {
+@function theme-var($key, $fallback: null, $map: vars.$theme-map-light-gray) {
   @if not map-has-key($map, $key) {
     @error "key: '#{$key}', is not a key in map: #{$map}";
   }
