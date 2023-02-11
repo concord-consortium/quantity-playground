@@ -651,8 +651,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first with a unit and second without a unit", () => {
@@ -667,8 +667,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first without a unit and second with a unit and an output unit", () => {
@@ -683,9 +683,9 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedUnitIncludingMessageAndError.unit).toEqual("m");
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first with a unit and second without a unit and an output unit", () => {
@@ -700,9 +700,9 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedUnitIncludingMessageAndError.unit).toEqual("m");
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: incompatible units");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when a cycle exists between two variables", () => {

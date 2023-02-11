@@ -208,14 +208,7 @@ export const Variable = types.model("Variable", {
       console.log(`computedValue.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
-      if (e.message?.startsWith("Unexpected type of argument")) {
-        // This can happen when a unit-less value is added or subtracted from a
-        // value with a unit. We could provide more information about this if we
-        // want to. When supporting generic expressions we probably will want to.
-        return {error: basicErrorMessage("incompatible units")};
-      } else {
-        return {error: getErrorMessage({ errorMessage: e.message })};
-      }
+      return {error: getErrorMessage({ errorMessage: e.message })};
     }
   },
 
@@ -296,16 +289,8 @@ export const Variable = types.model("Variable", {
       console.log(`computedUnit.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
-      if (e.message?.startsWith("Unexpected type of argument")) {
-        // This can happen when a unit-less value is added or subtracted from a
-        // value with a unit. We could provide more information about this if we
-        // want to. When supporting generic expressions we probably will want to.
-        // We return the unit for consistency with the error above.
-        return {unit: self.unit, error: basicErrorMessage("incompatible units")};
-      } else {
-        // TODO: self.unit was not included here previously. Will it cause problems to include it?
-        return {unit: self.unit, error: getErrorMessage({ errorMessage: e.message })};
-      }
+      // TODO: self.unit was not included here previously. Will it cause problems to include it?
+      return {unit: self.unit, error: getErrorMessage({ errorMessage: e.message })};
     }
   }
 }))

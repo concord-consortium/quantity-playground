@@ -66,6 +66,12 @@ export function getErrorMessage(args: IErrorMessage) {
     // property on the error that includes the character location and more
     // info about the error.
     return getIncompatibleUnitsErrorMessage();
+  } else if (args.errorMessage.startsWith("Unexpected type of argument")) {
+    // Old comment from models/variable.ts
+    // This can happen when a unit-less value is added or subtracted from a
+    // value with a unit. We could provide more information about this if we
+    // want to. When supporting generic expressions we probably will want to.
+    return getIncompatibleUnitsErrorMessage();
   }
   return getUnknownErrorMessage(args.errorMessage);
 }
