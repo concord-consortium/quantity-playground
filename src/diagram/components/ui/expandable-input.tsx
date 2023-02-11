@@ -2,7 +2,7 @@ import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from 
 import classNames from "classnames";
 import { NumberInput } from "./number-input";
 import { isValidNumber } from "../../utils/validate";
-import { IconExpand } from "../icon-expand";
+import { IconExpand } from "../icons/icon-expand";
 
 import "./expandable-input.scss";
 

@@ -9,8 +9,8 @@ import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/validate";
 import { ExpandableInput } from "./ui/expandable-input";
-import { IconColorMenu } from "./icon-color-menu";
-import { IconExpand } from "./icon-expand";
+import { IconColorMenu } from "./icons/icon-color-menu";
+import { IconExpand } from "./icons/icon-expand";
 import { ErrorMessageComponent } from "./error-message";
 
 import "./quantity-node.scss";

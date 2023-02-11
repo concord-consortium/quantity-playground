@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { ErrorMessage } from "../utils/error";
 
-import { IconNotification } from "./icon-notification";
+import { IconNotification } from "./icons/icon-notification";
 import { IconMorePrompt } from "./icons/icon-more-prompt";
 
 import "./error-message.scss";
