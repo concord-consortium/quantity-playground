@@ -1,4 +1,4 @@
-import math from "mathjs";
+import math, { parse, SymbolNode } from "mathjs";
 import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
@@ -57,6 +57,11 @@ export const Variable = types.model("Variable", {
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
     return validInputs.length;
+  }
+}))
+.views(self => ({
+  get hasInputs() {
+    return self.numberOfInputs > 0;
   },
 }))
 .views(self => ({
@@ -74,12 +79,31 @@ export const Variable = types.model("Variable", {
       // change.
       return replaceInputNames(self.expression, self.inputNames);
     }
-  }
-}))
-.views(self => ({
+  },
   get inputsInExpression() {
     if (self.expression) {
       return getUsedInputs(self.expression, self.inputNames);
+    }
+  },
+  get calculationString() {
+    // The calculation string is a representation of the expression with
+    // the variable names replaced by their associated values and units.
+    if (self.expression) {
+      try {
+        const expressionNode = parse(self.expression);
+        const calculation = expressionNode.transform((node) => {
+          if (node.type === "SymbolNode") {
+            const inputs = self.inputs as IVariable[];
+            const input = inputs.find(i => i.name === node.name);
+            return new SymbolNode(`${input?.computedValue} ${input?.computedUnit}`);
+          } else {
+            return node;
+          }
+        });
+        return calculation.toString();
+      } catch (e) {
+        return "";
+      }
     }
   }
 }))
@@ -326,6 +350,14 @@ export const Variable = types.model("Variable", {
   },
   get computedUnitMessage() {
     return self.computedUnitIncludingMessageAndError.message;
+  },
+}))
+.views(self => ({
+  get displayValue() {
+    return self.hasInputs ? self.computedValue : self.value;
+  },
+  get displayUnit() {
+    return self.hasInputs ? self.computedUnit : self.unit;
   }
 }))
 .actions(self => ({
@@ -359,7 +391,7 @@ export const Variable = types.model("Variable", {
 .actions(self => ({
   removeInput(input: VariableType) {
     const _var = self.inputs as unknown as VariableType[];
-     const inputToRemove = _var.find(i => i?.id === input.id);
+    const inputToRemove = _var.find(i => i?.id === input.id);
     const inputIdx = self.inputs.indexOf(inputToRemove);
     inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },

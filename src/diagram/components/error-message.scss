@@ -12,9 +12,9 @@
 .error-message {
   background-color: rgba(255, 255, 255, .5);
   border-radius: 5px;
-  border-left: 1px solid theme-var($--theme-color-2);
-  border-bottom: 1px solid theme-var($--theme-color-2);
-  border-right: 1px solid theme-var($--theme-color-2);
+  border-left: 1px solid theme-var($theme-color-2);
+  border-bottom: 1px solid theme-var($theme-color-2);
+  border-right: 1px solid theme-var($theme-color-2);
   color: $warning-purple;
   display: inline-block;
   font-family: $default-font-family;
@@ -59,7 +59,7 @@
       width: 20px;
 
       .more-prompt-oval {
-        fill: theme-var($--theme-color-5);
+        fill: theme-var($theme-color-5);
       }
   
       .more-prompt-circles {
@@ -68,12 +68,12 @@
 
       &:hover {
         .more-prompt-oval {
-          fill: theme-var($--theme-color-2)
+          fill: theme-var($theme-color-2)
         }
       }
       &:active {
         .more-prompt-oval {
-          fill: theme-var($--theme-color-1)
+          fill: theme-var($theme-color-1)
         }
 
         .more-prompt-circles {
@@ -84,7 +84,7 @@
   }
 
   .error-bottom {
-    border-top: 1px solid theme-var($--theme-color-2);
+    border-top: 1px solid theme-var($theme-color-2);
     padding: 3px 6px 4px;
   }
 }
