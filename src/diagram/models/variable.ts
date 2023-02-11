@@ -229,7 +229,6 @@ export const Variable = types.model("Variable", {
         return {error: basicErrorMessage(`unknown result type: ${resultType}`)};
       }
     } catch (e: any) {
-      console.log(`computedValue.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
       return {error: getErrorMessage({ errorMessage: e.message })};
@@ -310,7 +309,6 @@ export const Variable = types.model("Variable", {
         }
       }
     } catch (e: any) {
-      console.log(`computedUnit.getMathValues`, e.message);
       // TODO: we should find a way to handle this without throwing an
       // exception, but I think that will mean changes to MathJS
       // TODO: self.unit was not included here previously. Will it cause problems to include it?
