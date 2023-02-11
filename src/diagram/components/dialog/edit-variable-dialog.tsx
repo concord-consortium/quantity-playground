@@ -80,7 +80,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
           setRealValue={variableClone.setValue}
         />
         <div className="dialog-error-messages">
-          { errorMessage && <ErrorMessageComponent errorMessage={errorMessage} /> }
+          { errorMessage && <ErrorMessageComponent dialog={true} errorMessage={errorMessage} /> }
         </div>
       </div>
       <div className="variable-type-icon">
