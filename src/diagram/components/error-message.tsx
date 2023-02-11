@@ -25,7 +25,7 @@ export const ErrorMessageComponent = ({ dialog, errorMessage }: IProps) => {
 
   if (dialog) {
     return (
-      <div className="dialog-error-message error-message">
+      <div className="variable-dialog-error-message error-message">
         <div className="error-icon">
           <IconNotification />
         </div>

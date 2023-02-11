@@ -88,10 +88,6 @@
     display: flex;
     margin: 0 6px 4px 4px;
 
-    .error-emoji {
-      margin-top: 1px;
-    }
-
     .error-short {
       margin-left: 2px;
     }
@@ -103,7 +99,7 @@
   }
 }
 
-.dialog-error-message {
+.variable-dialog-error-message {
   display: flex;
   flex-direction: row;
   gap: 4px;
