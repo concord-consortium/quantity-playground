@@ -9,9 +9,9 @@ import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/validate";
 import { ExpandableInput } from "./ui/expandable-input";
-import { IconColorMenu } from "./icon-color-menu";
-import { IconExpand } from "./icon-expand";
-import { ErrorMessage } from "./error-message";
+import { IconColorMenu } from "./icons/icon-color-menu";
+import { IconExpand } from "./icons/icon-expand";
+import { ErrorMessageComponent } from "./error-message";
 
 import "./quantity-node.scss";
 
@@ -135,95 +135,98 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
-  const nodeClasses = classNames(variable.color, "node", {
+  const nodeContainerClasses = classNames(variable.color, "node-container");
+  const nodeClasses = classNames("node", {
     selected: data.dqRoot.selectedNode === data.node
   });
 
+  const errorMessage = variable.computedUnitError ?? variable.computedUnitMessage ?? variable.computedValueError;
+
   return (
-    <div className={nodeClasses} data-testid="quantity-node">
-      <div className="variable-info-container">
-        <div className="variable-info-row name-row">
-          <input
-            className="variable-info name"
-            type="text"
-            placeholder="variable_name"
-            autoComplete="off"
-            spellCheck="false"
-            value={variable.name || ""}
-            data-testid="variable-name"
-            maxLength={kMaxNameCharacters}
-            onChange={onNameChange}
-            onMouseDown={handleFieldFocus}
-            onFocus={handleFieldFocus}
-          />
-        </div>
-        {hasExpression &&
-          <div className="variable-info-row expression-row" data-testid="variable-expression-row">
-            <ExpandableInput
-              error={!!(variable.computedValueError || variable.computedUnitError)}
-              inputType="text"
-              lengthToExpand={kExpressionExpandLength}
-              placeholder="expression"
-              title="expression"
-              value={variable.expression || ""}
-              handleChange={onExpressionChange}
-              handleFocus={handleFieldFocus}
-              handleKeyDown={handleExpressionKeyDown}
-            />
-          </div>
-        }
-        {renderValueUnitInput({disabled: hasExpression})}
-        <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
-          {showDescription && 
-            <TextareaAutosize
+    <div className={nodeContainerClasses} data-testid="node-container">
+      {hasError &&
+        <ErrorMessageComponent
+          errorMessage={errorMessage}
+        />
+      }
+      <div className={nodeClasses} data-testid="quantity-node">
+        <div className="variable-info-container">
+          <div className="variable-info-row name-row">
+            <input
+              className="variable-info name"
+              type="text"
+              placeholder="variable_name"
               autoComplete="off"
-              className="variable-description-area"
-              value={variable.description || ""}
-              onChange={onDescriptionChange}
-              minRows={1}
-              maxLength={kMaxNotesCharacters}
-              maxRows={3}
-              placeholder={"notes"}
-              data-testid={"variable-description"}
+              spellCheck="false"
+              value={variable.name || ""}
+              data-testid="variable-name"
+              maxLength={kMaxNameCharacters}
+              onChange={onNameChange}
               onMouseDown={handleFieldFocus}
               onFocus={handleFieldFocus}
             />
+          </div>
+          {hasExpression &&
+            <div className="variable-info-row expression-row" data-testid="variable-expression-row">
+              <ExpandableInput
+                error={!!(variable.computedValueError || variable.computedUnitError)}
+                inputType="text"
+                lengthToExpand={kExpressionExpandLength}
+                placeholder="expression"
+                title="expression"
+                value={variable.expression || ""}
+                handleChange={onExpressionChange}
+                handleFocus={handleFieldFocus}
+                handleKeyDown={handleExpressionKeyDown}
+              />
+            </div>
           }
-          <button className="variable-description-toggle" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
-            <IconExpand />
-          </button>
+          {renderValueUnitInput({disabled: hasExpression})}
+          <div className={classNames("variable-info-row", "description-row", { expanded: showDescription })}>
+            {showDescription && 
+              <TextareaAutosize
+                autoComplete="off"
+                className="variable-description-area"
+                value={variable.description || ""}
+                onChange={onDescriptionChange}
+                minRows={1}
+                maxLength={kMaxNotesCharacters}
+                maxRows={3}
+                placeholder={"notes"}
+                data-testid={"variable-description"}
+                onMouseDown={handleFieldFocus}
+                onFocus={handleFieldFocus}
+              />
+            }
+            <button className="variable-description-toggle" onClick={handleShowDescription} data-testid="variable-description-toggle-button">
+              <IconExpand />
+            </button>
+          </div>
         </div>
-        {hasError &&
-          <ErrorMessage
-            unitError={variable.computedUnitError}
-            unitMessage={variable.computedUnitMessage}
-            valueError={variable.computedValueError}
+        {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
+          <Handle
+            type="target"
+            position={Position.Left}
+            style={{...targetNodeHandleStyle}}
+            onConnect={(params) => console.log("handle onConnect", params)}
+            isConnectable={isConnectable}
+            id="a"
           />
         }
-      </div>
-      {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
         <Handle
-          type="target"
-          position={Position.Left}
-          style={{...targetNodeHandleStyle}}
-          onConnect={(params) => console.log("handle onConnect", params)}
+          className="flow-handle"
+          type="source"
+          position={Position.Right}
           isConnectable={isConnectable}
-          id="a"
+          style={sourceHandleStyle}
+          title="drag to connect"
         />
-      }
-      <Handle
-        className="flow-handle"
-        type="source"
-        position={Position.Right}
-        isConnectable={isConnectable}
-        style={sourceHandleStyle}
-        title="drag to connect"
-      />
-      <div className="variable-info-floater">
-        <button className="color-palette-toggle" onClick={handleEditColor} title="Edit Color" data-testid="color-edit-button">
-          <IconColorMenu />
-        </button>
-        {showColorEditor && <ColorEditor variable={variable} onShowColorEditor={handleEditColor}/>}
+        <div className="variable-info-floater">
+          <button className="color-palette-toggle" onClick={handleEditColor} title="Edit Color" data-testid="color-edit-button">
+            <IconColorMenu />
+          </button>
+          {showColorEditor && <ColorEditor variable={variable} onShowColorEditor={handleEditColor}/>}
+        </div>
       </div>
     </div>
   );

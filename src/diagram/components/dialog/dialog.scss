@@ -109,29 +109,8 @@ $invalid-outline: .5px solid vars.$invalid-red;
 }
 
 .dialog-error-messages {
-  align-items: flex-start;
-  color: vars.$dialog-error-purple;
-  display: flex;
-  font-size: 14px;
-  gap: 4px;
   height: 51px;
-  margin-bottom: 20;
-  position: relative;
-
-  .error-icon {
-    bottom: auto;
-    left: 0;
-    position: relative;
-  }
-  .error-message {
-    color: vars.$dialog-error-purple;
-    display: block;
-    font-size: 14px;
-    left: 0;
-    position: relative;
-    top: 0;
-    width: auto;
-  }
+  margin-bottom: 20px;
 }
 
 .dialog-button-row {

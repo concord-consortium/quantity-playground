@@ -1,18 +1,22 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { ErrorMessage } from "./error-message";
+import { ErrorMessageComponent } from "./error-message";
+import { basicErrorMessage } from "../utils/error";
 
 describe("Expandable Input", () => {
   it ("renders an icon and message when passed the proper values", () => {
-    render(<ErrorMessage unitError="invalid unit" unitMessage="this is a unit message" valueError="invalid value" />);
+    const errorMessage = basicErrorMessage("invalid unit")
+      ?? basicErrorMessage("this is a unit message")
+      ?? basicErrorMessage("invalid value");
+    render(<ErrorMessageComponent
+      errorMessage={errorMessage}
+    />);
     expect(screen.getByTestId("error-icon")).toBeInTheDocument();
     expect(screen.getByTestId("error-message")).toBeInTheDocument();
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: invalid unit</p>");
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: this is a unit message</p>");
-    expect(screen.getByTestId("error-message")).toContainHTML("<p>Warning: invalid value</p>");
+    expect(screen.getByTestId("error-message")).toContainHTML("Warning: invalid unit");
   });
   it ("does not render anything when no values are passed", () => {
-    render(<ErrorMessage />);
+    render(<ErrorMessageComponent />);
     expect(screen.queryByTestId("error-icon")).not.toBeInTheDocument();
     expect(screen.queryByTestId("error-message")).not.toBeInTheDocument();
   });

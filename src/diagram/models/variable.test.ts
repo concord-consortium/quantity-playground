@@ -1,6 +1,7 @@
 import { getSnapshot } from "mobx-state-tree";
 import { GenericContainer } from "./test-utils";
 import { Operation, Variable, VariableType } from "./variable";
+import { incompatibleUnitsShort } from "../utils/error";
 
 describe("Variable", () => {
   it("Can be created", () => {
@@ -76,7 +77,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: no expression");
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
@@ -94,7 +95,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "no expression"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: no expression");
     expect(variable.computedValue).toBeUndefined();
     // The no operation is not included in the units
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
@@ -231,7 +232,7 @@ describe("Variable", () => {
 
     expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     // TODO: this case should be checked with project leaders: do we want to
     // pass the unit through to future nodes that depend on this one when there
     // is an error like this?
@@ -241,12 +242,12 @@ describe("Variable", () => {
     // Reason not to pass it through:
     //   If the user is only looking at the final output they might notice they
     //   have an error in their units further up the chain
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
-    expect(variable.computedValueError).toBe("incompatible units");
+    expect(variable.computedValueError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnit).toBeUndefined();
-    expect(variable.computedUnitError).toBe("incompatible units");
+    expect(variable.computedUnitError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnitMessage).toBeUndefined();
 
   });
@@ -264,12 +265,12 @@ describe("Variable", () => {
     expect(variable.inputs[0]).toEqual(input);
     expect(variable.numberOfInputs).toBe(1);
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
     expect(variable.computedValueWithSignificantDigits).toBe("NaN");
     expect(variable.computedValueError).toBeUndefined();
     expect(variable.computedUnit).toBeUndefined();
-    expect(variable.computedUnitError).toBe("incompatible units");
+    expect(variable.computedUnitError?.short).toBe(incompatibleUnitsShort);
     expect(variable.computedUnitMessage).toBeUndefined();
 
   });
@@ -296,8 +297,8 @@ describe("Variable", () => {
     });
     const variable = container.items[1] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({message: "cannot compute value from inputs"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "invalid input units"});
+    expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
 
   });
 
@@ -364,9 +365,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("with 2 inputs with matching units and operation subtract it returns result", () => {
@@ -398,9 +399,9 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.numberOfInputs).toBe(2);
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
     expect(variable.computedValue).toBeUndefined();
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("with 2 inputs with units, operation Multiply, " +
@@ -463,7 +464,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 49});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+    expect(variable.computedUnitIncludingMessageAndError.message?.short).toEqual("Warning: units cancel");
   });
 
   it("handles a compound unit that includes a custom unit multiplying by the custom unit", () => {
@@ -553,7 +554,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+    expect(variable.computedUnitIncludingMessageAndError.message?.short).toEqual("Warning: units cancel");
   });
 
   it("handles dividing compatible units without values", () => {
@@ -568,7 +569,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+    expect(variable.computedUnitIncludingMessageAndError.message?.short).toEqual("Warning: units cancel");
   });
 
   it("handles dividing custom units", () => {
@@ -582,7 +583,7 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({message: "units cancel"});
+    expect(variable.computedUnitIncludingMessageAndError.message?.short).toEqual("Warning: units cancel");
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0.01});
   });
 
@@ -598,8 +599,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "invalid input units"});
-    expect(variable.computedValueIncludingMessageAndError).toEqual({message: "cannot compute value from inputs"});
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
+    expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
   });
 
   it("handles adding compatible inputs first with a value and second without a value", () => {
@@ -656,8 +657,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first with a unit and second without a unit", () => {
@@ -672,8 +673,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first without a unit and second with a unit and an output unit", () => {
@@ -688,8 +689,9 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.unit).toEqual("m");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when adding inputs first with a unit and second without a unit and an output unit", () => {
@@ -704,8 +706,9 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "incompatible units"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m", error: "incompatible units"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
+    expect(variable.computedUnitIncludingMessageAndError.unit).toEqual("m");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual(incompatibleUnitsShort);
   });
 
   it("shows error when a cycle exists between two variables", () => {
@@ -719,8 +722,8 @@ describe("Variable", () => {
 
     const warn = jest.spyOn(console, "warn").mockImplementation(() => null);
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({error: "cycles or loops between cards is not supported"});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: cycles or loops between cards is not supported");
+    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: cycles or loops between cards is not supported");
     expect(warn).toBeCalledTimes(3);
   });
 

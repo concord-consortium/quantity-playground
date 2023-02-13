@@ -10,7 +10,7 @@ import { Variable, VariableType } from "../../models/variable";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../../utils/validate";
 import { IconInputCard } from "./icon-input-card";
 import { IconOutputCard } from "./icon-output-card";
-import { ErrorMessage } from "../error-message";
+import { ErrorMessageComponent } from "../error-message";
 
 import "./dialog.scss";
 
@@ -80,7 +80,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
           setRealValue={variableClone.setValue}
         />
         <div className="dialog-error-messages">
-          { errorMessage && <ErrorMessage valueError={errorMessage} /> }
+          { errorMessage && <ErrorMessageComponent dialog={true} errorMessage={errorMessage} /> }
         </div>
       </div>
       <div className="variable-type-icon">
