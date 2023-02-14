@@ -13,7 +13,7 @@ export interface ErrorMessage {
 
 export const incompleteEmoji = "🫤";
 export const incompleteShort = "Um, still working?";
-export const incompleteExpanded = "Check for anything missing or extra in the expression";
+export const incompleteExpanded = "Check for anything missing or extra in the expression.";
 const getIncompleteErrorMessage = () => ({
   emoji: incompleteEmoji,
   short: incompleteShort,
@@ -23,7 +23,7 @@ const getIncompleteErrorMessage = () => ({
 const unknownSymbolMessageStart = "Undefined symbol ";
 export const unknownSymbolEmoji = "🤔";
 export const unknownSymbolShort = "Hmm, what is ";
-export const unknownSymbolExpanded = "If it's a variable, create and link it to this card";
+export const unknownSymbolExpanded = "If it's a variable, create and link it to this card.";
 const getUnknownSymbolErrorMessage = (symbol: string) => ({
   emoji: unknownSymbolEmoji,
   short: <span>{unknownSymbolShort}<strong>{symbol}</strong>?</span>,
@@ -32,7 +32,7 @@ const getUnknownSymbolErrorMessage = (symbol: string) => ({
 
 export const incompatibleUnitsEmoji = "😮";
 export const incompatibleUnitsShort = "Oh, unit trouble?";
-export const incompatibleUnitsExpanded = "Adjust the units and/or operations to make them compatible";
+export const incompatibleUnitsExpanded = "Adjust the units and/or operations to make them compatible.";
 const getIncompatibleUnitsErrorMessage = () => ({
   emoji: incompatibleUnitsEmoji,
   short: incompatibleUnitsShort,
