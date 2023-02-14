@@ -69,6 +69,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
           disabled={isExpressionVariable}
           inputId="evd-units"
           label="Unit"
+          maxCharacters={27}
           value={isExpressionVariable ? variable.displayUnit || "" : variableClone.unit || ""}
           setValue={variableClone.setUnit}
         />
