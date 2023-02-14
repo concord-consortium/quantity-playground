@@ -220,7 +220,7 @@ $color-gray-dark: #3f3f3f;
       &:hover { outline: none; }
     }
     &.no-value { color: gray; }
-    &.invalid { outline: 2px solid $invalid-red; }
+    &.invalid { outline: 2px solid $warning-purple; }
   }
 }
 

@@ -91,6 +91,8 @@
 
     .error-short {
       margin-left: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

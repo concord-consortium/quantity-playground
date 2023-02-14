@@ -1,7 +1,7 @@
 @use "../../../scss/vars.scss";
 @use "../../../scss/mixins.scss";
 
-$invalid-outline: .5px solid vars.$invalid-red;
+$invalid-outline: .5px solid vars.$warning-purple;
 
 .blue { @include mixins.spread-map(vars.$theme-map-blue); }
 .gray { @include mixins.spread-map(vars.$theme-map-gray); }
@@ -79,7 +79,7 @@ $invalid-outline: .5px solid vars.$invalid-red;
   padding: 3.5px 6px;
 
   &.invalid {
-    border: 1.5px solid vars.$invalid-red;
+    border: 1.5px solid vars.$warning-purple;
     outline: $invalid-outline;
 
     &:focus {
