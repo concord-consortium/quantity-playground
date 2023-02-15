@@ -31,15 +31,16 @@ context("Test error messages", () => {
       errorBottom().should("contain.html", incompleteExpanded);
     });
 
-    const testIncomplete = (expression: string) => {
-      it (`renders incomplete for "${expression}"`, () => {
+    it (`renders incomplete for various incomplete expressions`, () => {
+      const incompleteExpressions = ["+ a + b", "+a", "*a+b", "a+*b", "/a+b", "a+/b", "^a+b",
+        "a+^b", "(a+b", "a(+b", "a+(b", "a+b)"];
+      const testIncomplete = (expression: string) => {
+        cy.visit("");
         enterExpression(expression);
         computedNode().find(".error-short").should("contain.html", "Um, still working?");
-      });
-    };
-    const incompleteStrings = ["+ a + b", "+a", "*a+b", "a+*b", "/a+b", "a+/b", "^a+b",
-      "a+^b", "(a+b", "a(+b", "a+(b", "a+b)"];
-    incompleteStrings.forEach(expression => testIncomplete(expression));
+      };
+      incompleteExpressions.forEach(expression => testIncomplete(expression));
+    });
 
     it("renders full unknown symbol error", () => {
       const variableName = "variablename";
