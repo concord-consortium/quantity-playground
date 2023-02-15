@@ -56,6 +56,12 @@ export function getErrorMessage(args: IErrorMessage) {
     return getIncompleteErrorMessage();
   } else if (args.errorMessage.startsWith("Function unaryPlus missing in provided namespace")) {
     return getIncompleteErrorMessage();
+  } else if (args.errorMessage.startsWith("Value expected")) {
+    return getIncompleteErrorMessage();
+  } else if (args.errorMessage.startsWith("Parenthesis ) expected")) {
+    return getIncompleteErrorMessage();
+  } else if (args.errorMessage.startsWith("Unexpected operator")) {
+    return getIncompleteErrorMessage();
   } else if (args.errorMessage.startsWith(unknownSymbolMessageStart)) {
     const symbol = args.errorMessage.split(unknownSymbolMessageStart)[1];
     return getUnknownSymbolErrorMessage(symbol);
