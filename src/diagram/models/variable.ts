@@ -351,6 +351,9 @@ export const Variable = types.model("Variable", {
   },
 }))
 .views(self => ({
+  get errorMessage() {
+    return self.computedUnitError ?? self.computedValueError;
+  },
   get displayValue() {
     return self.hasInputs ? self.computedValue : self.value;
   },

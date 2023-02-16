@@ -36,7 +36,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   }
 
   const hasExpression = !!(variable.numberOfInputs > 0);
-  const hasError = !!(variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage);
+  const errorMessage = variable.errorMessage;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
@@ -140,11 +140,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     selected: data.dqRoot.selectedNode === data.node
   });
 
-  const errorMessage = variable.computedUnitError ?? variable.computedUnitMessage ?? variable.computedValueError;
-
   return (
     <div className={nodeContainerClasses} data-testid="node-container">
-      {hasError &&
+      {!!errorMessage &&
         <ErrorMessageComponent
           errorMessage={errorMessage}
         />

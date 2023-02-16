@@ -8,6 +8,10 @@ import { create, simplifyDependencies, unitDependencies,
 const math = create({ simplifyDependencies, unitDependencies, parseDependencies, 
   evaluateDependencies, toDependencies, createUnitDependencies });
 
+const deleteUnits: string[] = [];
+// const deleteUnits = ["b", "hour", "hours", "hr", "minute"];
+deleteUnits.forEach((u: string) => (math as any).Unit.deleteUnit(u));
+
 // When adding new features you might want to comment out the statements above and 
 // uncomment these 2 lines below. This way all of mathjs is available. After the 
 // code is working you can go back and figure out what specific dependencies are 

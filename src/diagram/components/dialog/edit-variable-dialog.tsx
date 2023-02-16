@@ -24,7 +24,7 @@ export const EditVariableDialogContent = observer(({ variable, variableClone }: 
   // changes won't be saved unless the Save button is pushed. However, because variableClone was created
   // from a snapshot, we will not be able to access any computed values related to the original variable's
   // inputs. We need to get those values from the original variable.
-  const errorMessage = variable?.computedValueError || variable?.computedUnitError || variable?.computedUnitMessage;
+  const errorMessage = variable?.errorMessage;
   const isExpressionVariable = variable?.hasInputs;
 
   const updateName = (newName: string) => {
