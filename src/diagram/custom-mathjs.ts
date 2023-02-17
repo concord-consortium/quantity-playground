@@ -3,13 +3,13 @@ import { create, simplifyDependencies, unitDependencies,
   parseDependencies, evaluateDependencies, toDependencies,
   createUnitDependencies } from "mathjs";
 
+import { deleteUnits } from "./custom-mathjs-units";
+
 // This reduces the size of the bundle, see:
 // https://mathjs.org/docs/custom_bundling.html
 const math = create({ simplifyDependencies, unitDependencies, parseDependencies, 
   evaluateDependencies, toDependencies, createUnitDependencies });
 
-const deleteUnits: string[] = [];
-// const deleteUnits = ["b", "hour", "hours", "hr", "minute"];
 deleteUnits.forEach((u: string) => (math as any).Unit.deleteUnit(u));
 
 // When adding new features you might want to comment out the statements above and 
