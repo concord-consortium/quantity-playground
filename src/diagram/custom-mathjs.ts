@@ -5,28 +5,38 @@ import { create, simplifyDependencies, unitDependencies,
 
 import { deleteUnits } from "./custom-mathjs-units";
 
-// This reduces the size of the bundle, see:
-// https://mathjs.org/docs/custom_bundling.html
-const math = create({ simplifyDependencies, unitDependencies, parseDependencies, 
-  evaluateDependencies, toDependencies, createUnitDependencies });
+function createMath() {
+  // This reduces the size of the bundle, see:
+  // https://mathjs.org/docs/custom_bundling.html
+  const m = create({ simplifyDependencies, unitDependencies, parseDependencies,
+    evaluateDependencies, toDependencies, createUnitDependencies });
 
-deleteUnits.forEach((u: string) => (math as any).Unit.deleteUnit(u));
+  // When adding new features you might want to comment out the statements above and 
+  // uncomment these 2 lines below. This way all of mathjs is available. After the 
+  // code is working you can go back and figure out what specific dependencies are 
+  // needed.
+  // import { create , all } from "mathjs";
+  // const m = create({ all });
 
-// When adding new features you might want to comment out the statements above and 
-// uncomment these 2 lines below. This way all of mathjs is available. After the 
-// code is working you can go back and figure out what specific dependencies are 
-// needed.
-// import { create , all } from "mathjs";
-// const math = create({ all });
+  // The types don't give access to the Unit class object, but it is there.
+  const mathUnit = (m as any).Unit;
 
-const { simplify, unit, parse, createUnit, evaluate, number, isUnit } = math;
+  deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
 
-// The types don't give access to the Unit class object, but it is there.
-const { Unit } = math as any;
+  const isAlphaOriginal = mathUnit.isValidAlpha;
+  mathUnit.isValidAlpha = function (c: string): boolean {
+    return isAlphaOriginal(c) || c === "$";
+  };
 
-const isAlphaOriginal = Unit.isValidAlpha;
-Unit.isValidAlpha = function (c: string) : boolean{
-  return isAlphaOriginal(c) || c === "$";
-};
+  return {
+    simplify: m.simplify,
+    unit: m.unit,
+    parse: m.parse,
+    createUnit: m.createUnit,
+    evaluate: m.evaluate,
+    number: m.number,  
+    isUnit: m.isUnit,
+    Unit: mathUnit };
+}
 
-export { simplify, unit, parse, createUnit, evaluate, number, isUnit, Unit };
+export { createMath, };
