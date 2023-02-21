@@ -3,7 +3,7 @@ import { create, simplifyDependencies, unitDependencies,
   parseDependencies, evaluateDependencies, toDependencies,
   createUnitDependencies } from "mathjs";
 
-import { deleteUnits } from "./custom-mathjs-units";
+import { customUnitsArray, deleteUnits } from "./custom-mathjs-units";
 
 function createMath() {
   // This reduces the size of the bundle, see:
@@ -22,6 +22,7 @@ function createMath() {
   const mathUnit = (m as any).Unit;
 
   deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
+  customUnitsArray.forEach((u: any) => m.createUnit(u.unit, u.options));
 
   const isAlphaOriginal = mathUnit.isValidAlpha;
   mathUnit.isValidAlpha = function (c: string): boolean {

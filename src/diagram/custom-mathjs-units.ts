@@ -58,3 +58,17 @@ export const deleteUnits = [
   // Binary
   "b", "bit", "bits", "B", "byte", "bytes",
 ];
+
+export const customUnitsArray = [
+  { unit: "cat", options: { aliases: ["cats"] } }
+];
+
+export const customUnitsMap: { [id: string]: number } = {};
+customUnitsMap.cat = 0;
+
+export const addCustomUnit = (unit: string, options?: any) => {
+  if (unit in Object.keys(customUnitsMap)) return;
+
+  customUnitsArray.push({ unit, options });
+  customUnitsMap[unit] = customUnitsArray.length - 1;
+};

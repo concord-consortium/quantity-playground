@@ -1,9 +1,10 @@
-import React, { ChangeEvent, FocusEvent, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
+
 import { ColorEditor } from "./color-editor";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
@@ -12,6 +13,7 @@ import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icons/icon-color-menu";
 import { IconExpand } from "./icons/icon-expand";
 import { ErrorMessageComponent } from "./error-message";
+import { customUnitsArray } from "../custom-mathjs-units";
 
 import "./quantity-node.scss";
 
@@ -28,10 +30,18 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
+  const nodeAlive = isAlive(data.node) && data.node.tryVariable;
+  useEffect(() => {
+    if (nodeAlive) {
+      variable.recreateMath();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customUnitsArray.length]);
+
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
-  if (!isAlive(data.node) || !data.node.tryVariable) {
+  if (!nodeAlive) {
       return null;
   }
 

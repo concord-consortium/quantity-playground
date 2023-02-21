@@ -56,6 +56,11 @@ export const Variable = types.model("Variable", {
   }
   return snClone;
 })
+.actions(self => ({
+  recreateMath() {
+    self.math = createMath();
+  }
+}))
 .views(self => ({
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
@@ -283,7 +288,7 @@ export const Variable = types.model("Variable", {
     }
 
     const getMathValues = () => {
-      const valueObj: Record<string, number| math.Unit | undefined> = {};
+      const valueObj: Record<string, number | math.Unit | undefined> = {};
       nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValueWithValueOr1);
       return valueObj;
     };

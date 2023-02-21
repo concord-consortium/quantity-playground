@@ -4,6 +4,8 @@
 import math, { SymbolNode } from "mathjs";
 import * as pluralize from "pluralize";
 
+import { addCustomUnit } from "../custom-mathjs-units";
+
 export const getMathUnit = (value: number, unitString: string, mathLib: any): math.Unit | undefined => {
   try {
     // Look for unknown units in the unit string
@@ -12,19 +14,22 @@ export const getMathUnit = (value: number, unitString: string, mathLib: any): ma
     for(const symbol of symbols) {
       // if the symbol isn't already a unit, make a unit for it
       if (!mathLib.Unit.isValuelessUnit(symbol.name)) {
-        // console.log(`Adding unit`, symbol);
+        console.log(`Adding unit`, symbol);
         try {
           if (/^[a-zA-Z]\w*$/.test(symbol.name)) {
             const singular = pluralize.singular(symbol.name);
             const plural = pluralize.plural(symbol.name);
-            mathLib.createUnit(singular, {aliases: [plural]});
+            const options = { aliases: [plural] };
+            addCustomUnit(singular, options);
+            const newUnit = mathLib.createUnit(singular, options);
+            console.log(`Created unit: ${singular}(${plural})`, newUnit);
           } else {
+            addCustomUnit(symbol.name);
             mathLib.createUnit(symbol.name);
           }
         } catch (e: any) {
           console.log(`Error creating unit`, e);
         }
-        // console.log(`Created unit: ${singular}(${plural})`);
       }
     }
     return mathLib.unit(value, unitString);
