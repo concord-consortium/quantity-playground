@@ -14,15 +14,13 @@ export const getMathUnit = (value: number, unitString: string, mathLib: any): ma
     for(const symbol of symbols) {
       // if the symbol isn't already a unit, make a unit for it
       if (!mathLib.Unit.isValuelessUnit(symbol.name)) {
-        console.log(`Adding unit`, symbol);
         try {
           if (/^[a-zA-Z]\w*$/.test(symbol.name)) {
             const singular = pluralize.singular(symbol.name);
             const plural = pluralize.plural(symbol.name);
             const options = { aliases: [plural] };
             addCustomUnit(singular, options);
-            const newUnit = mathLib.createUnit(singular, options);
-            console.log(`Created unit: ${singular}(${plural})`, newUnit);
+            mathLib.createUnit(singular, options);
           } else {
             addCustomUnit(symbol.name);
             mathLib.createUnit(symbol.name);

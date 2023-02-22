@@ -1,3 +1,20 @@
+import { observable } from "mobx";
+
+interface IUnit {
+  unit: string;
+  options: any;
+}
+// A list of custom units added to mathjs. This list will grow as a user adds custom units.
+// Built-in custom units can also be added here. They should look like:
+// { unit: "cat", options: { aliases: ["cats"] } }
+export const customUnitsArray = observable.array<IUnit>([]);
+
+export const addCustomUnit = (unit: string, options?: any) => {
+  if (customUnitsArray.find((iunit: IUnit) => iunit.unit === unit)) return;
+  customUnitsArray.push({ unit, options });
+};
+
+// A list of built-in units to delete.
 export const deleteUnits = [
   // Length
   "link", "links", "li", "rod", "rods", "rd", "chain", "chains", "ch",
@@ -58,17 +75,3 @@ export const deleteUnits = [
   // Binary
   "b", "bit", "bits", "B", "byte", "bytes",
 ];
-
-export const customUnitsArray = [
-  { unit: "cat", options: { aliases: ["cats"] } }
-];
-
-export const customUnitsMap: { [id: string]: number } = {};
-customUnitsMap.cat = 0;
-
-export const addCustomUnit = (unit: string, options?: any) => {
-  if (unit in Object.keys(customUnitsMap)) return;
-
-  customUnitsArray.push({ unit, options });
-  customUnitsMap[unit] = customUnitsArray.length - 1;
-};
