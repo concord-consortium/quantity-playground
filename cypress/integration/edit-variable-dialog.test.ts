@@ -14,6 +14,7 @@ context("Test Edit Variable Dialog", () => {
   const nameField = () => cy.get("#evd-name");
   const valueField = () => cy.get("#evd-value");
   const notesField = () => cy.get("#evd-notes");
+  const unitsField = () => cy.get("#evd-units");
   describe("Edit Variable Dialog", () => {
     it("Edit variable button present and active when a node is selected", () => {
       editVariableButton().should("exist");
@@ -56,10 +57,16 @@ context("Test Edit Variable Dialog", () => {
       // After the value field has been blurred, it should switch to undefined
       valueField().should("have.value", "");
 
+      // Value and Unit fields should not allow line breaks
+      valueField().type("123{enter}456");
+      valueField().should("have.value", "123456");
+      unitsField().type("mp{enter}h");
+      unitsField().should("have.value", "mph");
+
       // Save changes and make sure the correct values have been saved
       editVariableOkButton().click();
       nodeToEdit().find(".name").should("have.value", nameNoSpaces);
-      nodeToEdit().find(".value").should("have.value", "");
+      nodeToEdit().find(".value").should("have.value", "123456");
       descriptionToggleButton().click();
       nodeToEdit().find(".variable-description-area").should("have.value", legalNotes);
     });

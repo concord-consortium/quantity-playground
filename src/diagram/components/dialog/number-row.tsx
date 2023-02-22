@@ -12,13 +12,14 @@ interface INumberRow {
   disabled?: boolean;
   inputId: string;
   label: string;
+  preventLineBreaks?: boolean;
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
   width?: number; // Width of text input
 }
 
 export const NumberRow = ({
-  className, disabled, inputId, label, realValue, width,
+  className, disabled, inputId, label, preventLineBreaks, realValue, width,
   setRealValue
 }: INumberRow) => {
   const style = { width };
@@ -29,6 +30,7 @@ export const NumberRow = ({
       isValid={isValidNumber}
       realValue={realValue}
       setRealValue={setRealValue}
+      preventLineBreaks={preventLineBreaks}
       otherProps={{ id: inputId, style }}
     />
   );
