@@ -5,12 +5,13 @@ import math, { SymbolNode } from "mathjs";
 import * as pluralize from "pluralize";
 
 import { addCustomUnit } from "../custom-mathjs-units";
+import { IMathLib } from "../custom-mathjs";
 
-export const getMathUnit = (value: number, unitString: string, mathLib: any): math.Unit | undefined => {
+export const getMathUnit = (value: number, unitString: string, mathLib: IMathLib): math.Unit | undefined => {
   try {
     // Look for unknown units in the unit string
     const unitNode = mathLib.parse(unitString);
-    const symbols = unitNode.filter((node: any) => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
+    const symbols = unitNode.filter(node => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
     for(const symbol of symbols) {
       // if the symbol isn't already a unit, make a unit for it
       if (!mathLib.Unit.isValuelessUnit(symbol.name)) {
@@ -36,13 +37,13 @@ export const getMathUnit = (value: number, unitString: string, mathLib: any): ma
   }
 };
 
-export const parseExpression = (expression: string, inputNames: (string | undefined)[], mathLib: any) => {
+export const parseExpression = (expression: string, inputNames: (string | undefined)[], mathLib: IMathLib) => {
   const localExpression = expression;
   const inputsInExpression: string[] = [];
 
   try {
     const expressionNode = mathLib.parse(localExpression);
-    const symbols = expressionNode.filter((node: any) => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
+    const symbols = expressionNode.filter(node => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
     for(const symbol of symbols) {
       inputNames.forEach((name, index) => {
         if (symbol.name === name) {
@@ -66,10 +67,10 @@ export const parseExpression = (expression: string, inputNames: (string | undefi
   }
 };
 
-export const replaceInputNames = (expression: string, inputNames: (string | undefined)[], mathLib: any) => {
+export const replaceInputNames = (expression: string, inputNames: (string | undefined)[], mathLib: IMathLib) => {
   return parseExpression(expression, inputNames, mathLib).expression;
 };
 
-export const getUsedInputs = (expression: string, inputNames: (string | undefined)[], mathLib: any) => {
+export const getUsedInputs = (expression: string, inputNames: (string | undefined)[], mathLib: IMathLib) => {
   return parseExpression(expression, inputNames, mathLib).inputsInExpression;
 };

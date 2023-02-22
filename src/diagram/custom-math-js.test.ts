@@ -1,4 +1,4 @@
-import { createMath } from "../custom-mathjs";
+import { createMath } from "./custom-mathjs";
 
 describe("MathJS", () => {
   const { evaluate, unit } = createMath();

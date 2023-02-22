@@ -1,6 +1,6 @@
 import { observable } from "mobx";
 
-interface IUnit {
+export interface IUnit {
   unit: string;
   options: any;
 }
