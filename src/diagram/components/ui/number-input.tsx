@@ -7,13 +7,14 @@ interface INumberInput {
   disabled?: boolean;
   isValid: (value: string) => boolean;
   otherProps?: Record<string, any>;
+  preventLineBreaks?: boolean;
   realValue?: number;
   setRealValue: (value: number | undefined) => void;
   onValueChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const NumberInput = ({
-  className, dataTestId, disabled, isValid, otherProps, realValue,
+  className, dataTestId, disabled, isValid, otherProps, preventLineBreaks, realValue,
   setRealValue, onValueChange
 }: INumberInput) => {
   const [value, setValue] = useState(realValue?.toString() || "");
@@ -24,6 +25,12 @@ export const NumberInput = ({
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
     onValueChange?.(e);
+  };
+
+  const handleKeydown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (preventLineBreaks && e.key === "Enter") {
+      e.preventDefault();
+    }
   };
 
   const onBlur = () => {
@@ -44,6 +51,7 @@ export const NumberInput = ({
       disabled={disabled}
       value={value}
       onChange={onChange}
+      onKeyDown={handleKeydown}
       onBlur={onBlur}
       {...otherProps}
       autoComplete="off"
