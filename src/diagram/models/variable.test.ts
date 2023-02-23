@@ -1,7 +1,7 @@
 import { getSnapshot } from "mobx-state-tree";
 import { GenericContainer } from "./test-utils";
 import { Operation, Variable, VariableType } from "./variable";
-import { incompatibleUnitsShort } from "../utils/error";
+import { incompatibleUnitsShort, getUnknownSymbolShort } from "../utils/error";
 import { addCustomUnit } from "../custom-mathjs-units";
 
 describe("Variable", () => {
@@ -828,6 +828,18 @@ describe("Variable", () => {
       color: "light-gray",
     });
 
+  });
+
+  it("appropriate built-in units have been removed", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", name: "a", value: 999.9, unit: "mm"},
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "b"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(getUnknownSymbolShort("b"));
   });
 
   // TODO: need tests about partially created units. When the user is typing a
