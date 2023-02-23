@@ -1,7 +1,8 @@
 import { getSnapshot } from "mobx-state-tree";
 import { GenericContainer } from "./test-utils";
 import { Operation, Variable, VariableType } from "./variable";
-import { incompatibleUnitsShort } from "../utils/error";
+import { incompatibleUnitsShort, getUnknownSymbolShort } from "../utils/error";
+import { addCustomUnit } from "../custom-mathjs-units";
 
 describe("Variable", () => {
   it("Can be created", () => {
@@ -224,7 +225,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 999.9, unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to seconds"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -256,7 +257,7 @@ describe("Variable", () => {
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", unit: "mm"},
-        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to N"}
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "a to seconds"}
       ]
     });
     const input = container.items[0] as VariableType;
@@ -276,6 +277,7 @@ describe("Variable", () => {
   });
 
   it("with a compound custom unit input and a compatible compound custom unit it does the conversion", () => {
+    addCustomUnit("thing", { aliases: ["things"] });
     const container = GenericContainer.create({
       items: [
         {id: "input", name: "a", value: 9, unit: "m/things"},
@@ -493,8 +495,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 200});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 2});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
   });
 
   it("handles adding compatible units without values", () => {
@@ -509,7 +511,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
   });
 
   it("handles subtracting compatible units with values", () => {
@@ -523,8 +525,8 @@ describe("Variable", () => {
     });
     const variable = container.items[2] as VariableType;
 
-    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 100});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 1});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
   });
 
   it("handles subtracting compatible units without values", () => {
@@ -539,7 +541,7 @@ describe("Variable", () => {
     const variable = container.items[2] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"cm"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit:"m"});
   });
 
   it("handles dividing compatible units with values", () => {
@@ -573,6 +575,7 @@ describe("Variable", () => {
   });
 
   it("handles dividing custom units", () => {
+    addCustomUnit("widget", { aliases: ["widgets"] });
     const container = GenericContainer.create({
       items: [
         {id: "inputA", name: "a", value: 1, unit: "widgets"},
@@ -621,7 +624,7 @@ describe("Variable", () => {
     // We don't show an explicit error here: The current UI shows NaN for the
     // value, so this seems like enough of a error message.
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m"});
   });
 
   it("handles adding compatible inputs first without a value and second with a value", () => {
@@ -642,7 +645,7 @@ describe("Variable", () => {
     // We don't show an explicit error here: The current UI shows NaN for the
     // value, so this seems like enough of a error message.
     expect(variable.computedValueIncludingMessageAndError).toEqual({});
-    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm"});
+    expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "m"});
   });
 
   it("shows error when adding inputs first without a unit and second with a unit", () => {
@@ -825,6 +828,18 @@ describe("Variable", () => {
       color: "light-gray",
     });
 
+  });
+
+  it("appropriate built-in units have been removed", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "input", name: "a", value: 999.9, unit: "mm"},
+        {id: "variable", value: 123.5, inputs: ["input"], expression: "b"}
+      ]
+    });
+    const variable = container.items[1] as VariableType;
+
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(getUnknownSymbolShort("b"));
   });
 
   // TODO: need tests about partially created units. When the user is typing a

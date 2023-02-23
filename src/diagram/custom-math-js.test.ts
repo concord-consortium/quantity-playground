@@ -1,6 +1,8 @@
-import { evaluate, unit } from "../custom-mathjs";
+import { createMath } from "./custom-mathjs";
 
 describe("MathJS", () => {
+  const { evaluate, unit } = createMath();
+  
   it("can handle unit conversion with evaluate and unit values", () => {
     const scope = {
       a: unit(1, "m"),

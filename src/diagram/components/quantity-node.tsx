@@ -4,6 +4,7 @@ import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "react-flow-renderer/nocss";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
+
 import { ColorEditor } from "./color-editor";
 import { DQNodeType } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
@@ -31,12 +32,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
-  if (!isAlive(data.node) || !data.node.tryVariable) {
+  const nodeAlive = isAlive(data.node) && data.node.tryVariable;
+  if (!nodeAlive) {
       return null;
   }
 
   const hasExpression = !!(variable.numberOfInputs > 0);
-  const hasError = !!(variable.computedValueError || variable.computedUnitError || variable.computedUnitMessage);
+  const errorMessage = variable.errorMessage;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
   const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
 
@@ -140,11 +142,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     selected: data.dqRoot.selectedNode === data.node
   });
 
-  const errorMessage = variable.computedUnitError ?? variable.computedUnitMessage ?? variable.computedValueError;
-
   return (
     <div className={nodeContainerClasses} data-testid="node-container">
-      {hasError &&
+      {!!errorMessage &&
         <ErrorMessageComponent
           errorMessage={errorMessage}
         />

@@ -23,10 +23,11 @@ const getIncompleteErrorMessage = () => ({
 const unknownSymbolMessageStart = "Undefined symbol ";
 export const unknownSymbolEmoji = "🤔";
 export const unknownSymbolShort = "Hmm, what is ";
+export const getUnknownSymbolShort = (symbol: string) => <span>{unknownSymbolShort}<strong>{symbol}</strong>?</span>;
 export const unknownSymbolExpanded = "If it's a variable, create and link it to this card.";
 const getUnknownSymbolErrorMessage = (symbol: string) => ({
   emoji: unknownSymbolEmoji,
-  short: <span>{unknownSymbolShort}<strong>{symbol}</strong>?</span>,
+  short: getUnknownSymbolShort(symbol),
   expanded: unknownSymbolExpanded
 });
 

@@ -1,9 +1,11 @@
 import math, { parse, SymbolNode } from "mathjs";
-import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { reaction } from "mobx";
+import { addDisposer, IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getMathUnit, getUsedInputs, replaceInputNames } from "./mathjs-utils";
-import { evaluate, isUnit } from "../custom-mathjs";
+import { getMathUnit, getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
+import { createMath } from "../custom-mathjs";
+import { customUnitsArray } from "../custom-mathjs-units";
 import { basicErrorMessage, ErrorMessage, getErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
@@ -35,6 +37,9 @@ export const Variable = types.model("Variable", {
   expression: types.maybe(types.string),
   color: types.optional(types.string, Colors.LightGray)
 })
+.volatile(self => ({
+  math: createMath()
+}))
 .preProcessSnapshot(sn => {
   // Make sure color value is valid.
   const snClone = { ...sn };
@@ -53,6 +58,20 @@ export const Variable = types.model("Variable", {
   }
   return snClone;
 })
+.actions(self => ({
+  recreateMath() {
+    self.math = createMath();
+  }
+}))
+.actions(self => ({
+  afterCreate() {
+    // Update the math library whenever the custom units have changed.
+    addDisposer(self, reaction(
+      () => customUnitsArray.length,
+      () => self.recreateMath()
+    ));
+  }
+}))
 .views(self => ({
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
@@ -77,12 +96,12 @@ export const Variable = types.model("Variable", {
       // we need to store the expression in its processed form.
       // Then view reverses this. This way it will update when the nodes
       // change.
-      return replaceInputNames(self.expression, self.inputNames);
+      return replaceInputNames(self.expression, self.inputNames, self.math);
     }
   },
   get inputsInExpression() {
     if (self.expression) {
-      return getUsedInputs(self.expression, self.inputNames);
+      return getUsedInputs(self.expression, self.inputNames, self.math);
     }
   },
   get calculationString() {
@@ -115,7 +134,7 @@ export const Variable = types.model("Variable", {
     if (selfComputedValue !== undefined) {
       if (selfComputedUnit) {
         // This will add any custom units
-        return getMathUnit(selfComputedValue, selfComputedUnit);
+        return getMathUnit(selfComputedValue, selfComputedUnit, self.math);
       } else {
         return selfComputedValue;
       }
@@ -131,7 +150,7 @@ export const Variable = types.model("Variable", {
     const value = this.computedValueIncludingMessageAndError.value ?? 1;
     if (selfComputedUnit) {
       // This will add any custom units
-      return getMathUnit(value, selfComputedUnit);
+      return getMathUnit(value, selfComputedUnit, self.math);
     } else {
       return value;
     }
@@ -212,9 +231,9 @@ export const Variable = types.model("Variable", {
     };
     const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, mathValues);
+      const result = self.math.evaluate(expression, mathValues);
       const resultType = typeof result;
-      if (isUnit(result)) {
+      if (self.math.isUnit(result)) {
         // We need to use simplify here so we are consistent with the unit
         // calculation. The simplify function will convert the prefix of
         // units based on the size of the value.
@@ -280,14 +299,14 @@ export const Variable = types.model("Variable", {
     }
 
     const getMathValues = () => {
-      const valueObj: Record<string, number| math.Unit | undefined> = {};
+      const valueObj: Record<string, number | math.Unit | undefined> = {};
       nodeInputs.forEach((input,idx) => valueObj[`input_${idx}`] = input.mathValueWithValueOr1);
       return valueObj;
     };
     const mathValues = getMathValues();
     try {
-      const result = evaluate(expression, mathValues);
-      if (isUnit(result)) {
+      const result = self.math.evaluate(expression, mathValues);
+      if (self.math.isUnit(result)) {
         const unitString = result.simplify().formatUnits();
         if (unitString === "") {
           // This seems to be unreachable currently, but it is possible for
@@ -351,6 +370,9 @@ export const Variable = types.model("Variable", {
   },
 }))
 .views(self => ({
+  get errorMessage() {
+    return self.computedUnitError ?? self.computedValueError;
+  },
   get displayValue() {
     return self.hasInputs ? self.computedValue : self.value;
   },
