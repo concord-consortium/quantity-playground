@@ -1,18 +1,13 @@
 import {
+  morePromptButton, enterExpression, computedNode, errorBottom, enterName, enterUnit, enterValue
+} from "../support/diagram-helpers";
+import {
   incompatibleUnitsEmoji, incompatibleUnitsExpanded, incompatibleUnitsShort,
   incompleteEmoji, incompleteExpanded, incompleteShort,
   unknownSymbolEmoji, unknownSymbolExpanded, unknownSymbolShort
 } from "../../src/diagram/utils/error";
 
 context("Test error messages", () => {
-  const node = (index: number) => cy.get("[data-testid='node-container'").eq(index);
-  const enterName = (index: number, name: string) => node(index).find(".name-row input").type(name);
-  const enterValue = (index: number, value: string) => node(index).find(".value-unit-row textarea").eq(0).type(value);
-  const enterUnit = (index: number, unit: string) => node(index).find(".value-unit-row textarea").eq(1).type(unit);
-  const computedNode = () => node(2);
-  const enterExpression = (text: string) => computedNode().find(".expression-row textarea").type(text);
-  const morePromptButton = () => computedNode().find(".more-prompt-button");
-  const errorBottom = () => computedNode().find(".error-bottom");
   describe("Custom error messages", () => {
     beforeEach(() => {
       cy.visit("");
