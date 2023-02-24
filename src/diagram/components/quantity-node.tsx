@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "react-flow-renderer/nocss";
@@ -33,6 +33,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
   const nodeAlive = isAlive(data.node) && data.node.tryVariable;
+
+  // State used to track updates to the unit before they're ready to be committed to the model.
+  const variableUnit = nodeAlive ? variable.unit : undefined;
+  const [displayUnit, setDisplayUnit] = useState(variableUnit);
+  useEffect(() => {
+    setDisplayUnit(variableUnit);
+  }, [variableUnit]);
+
   if (!nodeAlive) {
       return null;
   }
@@ -40,7 +48,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const hasExpression = !!(variable.numberOfInputs > 0);
   const errorMessage = variable.errorMessage;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
-  const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
+  const shownUnit = hasExpression ? variable.computedUnit : displayUnit;
 
   const handleEditColor = () => {
     setShowColorEditor(!showColorEditor);
@@ -50,28 +58,24 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
+  const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
+    variable.setUnit(evt.target.value);
+  };
+
   const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setUnit(undefined);
-    } else {
-      variable.setUnit(evt.target.value);
-    }
+    setDisplayUnit(evt.target.value);
   };
 
   const onNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    if (!evt.target.value) {
-      variable.setName(undefined);
-    } else {
-      variable.setName(processName(evt.target.value));
-    }
+    variable.setName(evt.target.value ? processName(evt.target.value) : undefined);
+  };
+
+  const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    variable.setDescription(evt.target.value);
   };
 
   const onExpressionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setExpression(undefined);
-    } else {
-      variable.setExpression(evt.target.value);
-    }
+    variable.setExpression(evt.target.value);
   };
 
   const handleExpressionKeyDown = (evt: any) => {
@@ -79,14 +83,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       evt.preventDefault();
       evt.stopPropagation();
       onExpressionChange(evt);
-    }
-  };
-
-  const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setDescription(undefined);
-    } else {
-      variable.setDescription(evt.target.value);
     }
   };
 
@@ -125,6 +121,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           placeholder="unit"
           title="unit"
           value={shownUnit || ""}
+          handleBlur={onUnitBlur}
           handleChange={onUnitChange}
           handleFocus={handleFieldFocus}
         />

@@ -1,11 +1,9 @@
 import math, { parse, SymbolNode } from "mathjs";
-import { reaction } from "mobx";
-import { addDisposer, IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { IAnyComplexType, Instance, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
 import { getMathUnit, getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
 import { createMath } from "../custom-mathjs";
-import { customUnitsArray } from "../custom-mathjs-units";
 import { basicErrorMessage, ErrorMessage, getErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
 
@@ -37,9 +35,6 @@ export const Variable = types.model("Variable", {
   expression: types.maybe(types.string),
   color: types.optional(types.string, Colors.LightGray)
 })
-.volatile(self => ({
-  math: createMath()
-}))
 .preProcessSnapshot(sn => {
   // Make sure color value is valid.
   const snClone = { ...sn };
@@ -58,21 +53,10 @@ export const Variable = types.model("Variable", {
   }
   return snClone;
 })
-.actions(self => ({
-  recreateMath() {
-    self.math = createMath();
-  }
-}))
-.actions(self => ({
-  afterCreate() {
-    // Update the math library whenever the custom units have changed.
-    addDisposer(self, reaction(
-      () => customUnitsArray.length,
-      () => self.recreateMath()
-    ));
-  }
-}))
 .views(self => ({
+  get math() {
+    return createMath();
+  },
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
     return validInputs.length;
