@@ -224,7 +224,10 @@ $color-gray-dark: #3f3f3f;
   }
 
   .expanded {
-    .variable-info.unit { width: calc($input-half-width - 15px); }
+    .variable-info{
+      &.unit { width: calc($input-half-width - 15px); }
+      &.value { width: calc($input-half-width - 15px); }
+    }
   }
 }
 
