@@ -21,75 +21,75 @@ $color-gray-dark: #3f3f3f;
   &.light-gray { @include spread-map($theme-map-light-gray); }
   &.red { @include spread-map($theme-map-red); }
   &.yellow { @include spread-map($theme-map-yellow); }
+}
 
-  .node {
-    background: theme-var($theme-color-5);
-    border: 2px solid theme-var($theme-color-2);
-    border-radius: 5px;
-    box-sizing: border-box;
-    color: $default-fg-color;
+.node {
+  background: theme-var($theme-color-5);
+  border: 2px solid theme-var($theme-color-2);
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: $default-fg-color;
+  font-family: $default-font-family;
+  font-size: 11px;
+  height: auto;
+  min-height: $node-height;
+  position: relative;
+  transition: height .25s;
+  width: 100%;
+  z-index: 4;
+
+  &:hover { outline: 2px solid $hover-blue; }
+  &.selected {
+    outline: 2px solid $select-blue;
+    &:active { cursor: grabbing; }
+  }
+
+  select, input {
+    background-color: white;
+    border: none;
     font-family: $default-font-family;
-    font-size: 11px;
-    height: auto;
-    min-height: $node-height;
-    position: relative;
-    transition: height .25s;
-    width: 100%;
-    z-index: 4;
+    line-height: normal;
+    padding: 2px 6px;
+    resize: none;
+  }
+  textarea {
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: $default-font-family;
+    font-size: 14px;
+    line-height: normal;
+    overflow: hidden;
+    padding: 3px 6px;
+    resize: none;
+  }
 
-    &:hover { outline: 2px solid $hover-blue; }
-    &.selected {
-      outline: 2px solid $select-blue;
-      &:active { cursor: grabbing; }
+  // TODO: Find a way to drop use of !important here.
+  // React Flow's Handle component doesn't seem to provide a way to set
+  // hover and active styling without interfering with its functionality.
+  .flow-handle {
+    &:hover {
+      background-color: $hover-blue !important;
+      box-sizing: content-box;
+      cursor: pointer;
     }
+    &:active {
+      background-color: $select-blue !important;
+      cursor: grab;
+    }
+  }
 
-    select, input {
-      background-color: white;
-      border: none;
-      font-family: $default-font-family;
-      line-height: normal;
-      padding: 2px 6px;
-      resize: none;
-    }
-    textarea {
-      background-color: white;
-      border: none;
-      border-radius: 5px;
-      font-family: $default-font-family;
-      font-size: 14px;
-      line-height: normal;
-      overflow: hidden;
-      padding: 3px 6px;
-      resize: none;
-    }
-
-    // TODO: Find a way to drop use of !important here.
-    // React Flow's Handle component doesn't seem to provide a way to set
-    // hover and active styling without interfering with its functionality.
-    .flow-handle {
-      &:hover {
-        background-color: $hover-blue !important;
-        box-sizing: content-box;
-        cursor: pointer;
-      }
-      &:active {
-        background-color: $select-blue !important;
-        cursor: grab;
-      }
-    }
-
-    /* Make scrollbar always visible when active:
-    * https://stackoverflow.com/questions/1202425/making-the-main-scrollbar-always-visible
-    */
-    .variable-description-area::-webkit-scrollbar {
-      -webkit-appearance: none;
-      width: 7px;
-    }
-    .variable-description-area::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgba(0, 0, 0, .5);
-      -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-    }
+  /* Make scrollbar always visible when active:
+  * https://stackoverflow.com/questions/1202425/making-the-main-scrollbar-always-visible
+  */
+  .variable-description-area::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+  .variable-description-area::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
   }
 }
 
@@ -221,13 +221,6 @@ $color-gray-dark: #3f3f3f;
     }
     &.no-value { color: gray; }
     &.invalid { outline: 2px solid $warning-purple; }
-  }
-
-  .expanded {
-    .variable-info{
-      &.unit { width: calc($input-half-width - 15px); }
-      &.value { width: calc($input-half-width - 15px); }
-    }
   }
 }
 
