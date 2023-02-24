@@ -55,7 +55,6 @@ export const Variable = types.model("Variable", {
 })
 .views(self => ({
   get math() {
-    console.log(`recreating math for ${self.name} ${self.id}`);
     return createMath();
   },
   get numberOfInputs() {

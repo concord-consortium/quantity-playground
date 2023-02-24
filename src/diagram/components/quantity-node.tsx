@@ -59,35 +59,23 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setUnit(undefined);
-    } else {
-      variable.setUnit(evt.target.value);
-    }
+    variable.setUnit(evt.target.value);
   };
 
   const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      setDisplayUnit(undefined);
-    } else {
-      setDisplayUnit(evt.target.value);
-    }
+    setDisplayUnit(evt.target.value);
   };
 
   const onNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    if (!evt.target.value) {
-      variable.setName(undefined);
-    } else {
-      variable.setName(processName(evt.target.value));
-    }
+    variable.setName(evt.target.value ? processName(evt.target.value) : undefined);
+  };
+
+  const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    variable.setDescription(evt.target.value);
   };
 
   const onExpressionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setExpression(undefined);
-    } else {
-      variable.setExpression(evt.target.value);
-    }
+    variable.setExpression(evt.target.value);
   };
 
   const handleExpressionKeyDown = (evt: any) => {
@@ -95,14 +83,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       evt.preventDefault();
       evt.stopPropagation();
       onExpressionChange(evt);
-    }
-  };
-
-  const onDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!evt.target.value) {
-      variable.setDescription(undefined);
-    } else {
-      variable.setDescription(evt.target.value);
     }
   };
 
