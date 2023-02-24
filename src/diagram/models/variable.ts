@@ -58,20 +58,6 @@ export const Variable = types.model("Variable", {
   }
   return snClone;
 })
-.actions(self => ({
-  recreateMath() {
-    self.math = createMath();
-  }
-}))
-.actions(self => ({
-  afterCreate() {
-    // Update the math library whenever the custom units have changed.
-    addDisposer(self, reaction(
-      () => customUnitsArray.length,
-      () => self.recreateMath()
-    ));
-  }
-}))
 .views(self => ({
   get numberOfInputs() {
     const validInputs = self.inputs.filter(input => !!input);
@@ -82,6 +68,25 @@ export const Variable = types.model("Variable", {
   get hasInputs() {
     return self.numberOfInputs > 0;
   },
+}))
+.actions(self => ({
+  recreateMath() {
+    self.math = createMath();
+  }
+}))
+.actions(self => ({
+  afterCreate() {
+    // Update the math library whenever the custom units have changed.
+    addDisposer(self, reaction(
+      () => customUnitsArray.length,
+      () => {
+        // if (self.hasInputs) {
+          console.log(`recreating math for ${self.name} ${self.id}`);
+          self.recreateMath();
+        // }
+      }
+    ));
+  }
 }))
 .views(self => ({
   get inputNames() {

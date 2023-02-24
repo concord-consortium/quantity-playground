@@ -15,6 +15,7 @@ interface IProps {
   placeholder?: string;
   title: string;
   value?: string | number;
+  handleBlur?: (evt: FocusEvent<HTMLTextAreaElement>) => void;
   handleChange?: (evt: ChangeEvent<HTMLTextAreaElement>) => void;
   handleFocus?: (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => void;
   handleKeyDown?: (evt: React.KeyboardEvent) => void;
@@ -23,7 +24,7 @@ interface IProps {
 
 export const ExpandableInput = ({
   error, disabled, inputType, lengthToExpand, maxLength, placeholder, title, value,
-  handleChange, handleFocus, handleKeyDown, setRealValue
+  handleBlur, handleChange, handleFocus, handleKeyDown, setRealValue
 }: IProps) => {
 
   const isLongValue = (val: number | string | undefined, length: number) => {
@@ -86,6 +87,7 @@ export const ExpandableInput = ({
           data-testid={`variable-${title}`}
           disabled={disabled}
           maxLength={maxLength}
+          onBlur={handleBlur}
           onChange={onChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}

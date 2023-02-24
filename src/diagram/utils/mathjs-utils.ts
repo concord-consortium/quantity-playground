@@ -21,6 +21,7 @@ export const getMathUnit = (value: number, unitString: string, mathLib: IMathLib
             const plural = pluralize.plural(symbol.name);
             const options = { aliases: [plural] };
             addCustomUnit(singular, options);
+            console.log(`adding ${singular}(${plural})`);
             mathLib.createUnit(singular, options);
           } else {
             addCustomUnit(symbol.name);

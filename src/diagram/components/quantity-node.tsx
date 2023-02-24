@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "react-flow-renderer/nocss";
@@ -26,6 +26,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const kDefaultExpandLength = 10;
   const kExpressionExpandLength = 18;
 
+  const [displayUnit, setDisplayUnit] = useState(variable.unit);
+  useEffect(() => {
+    setDisplayUnit(variable.unit);
+  }, [variable.unit]);
+
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
@@ -40,7 +45,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const hasExpression = !!(variable.numberOfInputs > 0);
   const errorMessage = variable.errorMessage;
   const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
-  const shownUnit = hasExpression ? variable.computedUnit : variable.unit;
+  const shownUnit = hasExpression ? variable.computedUnit : displayUnit;
 
   const handleEditColor = () => {
     setShowColorEditor(!showColorEditor);
@@ -50,11 +55,19 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
-  const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+  const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
     if (!evt.target.value) {
       variable.setUnit(undefined);
     } else {
       variable.setUnit(evt.target.value);
+    }
+  };
+
+  const onUnitChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!evt.target.value) {
+      setDisplayUnit(undefined);
+    } else {
+      setDisplayUnit(evt.target.value);
     }
   };
 
@@ -125,6 +138,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           placeholder="unit"
           title="unit"
           value={shownUnit || ""}
+          handleBlur={onUnitBlur}
           handleChange={onUnitChange}
           handleFocus={handleFieldFocus}
         />
