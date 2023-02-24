@@ -26,11 +26,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const kDefaultExpandLength = 10;
   const kExpressionExpandLength = 18;
 
-  const [displayUnit, setDisplayUnit] = useState(variable.unit);
-  useEffect(() => {
-    setDisplayUnit(variable.unit);
-  }, [variable.unit]);
-
   const [showColorEditor, setShowColorEditor] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
@@ -38,6 +33,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
   const nodeAlive = isAlive(data.node) && data.node.tryVariable;
+
+  // State used to track updates to the unit before they're ready to be committed to the model.
+  const variableUnit = nodeAlive ? variable.unit : undefined;
+  const [displayUnit, setDisplayUnit] = useState(variableUnit);
+  useEffect(() => {
+    setDisplayUnit(variableUnit);
+  }, [variableUnit]);
+
   if (!nodeAlive) {
       return null;
   }
