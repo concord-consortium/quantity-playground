@@ -222,6 +222,10 @@ $color-gray-dark: #3f3f3f;
     &.no-value { color: gray; }
     &.invalid { outline: 2px solid $warning-purple; }
   }
+
+  .expanded {
+    .variable-info.unit { width: calc($input-half-width - 15px); }
+  }
 }
 
 .variable-info-floater {
