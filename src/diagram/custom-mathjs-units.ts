@@ -1,4 +1,4 @@
-import { observable } from "mobx";
+import { action, observable } from "mobx";
 
 export interface IUnit {
   unit: string;
@@ -9,10 +9,10 @@ export interface IUnit {
 // { unit: "cat", options: { aliases: ["cats"] } }
 export const customUnitsArray = observable.array<IUnit>([]);
 
-export const addCustomUnit = (unit: string, options?: any) => {
+export const addCustomUnit = action(function addCustomUnit(unit: string, options?: any) {
   if (customUnitsArray.find((iunit: IUnit) => iunit.unit === unit)) return;
   customUnitsArray.push({ unit, options });
-};
+});
 
 // A list of built-in units to delete.
 export const deleteUnits = [
