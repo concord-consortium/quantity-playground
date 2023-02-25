@@ -38,8 +38,11 @@ function createMath(): IMathLib {
 
   deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
   customUnitsArray.forEach((u: IUnit) => {
-    // Typescript's overloading support is used by createUnit
-    // and it doesn't handle `createUnit(unit, any)` well.
+    // createUnit has two versions:
+    //   createUnit(name: string, definition?: string | UnitDefinition, options?: CreateUnitOptions): Unit;
+    //   createUnit(units: Record<string, string | UnitDefinition>, options?: CreateUnitOptions): Unit;
+    // If u.options is undefined and we call `m.createUnit(u.unit, u.options);` Typescript's overloading
+    // support fails for some reason. So this is split out to 2 function calls.
     if (u.options) {
       m.createUnit(u.unit, u.options);
     } else {
