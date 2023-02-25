@@ -1,5 +1,5 @@
 // Note: we can't use mathjs/number due to https://github.com/josdejong/mathjs/issues/2284
-import { create, simplifyDependencies, unitDependencies, 
+import { create, simplifyDependencies, unitDependencies,
   parseDependencies, evaluateDependencies, toDependencies,
   createUnitDependencies } from "mathjs";
 
@@ -21,9 +21,9 @@ function createMath(): IMathLib {
   const m = create({ simplifyDependencies, unitDependencies, parseDependencies,
     evaluateDependencies, toDependencies, createUnitDependencies });
 
-  // When adding new features you might want to comment out the statements above and 
-  // uncomment these 2 lines below. This way all of mathjs is available. After the 
-  // code is working you can go back and figure out what specific dependencies are 
+  // When adding new features you might want to comment out the statements above and
+  // uncomment these 2 lines below. This way all of mathjs is available. After the
+  // code is working you can go back and figure out what specific dependencies are
   // needed.
   // import { create , all } from "mathjs";
   // const m = create({ all });
@@ -31,13 +31,21 @@ function createMath(): IMathLib {
   // The types don't give access to the Unit class object, but it is there.
   const mathUnit = (m as any).Unit;
 
-  deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
-  customUnitsArray.forEach((u: IUnit) => m.createUnit(u.unit, u.options));
-
   const isAlphaOriginal = mathUnit.isValidAlpha;
   mathUnit.isValidAlpha = function (c: string): boolean {
     return isAlphaOriginal(c) || c === "$";
   };
+
+  deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
+  customUnitsArray.forEach((u: IUnit) => {
+    // Typescript's overloading support is used by createUnit
+    // and it doesn't handle `createUnit(unit, any)` well.
+    if (u.options) {
+      m.createUnit(u.unit, u.options);
+    } else {
+      m.createUnit(u.unit);
+    }
+  });
 
   return {
     simplify: m.simplify,
@@ -45,7 +53,7 @@ function createMath(): IMathLib {
     parse: m.parse,
     createUnit: m.createUnit,
     evaluate: m.evaluate,
-    number: m.number,  
+    number: m.number,
     isUnit: m.isUnit,
     Unit: mathUnit
   };
