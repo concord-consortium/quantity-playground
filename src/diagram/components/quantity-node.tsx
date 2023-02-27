@@ -90,6 +90,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     // Stopping propagation allows the user to select text in the input field without 
     // inadvertently dragging the card/node.
     evt.stopPropagation();
+    data.dqRoot.setSelectedNode(data.node);
   };
 
   const renderValueUnitInput = (params: {disabled: boolean}) => {
