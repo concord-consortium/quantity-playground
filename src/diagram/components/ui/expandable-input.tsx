@@ -28,7 +28,7 @@ export const ExpandableInput = ({
 }: IProps) => {
 
   const isLongValue = (val: number | string | undefined, length: number) => {
-    return val && val.toString().length >= length;
+    return !!(val && val.toString().length >= length);
   };
 
   const [hasLongValue, setHasLongValue] = useState(isLongValue(value, lengthToExpand));
@@ -100,14 +100,12 @@ export const ExpandableInput = ({
     }
   };
 
-  // Ensure that hasLongValue is updated when the value changes in 
-  // disabled fields -- the onChange handler above does not get triggered
-  // by disabled fields.
+  // Ensure that hasLongValue is updated when the value changes. This is done separately
+  // from the onChange handler because the latter does not get triggered by disabled fields,
+  // nor when the value is set using the Edit Variable dialog.
   useEffect(() => {
-    if (disabled && value) {
-      setHasLongValue(isLongValue(value, lengthToExpand));
-    }
-  }, [disabled, lengthToExpand, value]);
+    setHasLongValue(isLongValue(value, lengthToExpand));
+  }, [lengthToExpand, value]);
 
   const containerClasses = classNames(
     "expandable-input-container",
