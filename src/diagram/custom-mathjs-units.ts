@@ -1,15 +1,16 @@
+import { CreateUnitOptions } from "mathjs";
 import { action, observable } from "mobx";
 
 export interface IUnit {
   unit: string;
-  options: any;
+  options?: CreateUnitOptions;
 }
 // A list of custom units added to mathjs. This list will grow as a user adds custom units.
 // Built-in custom units can also be added here. They should look like:
 // { unit: "cat", options: { aliases: ["cats"] } }
 export const customUnitsArray = observable.array<IUnit>([]);
 
-export const addCustomUnit = action(function addCustomUnit(unit: string, options?: any) {
+export const addCustomUnit = action(function addCustomUnit(unit: string, options?: CreateUnitOptions) {
   if (customUnitsArray.find((iunit: IUnit) => iunit.unit === unit)) return;
   customUnitsArray.push({ unit, options });
 });

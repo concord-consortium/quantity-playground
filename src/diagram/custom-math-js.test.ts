@@ -1,8 +1,9 @@
 import { createMath } from "./custom-mathjs";
+import { addCustomUnit } from "./custom-mathjs-units";
 
 describe("MathJS", () => {
   const { evaluate, unit } = createMath();
-  
+
   it("can handle unit conversion with evaluate and unit values", () => {
     const scope = {
       a: unit(1, "m"),
@@ -32,7 +33,7 @@ describe("MathJS", () => {
   });
 
   it("sort of handles simple unit conversion with evaluate and a valueless unit", () => {
-    // This isn't really useful to us because it adds a value. 
+    // This isn't really useful to us because it adds a value.
     // If we allow the user to use `to` method in an expression and the input
     // has no value then it won't be obvious if the result should have a value
     // or not. So instead we will probably need to assign a value to a if it
@@ -125,8 +126,8 @@ describe("MathJS", () => {
     };
     const result = evaluate("a * 2 s", scope);
 
-    // The un-simplified result is an unexpected behavior. 
-    // But it kind of makes since it isn't clear what should happen with 
+    // The un-simplified result is an unexpected behavior.
+    // But it kind of makes since it isn't clear what should happen with
     // `s / hr`
     expect(result.toJSON()).toEqual({
       fixPrefix: false,
@@ -185,15 +186,60 @@ describe("MathJS", () => {
       expect(() => evaluate("a+b", scope)).toThrowError("Units do not match");
       expect(() => evaluate("a-b", scope)).toThrowError("Units do not match");
     });
-  
+
     test("a unit-less value is added or subtracted from a value with a unit", () => {
       const scope = {
         a: 1,
         b: unit(1, "s")
       };
-      expect(() => evaluate("a+b", scope)).toThrowError("Unexpected type of argument");  
-      expect(() => evaluate("a-b", scope)).toThrowError("Unexpected type of argument");  
-      expect(() => evaluate("b-a", scope)).toThrowError("Unexpected type of argument");  
-    });  
+      expect(() => evaluate("a+b", scope)).toThrowError("Unexpected type of argument");
+      expect(() => evaluate("a-b", scope)).toThrowError("Unexpected type of argument");
+      expect(() => evaluate("b-a", scope)).toThrowError("Unexpected type of argument");
+    });
+  });
+
+  describe("our customizations", () => {
+
+    it("handles '$'", () => {
+      addCustomUnit("$");
+      const localMath = createMath();
+      const scope = {
+        a: localMath.unit(1, "m/$"),
+        b: localMath.unit(1, "$")
+      };
+      const result = localMath.evaluate("a*b", scope);
+      const simpl = result.simplify();
+      expect(simpl.toString()).toEqual("1 m");
+    });
+
+    it("handles units with options", () => {
+      addCustomUnit("cat", { aliases: ["cats"]});
+      const localMath = createMath();
+      const scope = {
+        a: localMath.unit(1, "cat"),
+        b: localMath.unit(2, "cats")
+      };
+      const result = localMath.evaluate("a+b", scope);
+      const simpl = result.simplify();
+      expect(simpl.toString()).toEqual("3 cats");
+    });
+
+    it("shares units across math instances", () => {
+      addCustomUnit("bags");
+      const localMath = createMath();
+      const scope = {
+        a: localMath.unit(2, "bags"),
+        b: localMath.unit(3, "bags")
+      };
+      const result = localMath.evaluate("a+b", scope);
+      const simpl = result.simplify();
+      expect(simpl.toString()).toEqual("5 bags");
+
+      const localMath2 = createMath();
+      const result2 = localMath2.evaluate("a+b+4 bags", scope);
+      const simpl2 = result2.simplify();
+      expect(simpl2.toString()).toEqual("9 bags");
+    });
+
   });
 });
