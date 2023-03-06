@@ -30,6 +30,7 @@ const edgeTypes = {
 };
 
 export interface IProps {
+  dialogPresent?: boolean;
   dqRoot: DQRootType;
   hideControls?: boolean;
   hideNavigator?: boolean;
@@ -42,8 +43,9 @@ export interface IProps {
   showUnusedVariableDialog?: () => void;
   getDiagramExport?: () => unknown;
 }
-export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator, hideNewVariableButton, interactionLocked,
-  setDiagramHelper, showDeleteCardButton, showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
+export const _Diagram = ({ dialogPresent, dqRoot, getDiagramExport, hideControls, hideNavigator,
+  hideNewVariableButton, interactionLocked, setDiagramHelper, showDeleteCardButton,
+  showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
@@ -106,14 +108,16 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   // onElementsRemove is called when the user's keyboard Delete key is pressed
   // to delete a selected card or a selected connecting arrow (aka "edge").
   const onElementsRemove = (elementsToRemove: Elements) => {
-    for (const element of elementsToRemove) {
-      if (isEdge((element as any))) {
-        const edge = element as Edge;
-        deleteEdge(edge);
-      } else {
-        const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        deleteAllEdgesOfNode(element.id);
-        dqRoot.removeNode(nodeToRemove);
+    if (!dialogPresent) {
+      for (const element of elementsToRemove) {
+        if (isEdge((element as any))) {
+          const edge = element as Edge;
+          deleteEdge(edge);
+        } else {
+          const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
+          deleteAllEdgesOfNode(element.id);
+          dqRoot.removeNode(nodeToRemove);
+        }
       }
     }
   };
