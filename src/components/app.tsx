@@ -103,7 +103,6 @@ export const App = observer(() => {
         hideNavigator={hideUI}
         hideNewVariableButton={hideUI}
         showDeleteCardButton={!hideUI}
-        dialogPresent={showEditVariableDialog || showUnusedVariableDialog}
         showEditVariableDialog={hideUI ? undefined : () => setShowEditVariableDialog(true)}
         showUnusedVariableDialog={hideUI ? undefined : () => setShowUnusedVariableDialog(true)}
       />

@@ -31,7 +31,7 @@ export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
 
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (
-    <g className="react-flow__connection">
+    <g className="react-flow__connection" tabIndex={-1}>
       <path id={id} className="react-flow__edge-path react-flow__edgeupdater" d={d}/>
     </g>
   );
