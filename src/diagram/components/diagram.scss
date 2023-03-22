@@ -10,6 +10,11 @@
 //   border-radius: 5px;
 // }
 
+.react-flow__connection:focus,
+.react-flow__connection:focus * {
+  outline: none;
+}
+
 // While some stroke settings affect the path markers (arrowheads), stroke color
 // settings do not. To support different colored arrowheads, we define custom SVG
 // markers in the Diagram component and set marker-end properties to the custom 

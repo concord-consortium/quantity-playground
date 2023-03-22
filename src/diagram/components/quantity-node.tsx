@@ -141,7 +141,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   });
 
   return (
-    <div className={nodeContainerClasses} data-testid="node-container">
+    <div className={nodeContainerClasses} data-testid="node-container" tabIndex={-1}>
       {!!errorMessage &&
         <ErrorMessageComponent
           errorMessage={errorMessage}
