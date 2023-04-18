@@ -22,6 +22,9 @@ describe("mathjs-utils", () => {
       const singU = getMathUnit(0, "half", math);
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
+    it("new unit with singular that is already a unit doesn't crash", () => {
+      expect(getMathUnit(0, "yds", math)).toBeTruthy();
+    });
     it("permits the '$' unit", () => {
       const u = getMathUnit(0,"$",math);
       expect(u?.toString()).toBe("0 $");
