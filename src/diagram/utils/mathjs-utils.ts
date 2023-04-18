@@ -19,9 +19,16 @@ export const getMathUnit = (value: number, unitString: string, mathLib: IMathLib
           if (/^[a-zA-Z]\w*$/.test(symbol.name)) {
             const singular = pluralize.singular(symbol.name);
             const plural = pluralize.plural(symbol.name);
-            const options = { aliases: [plural] };
-            addCustomUnit(singular, options);
-            mathLib.createUnit(singular, options);
+            if (mathLib.Unit.isValuelessUnit(singular) || mathLib.Unit.isValuelessUnit(plural)) {
+              // If the singular or plural is already a unit, just add the base
+              addCustomUnit(symbol.name);
+              mathLib.createUnit(symbol.name);
+            } else {
+              // Otherwise, add them both as synonyms
+              const options = { aliases: [plural] };
+              addCustomUnit(singular, options);
+              mathLib.createUnit(singular, options);
+            }
           } else {
             addCustomUnit(symbol.name);
             mathLib.createUnit(symbol.name);
