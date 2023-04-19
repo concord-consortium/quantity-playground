@@ -98,6 +98,7 @@ export const Variable = types.model("Variable", {
           if (node.type === "SymbolNode") {
             const inputs = self.inputs as IVariable[];
             const input = inputs.find(i => i.name === node.name);
+            if (!input) return node;
             return new SymbolNode(`${input?.computedValue} ${input?.computedUnit}`);
           } else {
             return node;
