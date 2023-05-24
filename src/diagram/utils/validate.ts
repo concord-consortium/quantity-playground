@@ -7,7 +7,8 @@ export const isValidNumber = (v: string) => v !== "" && !isNaN(+v);
 // Only letters, digits, and underscores are allowed in variable names,
 // and the first character must be a letter.
 export const processName: (name: string) => string = name => (
-  name.length > 0 && name.match(/^[^a-zA-Z]\W*/)
+  // name.length > 0 && name.match(/^[^a-zA-Z]\W*/)
+  name.length > 0 && name.match(/^[^a-zA-Z]/)
   ? processName(name.slice(1))
   : name.replace(/\W/g, "")
 );

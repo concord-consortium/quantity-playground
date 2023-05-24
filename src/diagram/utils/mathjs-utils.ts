@@ -4,6 +4,7 @@
 import math, { SymbolNode } from "mathjs";
 import * as pluralize from "pluralize";
 
+import { processName } from "./validate";
 import { addCustomUnit } from "../custom-mathjs-units";
 import { IMathLib } from "../custom-mathjs";
 
@@ -65,9 +66,11 @@ export const parseExpression = (expression: string, inputNames: (string | undefi
     // use a regex to find the input names in the expression.
     // Note there are slightly different subtract signs we need to handle.
     inputNames.forEach((name) => {
-      const variableRegex = new RegExp(`(^|[÷,×,+,-,-,/,*,),(,^])${name}([÷,×,+,-,-,/,*,(,),^]|$)`);
-      if (name && variableRegex.test(localExpression)) {
-        inputsInExpression.push(name);
+      if (name) {
+        const variableRegex = new RegExp(`(^|[÷,×,+,-,-,/,*,),(,^])${processName(name)}([÷,×,+,-,-,/,*,(,),^]|$)`);
+        if (name && variableRegex.test(localExpression)) {
+          inputsInExpression.push(name);
+        }
       }
     });
     return { expression: localExpression, inputsInExpression };
