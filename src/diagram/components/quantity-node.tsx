@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FocusEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "react-flow-renderer/nocss";
@@ -132,7 +132,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
-  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
+  const targetNodeHandleStyle = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable
+                                  ? {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0}
+                                  : {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0, pointerEvents: ("none" as React.CSSProperties["pointerEvents"])};
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
@@ -201,16 +203,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             </button>
           </div>
         </div>
-        {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
-          <Handle
-            type="target"
-            position={Position.Left}
-            style={{...targetNodeHandleStyle}}
-            onConnect={(params) => console.log("handle onConnect", params)}
-            isConnectable={isConnectable}
-            id="a"
-          />
-        }
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{...targetNodeHandleStyle}}
+          isConnectable={isConnectable}
+          id="a" // is this supposed to be here?
+        />
         <Handle
           className="flow-handle"
           type="source"
@@ -243,6 +242,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 //
 // But if the model gets changed without a flow re-render
 // then, it doesn't update without the observer
-export const QuantityNode = observer(_QuantityNode);
+export const QuantityNode = memo(observer(_QuantityNode));
 // Because it is observed we have to set the display name
 QuantityNode.displayName = "QuantityNode";

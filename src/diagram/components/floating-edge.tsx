@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getBezierPath, useStoreState } from "react-flow-renderer/nocss";
+import { getBezierPath, useStore } from "react-flow-renderer/nocss";
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
 interface IProps {
@@ -9,9 +9,11 @@ interface IProps {
 }
 
 export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
-  const nodes = useStoreState((state) => state.nodes);
-  const sourceNode = useMemo(() => nodes.find((n) => n.id === source), [source, nodes]);
-  const targetNode = useMemo(() => nodes.find((n) => n.id === target), [target, nodes]);
+  const nodes = useStore((store) => {
+    return store.nodeInternals;
+  });
+  const sourceNode = useMemo(() => nodes.get(source), [source, nodes]);
+  const targetNode = useMemo(() => nodes.get(target), [target, nodes]);
 
   if (!source || !target) {
     return null;

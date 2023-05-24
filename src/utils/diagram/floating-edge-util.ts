@@ -8,8 +8,8 @@ function getNodeIntersection(sourceNode: any, targetNode: any) {
     width: intersectionNodeWidth,
     height: intersectionNodeHeight,
     position: intersectionNodePosition,
-  } = sourceNode.__rf;
-  const targetPosition = targetNode.__rf.position;
+  } = sourceNode;
+  const targetPosition = targetNode.position;
   const w = intersectionNodeWidth / 2;
   const h = intersectionNodeHeight / 2;
   const x2 = intersectionNodePosition.x + w;
@@ -29,7 +29,7 @@ function getNodeIntersection(sourceNode: any, targetNode: any) {
 
 // returns the position (top,right,bottom or right) passed node compared to the intersection point
 function getEdgePosition(node: any, intersectionPoint: any) {
-  const n = { ...node.__rf.position, ...node.__rf };
+  const n = { ...node.position, ...node };
   const nx = Math.round(n.x);
   const ny = Math.round(n.y);
   const px = Math.round(intersectionPoint.xIntersect);

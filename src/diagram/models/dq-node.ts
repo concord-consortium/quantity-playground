@@ -1,6 +1,6 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
+import { Edge, Node, MarkerType } from "react-flow-renderer/nocss";
 import { Variable, VariableType } from "./variable";
 
 export const kDefaultNodeWidth = 194;
@@ -33,16 +33,22 @@ export const DQNode = types.model("DQNode", {
 }))
 .views(self => ({
   // Circular reference with dqRoot and dqNode so typing as any
-  getReactFlowElements(dqRoot: any) {
-    const elements: Elements = [];
+  getReactFlowNodes(dqRoot: any) {
+    const nodes: Node[] = [];
     const id = self.variableId;
-    elements.push({
+    nodes.push({
       id,
       type: "quantityNode",
-      data: { node: self, dqRoot },
+      data: { node: self, dqRoot }, // ??
       position: { x: self.x, y: self.y },
     });
 
+    return nodes;    
+  },
+  // Circular reference with dqRoot and dqNode so typing as any
+  getReactFlowEdges(dqRoot: any) {
+    const edges: Edge[] = [];
+    const id = self.variableId;
     const variable = self.tryVariable;
     if (variable) {
       const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
@@ -50,20 +56,21 @@ export const DQNode = types.model("DQNode", {
       inputs?.forEach((input) => {
         if (input) {
           const usedInExpression = input.name && usedInputs?.includes(input.name);
-          elements.push({
+          edges.push({
             id: `e${input.id}-target${id}-a`,
             source: input.id,
             target: id,
-            arrowHeadType: ArrowHeadType.ArrowClosed,
             type: "floatingEdge",
+            markerEnd: {
+              type: MarkerType.Arrow,
+            },
             data: { dqRoot },
-            className: usedInExpression ? "used-in-expression" : "",
+            className: usedInExpression ? "used-in-expression" : ""
           });
         }
       });
     }
-
-    return elements;
+    return edges;
   }
 }))
 .actions(self => ({
