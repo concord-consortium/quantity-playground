@@ -1,6 +1,6 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { Edge, Node, MarkerType } from "react-flow-renderer/nocss";
+import { Edge, Node, MarkerType } from "reactflow";
 import { Variable, VariableType } from "./variable";
 
 export const kDefaultNodeWidth = 194;

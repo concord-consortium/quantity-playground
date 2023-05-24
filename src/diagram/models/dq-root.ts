@@ -1,5 +1,5 @@
 import { destroy, Instance, isValidReference, types } from "mobx-state-tree";
-import { Edge, Node } from "react-flow-renderer/nocss";
+import { Edge, Node } from "reactflow";
 import { DQNode, DQNodeType } from "./dq-node";
 import { VariableType } from "./variable";
 
@@ -30,6 +30,8 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
+  // TODO: Remove reactFlowElements if it's really no longer needed.
+  // reactFlowNodes and reactFlowEdges seem to be sufficient.
   get reactFlowElements() {
     const elements: any = [];
     self.nodes.forEach((node) => {

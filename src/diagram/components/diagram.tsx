@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   addEdge, Edge, OnEdgeUpdateFunc, MiniMap, Controls,
   ReactFlowProvider, OnConnectStart, OnConnectEnd, 
-  applyEdgeChanges, applyNodeChanges } from "react-flow-renderer/nocss";
+  applyEdgeChanges, applyNodeChanges, Viewport } from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
 import { QuantityNode } from "./quantity-node";
@@ -13,12 +13,8 @@ import { DiagramHelper } from "../utils/diagram-helper";
 import { ConnectionLine } from "./connection-line";
 import { MarkerEnd } from "./marker-end";
 
-// We use the nocss version of RF so we can manually load
-// the CSS. This way we can override it.
-// Otherwise RF injects its CSS after our CSS, so we can't
-// override it.
-import "react-flow-renderer/dist/style.css";
-import "react-flow-renderer/dist/theme-default.css";
+import "reactflow/dist/style.css";
+import "reactflow/dist/base.css";
 
 // The order matters the diagram css overrides some styles
 // from the react-flow css.
@@ -210,8 +206,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     return applyEdgeChanges(changes, es);
   });
 
-  const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
-  const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
+  const { zoom, x, y } = dqRoot.flowTransform || {};
+  // TODO: Delete the commented out line below if it's really not needed.
+  // const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
+  const defaultViewport: Viewport = { x, y, zoom };
 
   const interactive = !interactionLocked;
 
@@ -229,15 +227,14 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
         <ReactFlow
-          connectionLineComponent={ConnectionLine}
+          connectionLineComponent={ConnectionLine as any} // TODO: Fix type(s)
           nodes={nodes}
           edges={edges}
-          defaultPosition={defaultPosition}
-          defaultZoom={defaultZoom}
+          defaultViewport={defaultViewport}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           onEdgeUpdate={onEdgeUpdate}
-          onConnect={onConnect}  // TODO: fix types
+          onConnect={onConnect}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
           onEdgesChange={onEdgesChange}

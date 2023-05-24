@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FocusEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
-import { Handle, Position } from "react-flow-renderer/nocss";
+import { Handle, Position } from "reactflow";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
 
