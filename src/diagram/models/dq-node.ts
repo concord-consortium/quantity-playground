@@ -17,6 +17,10 @@ export const DQNode = types.model("DQNode", {
   x: types.number,
   y: types.number
 })
+.volatile(self => ({
+  dragX: undefined as number | undefined,
+  dragY: undefined as number | undefined
+}))
 .views(self => ({
   get tryVariable() {
     return tryReference(() => self.variable);
@@ -30,6 +34,13 @@ export const DQNode = types.model("DQNode", {
     const snapshot = getSnapshot(self);
     return snapshot.variable as string;
   },
+  get position() {
+    // Uses the volatile dragX and dragY while the node is being dragged
+    return {
+      x: self.dragX ?? self.x,
+      y: self.dragY ?? self.y
+    };
+  }
 }))
 .views(self => ({
   // Circular reference with dqRoot and dqNode so typing as any
@@ -40,7 +51,7 @@ export const DQNode = types.model("DQNode", {
       id,
       type: "quantityNode",
       data: { node: self, dqRoot }, // ??
-      position: { x: self.x, y: self.y },
+      position: { x: self.position.x, y: self.position.y },
     });
 
     return nodes;    
@@ -81,11 +92,15 @@ export const DQNode = types.model("DQNode", {
     self.x = x;
     self.y = y;
   },
-
+  updateDragPosition(x?: number, y?: number) {
+    self.dragX = x;
+    self.dragY = y;
+  },
   addInput(newInput: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.addInput((newInput as any)?.variable);
   },
   removeInput(input: VariableType) {
+    console.log(`--- removed input`, input);
     self.tryVariable?.removeInput((input));
   },
 }));
