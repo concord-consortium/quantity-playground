@@ -23,18 +23,6 @@ function getNodeIntersection(sourceNode: Node, targetNode: Node) {
   const yy3 = a * yy1;
   const xIntersect = w * (xx3 + yy3) + x2;
   const yIntersect = h * (-xx3 + yy3) + y2;
-  // CONSOLE.LOG TO REMOVE
-  // console.log(`*** getNodeIntersection ***`, sourceNode, targetNode);
-  // console.log(`w`, w);
-  // console.log(`h`, h);
-  // console.log(`x2`, x2);
-  // console.log(`y2`, y2);
-  // console.log(`x1`, x1);
-  // console.log(`y1`, y1);
-  // console.log(`xx1`, xx1);
-  // console.log(`yy1`, yy1);
-  // console.log(`a`, a);
-  // console.log(`*** end ***`);
 
   return { xIntersect, yIntersect };
 }
@@ -74,24 +62,6 @@ export function getEdgeParams(source: Node, target: Node) {
   const sy = sourceIntersectionPoint.yIntersect;
   const tx = targetIntersectionPoint.xIntersect;
   const ty = targetIntersectionPoint.yIntersect;
-
-  // CONSOLE.LOG TO REMOVE
-  // console.log(`--- getEdgeParams --- `);
-  // console.log(`source`, source);
-  // console.log(`target`, target);
-
-  // console.log(`sourceIntersectionPoint`, sourceIntersectionPoint);
-  // console.log(`targetIntersectionPoint`, targetIntersectionPoint);
-
-  // console.log(`sourcePos`, sourcePos);
-  // console.log(`targetPos`, targetPos);
-
-  // console.log("sx", sx);
-  // console.log("sy", sy);
-  // console.log("sourcePos", sourcePos);
-  // console.log("targetPos", targetPos);
-  // console.log("targetX", ty);
-  // console.log("targetY", ty);
 
   return { sx, sy, tx, ty, sourcePos, targetPos };
 }

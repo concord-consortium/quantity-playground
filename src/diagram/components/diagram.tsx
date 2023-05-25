@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite";
 import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
-  Edge, OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, OnConnectStart,
-  OnConnectEnd, Viewport
+  Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
+  OnEdgeUpdateFunc, OnSelectionChangeParams, ReactFlowProvider, Viewport
 } from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
@@ -114,11 +114,17 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   }
   : undefined;
 
-  const onSelectionChange = (selectedElements: any) => {
-    if (selectedElements?.[0]?.type === "quantityNode" ) {
-      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
+  const onSelectionChange = ({ nodes, edges }: OnSelectionChangeParams) => {
+    // console.log(`selectionChange`, nodes, edges);
+    if (nodes?.[0]?.type === "quantityNode" ) {
+      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(nodes[0].id));
     } else {
       dqRoot.setSelectedNode(undefined);
+    }
+    if (edges?.[0]?.type === "floatingEdge") {
+      dqRoot.setSelectedEdgeId(edges[0].id);
+    } else {
+      dqRoot.setSelectedEdgeId();
     }
   };
 

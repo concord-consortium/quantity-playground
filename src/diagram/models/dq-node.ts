@@ -67,8 +67,10 @@ export const DQNode = types.model("DQNode", {
       inputs?.forEach((input) => {
         if (input) {
           const usedInExpression = input.name && usedInputs?.includes(input.name);
+          const edgeId = `e${input.id}-target${id}-a`;
           edges.push({
-            id: `e${input.id}-target${id}-a`,
+            id: edgeId,
+            selected: edgeId === dqRoot.selectedEdgeId,
             source: input.id,
             target: id,
             type: "floatingEdge",

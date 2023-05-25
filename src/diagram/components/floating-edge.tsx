@@ -1,14 +1,9 @@
 import React, { useMemo } from "react";
-import { getBezierPath, Node, useStore } from "reactflow";
+import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
+
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
-interface IProps {
-  id: string;
-  source: string;
-  target: string;
-}
-
-export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
+export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target }) =>  {
   const nodes = useStore((store) => {
     return store.nodeInternals;
   });
@@ -30,8 +25,6 @@ export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
     targetX,
     targetY,
   });
-  // CONSOLE.LOG TO REMOVE
-  // console.log("d", d);
 
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (

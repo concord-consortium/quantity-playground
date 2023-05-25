@@ -16,7 +16,8 @@ export const DQRoot = types.model("DQRoot", {
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
   connectingVariable: undefined as VariableType | undefined,
-  selectedNode: undefined as DQNodeType | undefined
+  selectedNode: undefined as DQNodeType | undefined,
+  selectedEdgeId: undefined as string | undefined
 }))
 .actions(self => ({
   afterCreate() {
@@ -104,6 +105,9 @@ export const DQRoot = types.model("DQRoot", {
   },
   setSelectedNode(node?: DQNodeType) {
     self.selectedNode = node;
+  },
+  setSelectedEdgeId(id?: string) {
+    self.selectedEdgeId = id;
   }
 }))
 .actions(self => ({

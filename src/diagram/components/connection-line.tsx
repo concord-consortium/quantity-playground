@@ -2,7 +2,6 @@ import React from "react";
 import { ConnectionLineComponent, ConnectionLineComponentProps } from "reactflow";
 
 export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY, ...rest }: ConnectionLineComponentProps) =>  {
-  console.log(`connecstionLine`, {fromX, fromY, toX, toY, rest});
   return (
     <g className="react-flow__connection">
       <path
