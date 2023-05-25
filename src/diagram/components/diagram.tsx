@@ -180,17 +180,20 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   };
 
   const onNodeDrag = (event: React.MouseEvent<Element, MouseEvent>, node: any) => {
+    console.log(` -- dragging`, node);
     event.stopPropagation();
   };
 
   // Keep the MST node model in sync with the diagram
   const onNodeDragStop = (event: any, node: any) => {
+    console.log(`--- dragEnd`);
     const mstNode = dqRoot.getNodeFromVariableId(node.id);
     mstNode?.updatePosition(node.position.x, node.position.y);
     event.stopPropagation();
   };
 
   const onNodesChange = (changes: any) => setNodes((ns) => {
+    console.log(`onNodesChange`, changes, ns);
     return applyNodeChanges(changes, ns);
   });
 
@@ -227,7 +230,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
         <ReactFlow
-          connectionLineComponent={ConnectionLine as any} // TODO: Fix type(s)
+          connectionLineComponent={ConnectionLine}
           nodes={nodes}
           edges={edges}
           defaultViewport={defaultViewport}

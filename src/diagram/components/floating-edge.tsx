@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getBezierPath, useStore } from "reactflow";
+import { getBezierPath, Node, useStore } from "reactflow";
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
 interface IProps {
@@ -12,22 +12,16 @@ export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
   const nodes = useStore((store) => {
     return store.nodeInternals;
   });
-  const sourceNode = useMemo(() => nodes.get(source), [source, nodes]);
-  const targetNode = useMemo(() => nodes.get(target), [target, nodes]);
+  const sourceNode: Node | undefined = useMemo(() => nodes.get(source), [source, nodes]);
+  const targetNode: Node | undefined = useMemo(() => nodes.get(target), [target, nodes]);
 
-  if (!source || !target) {
+  if (!sourceNode || !targetNode) {
     return null;
   }
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
   const arrowHeadOffset = 3;
   const targetX = sx < tx ? tx - arrowHeadOffset : tx + arrowHeadOffset;
   const targetY = sy < ty ? ty - arrowHeadOffset : ty + arrowHeadOffset;
-  console.log("sx", sx);
-  console.log("sy", sy);
-  console.log("sourcePos", sourcePos);
-  console.log("targetPos", targetPos);
-  console.log("targetX", targetX);
-  console.log("targetY", targetY);
   const d = getBezierPath({
     sourceX: sx,
     sourceY: sy,
@@ -36,7 +30,8 @@ export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
     targetX,
     targetY,
   });
-  console.log("d", d);
+  // CONSOLE.LOG TO REMOVE
+  // console.log("d", d);
 
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (

@@ -1,13 +1,8 @@
 import React from "react";
+import { ConnectionLineComponent, ConnectionLineComponentProps } from "reactflow";
 
-interface IProps {
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-}
-
-export const ConnectionLine: React.FC<IProps> = ({ sourceX, sourceY, targetX, targetY }) =>  {
+export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY, ...rest }: ConnectionLineComponentProps) =>  {
+  console.log(`connecstionLine`, {fromX, fromY, toX, toY, rest});
   return (
     <g className="react-flow__connection">
       <path
@@ -16,7 +11,7 @@ export const ConnectionLine: React.FC<IProps> = ({ sourceX, sourceY, targetX, ta
         fill="none"
         stroke="#0081ff"
         strokeWidth={2}
-        d={`M${sourceX},${sourceY} C ${sourceX} ${targetY} ${sourceX} ${targetY} ${targetX},${targetY}`}
+        d={`M${fromX},${fromY} C ${fromX} ${toY} ${fromX} ${toY} ${toX},${toY}`}
       />
     </g>
   );
