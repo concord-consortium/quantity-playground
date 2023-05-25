@@ -23,7 +23,7 @@ context("Test Edit Variable Dialog", () => {
       editVariableButton().should("not.be.disabled");
     });
     it("Dialog appears and works", () => {
-      const variableName = "variable-name";
+      const variableName = "variable_name";
       editVariableButton().click();
       editVariableDialog().should("exist");
       nameField().should("exist");
