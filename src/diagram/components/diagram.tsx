@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
-  OnEdgeUpdateFunc, OnSelectionChangeParams, ReactFlowProvider, Viewport
+  OnEdgeUpdateFunc, ReactFlowProvider, Viewport
 } from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
@@ -114,20 +114,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   }
   : undefined;
 
-  const onSelectionChange = ({ nodes, edges }: OnSelectionChangeParams) => {
-    console.log(`selectionChange`, nodes?.[0]?.id, edges?.[0]?.id);
-    if (nodes?.[0]?.type === "quantityNode" ) {
-      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(nodes[0].id));
-    } else {
-      dqRoot.setSelectedNode(undefined);
-    }
-    if (edges?.[0]?.type === "floatingEdge") {
-      dqRoot.setSelectedEdgeId(edges[0].id);
-    } else {
-      dqRoot.setSelectedEdgeId();
-    }
-  };
-
   const onLoad = (_rfInstance: any) => {
     setRfInstance(_rfInstance);
     if (setDiagramHelper) {
@@ -165,6 +151,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     // Set the node's model's drag position
     const mstNode = dqRoot.getNodeFromVariableId(node.id);
     mstNode?.updateDragPosition(node.position.x, node.position.y);
+
+    dqRoot.setSelectedNode(node.data.node);
 
     event.stopPropagation();
   };
@@ -206,7 +194,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onConnect={onConnect}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
-          onSelectionChange={onSelectionChange}
           onInit={onLoad}
           onDrop={onDrop}
           onDragOver={onDragOver}

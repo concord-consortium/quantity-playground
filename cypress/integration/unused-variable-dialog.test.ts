@@ -19,7 +19,7 @@ context("Test Unused Variable Dialog and Delete Button", () => {
       deleteCardButton().should("be.disabled");
       unusedVariableButton().should("be.disabled");
       nodes().should("have.length", 4);
-      nodeToEdit().find(".name").click();
+      nodeToEdit().click();
       deleteCardButton().should("be.enabled");
       deleteCardButton().click();
       nodes().should("have.length", 3);
@@ -35,7 +35,7 @@ context("Test Unused Variable Dialog and Delete Button", () => {
       unusedVariableCancelButton().should("exist").click();
     });
     it("Multi select list works", () => {
-      nodeToEdit().find(".name").click();
+      nodeToEdit().click();
       deleteCardButton().click();
       unusedVariableButton().click();
       unusedChips().should("have.length", 2);

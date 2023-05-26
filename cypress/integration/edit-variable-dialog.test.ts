@@ -19,7 +19,7 @@ context("Test Edit Variable Dialog", () => {
     it("Edit variable button present and active when a node is selected", () => {
       editVariableButton().should("exist");
       editVariableButton().should("be.disabled");
-      nodeToEdit().find(".name").click();
+      nodeToEdit().click();
       editVariableButton().should("not.be.disabled");
     });
     it("Dialog appears and works", () => {

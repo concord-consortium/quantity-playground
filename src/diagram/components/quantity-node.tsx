@@ -93,6 +93,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     data.dqRoot.setSelectedNode(data.node);
   };
 
+  const handleClick = (event: MouseEvent) => {
+    data.dqRoot.setSelectedNode(data.node);
+  };
+
   const renderValueUnitInput = (params: {disabled: boolean}) => {
     const { disabled } = params;
     const staticValue = shownValue !== undefined
@@ -149,7 +153,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           errorMessage={errorMessage}
         />
       }
-      <div className={nodeClasses} data-testid="quantity-node">
+      <div className={nodeClasses} data-testid="quantity-node" onClick={handleClick} >
         <div className="variable-info-container">
           <div className="variable-info-row name-row">
             <input

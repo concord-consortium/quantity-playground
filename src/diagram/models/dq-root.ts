@@ -105,9 +105,11 @@ export const DQRoot = types.model("DQRoot", {
   },
   setSelectedNode(node?: DQNodeType) {
     self.selectedNode = node;
+    self.selectedEdgeId = undefined;
   },
   setSelectedEdgeId(id?: string) {
     self.selectedEdgeId = id;
+    self.selectedNode = undefined;
   }
 }))
 .actions(self => ({
