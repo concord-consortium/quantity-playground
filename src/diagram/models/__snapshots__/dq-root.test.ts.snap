@@ -93,6 +93,132 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "className": "",
+    "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 300,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 550,
+            "y": 150,
+          },
+          "4": Object {
+            "id": "4",
+            "variable": "d",
+            "x": 150,
+            "y": 500,
+          },
+        },
+      },
+    },
+    "id": "ea-targetc-a",
+    "markerEnd": Object {
+      "type": "arrow",
+    },
+    "selected": false,
+    "source": "a",
+    "target": "c",
+    "type": "floatingEdge",
+  },
+  Object {
+    "className": "",
+    "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 300,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 550,
+            "y": 150,
+          },
+          "4": Object {
+            "id": "4",
+            "variable": "d",
+            "x": 150,
+            "y": 500,
+          },
+        },
+      },
+    },
+    "id": "ed-targetc-a",
+    "markerEnd": Object {
+      "type": "arrow",
+    },
+    "selected": false,
+    "source": "d",
+    "target": "c",
+    "type": "floatingEdge",
+  },
+  Object {
+    "className": "",
+    "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 300,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 550,
+            "y": 150,
+          },
+          "4": Object {
+            "id": "4",
+            "variable": "d",
+            "x": 150,
+            "y": 500,
+          },
+        },
+      },
+    },
+    "id": "eb-targetc-a",
+    "markerEnd": Object {
+      "type": "arrow",
+    },
+    "selected": false,
+    "source": "b",
+    "target": "c",
+    "type": "floatingEdge",
+  },
+  Object {
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -136,123 +262,6 @@ Array [
       "y": 150,
     },
     "type": "quantityNode",
-  },
-  Object {
-    "arrowHeadType": "arrowclosed",
-    "className": "",
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
-          },
-        },
-      },
-    },
-    "id": "ea-targetc-a",
-    "source": "a",
-    "target": "c",
-    "type": "floatingEdge",
-  },
-  Object {
-    "arrowHeadType": "arrowclosed",
-    "className": "",
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
-          },
-        },
-      },
-    },
-    "id": "ed-targetc-a",
-    "source": "d",
-    "target": "c",
-    "type": "floatingEdge",
-  },
-  Object {
-    "arrowHeadType": "arrowclosed",
-    "className": "",
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
-          },
-        },
-      },
-    },
-    "id": "eb-targetc-a",
-    "source": "b",
-    "target": "c",
-    "type": "floatingEdge",
   },
   Object {
     "data": Object {
