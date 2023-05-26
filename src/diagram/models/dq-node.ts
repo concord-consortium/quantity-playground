@@ -50,8 +50,8 @@ export const DQNode = types.model("DQNode", {
     nodes.push({
       id,
       type: "quantityNode",
-      data: { node: self, dqRoot }, // ??
-      position: { x: self.position.x, y: self.position.y },
+      data: { node: self, dqRoot },
+      position: { x: self.position.x, y: self.position.y }
     });
 
     return nodes;    

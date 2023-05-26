@@ -178,7 +178,9 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const onNodesDelete: OnNodesDelete = nodes => {
     if (!preventKeyboardDelete) {
       nodes.forEach(node => {
-        deleteNode(node.data.node);
+        if (node.id === dqRoot.selectedNode?.variable.id) {
+          deleteNode(node.data.node);
+        }
       });
     }
   };
@@ -187,14 +189,19 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     if (!preventKeyboardDelete) {
       edges.forEach(edge => {
         const edgeModel = dqRoot.reactFlowEdges.find((e: Edge) => e.id === edge.id);
-        edgeModel && deleteEdge(edge);
+        if (edgeModel?.id === dqRoot.selectedEdgeId) {
+          deleteEdge(edge);
+        }
       });
     }
   };
 
+  const onPaneClick = (event: React.MouseEvent<Element, MouseEvent>) => {
+    dqRoot.setSelectedNode();
+  };
+
   const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
   const defaultViewport: Viewport = { x, y, zoom };
-  console.log(`defaultViewport`, defaultViewport);
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
@@ -218,6 +225,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
           onMoveEnd={handleViewportChange}
+          onPaneClick={onPaneClick}
           nodesDraggable={interactive}
           nodesConnectable={interactive}
           elementsSelectable={interactive}

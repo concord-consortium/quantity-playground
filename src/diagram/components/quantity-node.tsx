@@ -58,6 +58,15 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
+  // TODO This function used to prevent nodes from dragging when an input field
+  // was focused, but it no longer works.
+  const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
+    // Stopping propagation allows the user to select text in the input field without 
+    // inadvertently dragging the card/node.
+    evt.stopPropagation();
+    data.dqRoot.setSelectedNode(data.node);
+  };
+
   const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
     variable.setUnit(evt.target.value);
   };
@@ -84,13 +93,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
       evt.stopPropagation();
       onExpressionChange(evt);
     }
-  };
-
-  const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-    // Stopping propagation allows the user to select text in the input field without 
-    // inadvertently dragging the card/node.
-    evt.stopPropagation();
-    data.dqRoot.setSelectedNode(data.node);
   };
 
   const handleClick = (event: MouseEvent) => {
