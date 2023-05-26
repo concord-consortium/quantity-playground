@@ -2,10 +2,11 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useRef, useState } from "react";
 import ReactFlow, {
   Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
-  OnEdgeUpdateFunc, ReactFlowProvider, Viewport
+  OnEdgeUpdateFunc, OnNodesDelete, ReactFlowProvider, Viewport
 } from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
+import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
@@ -33,6 +34,7 @@ export interface IProps {
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
   interactionLocked?: boolean;
+  preventKeyboardDelete?: boolean;
   setDiagramHelper?: (dh: DiagramHelper) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
@@ -41,11 +43,13 @@ export interface IProps {
   getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator,
-  hideNewVariableButton, interactionLocked, setDiagramHelper, showDeleteCardButton,
+  hideNewVariableButton, interactionLocked, preventKeyboardDelete, setDiagramHelper, showDeleteCardButton,
   showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
+
+  const interactive = !interactionLocked;
 
   const handleChangeFlowTransform = (transform?: MouseEvent | TouchEvent) => {
     transform && dqRoot.setTransform(transform);
@@ -101,6 +105,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     }
   };
 
+  const deleteNode = (node: DQNodeType) => {
+    deleteAllEdgesOfNode(node.variable.id);
+    dqRoot.removeNode(node);
+  };
+
   // deleteCard is called when the UI's Delete Card button is clicked to
   // delete a selected card. It is not called when the user's keyboard Delete
   // key is pressed.
@@ -108,8 +117,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   ? () => {
     const selectedNode = dqRoot.selectedNode;
     if (selectedNode) {
-      deleteAllEdgesOfNode(selectedNode.variable.id);
-      dqRoot.removeNode(selectedNode);
+      deleteNode(selectedNode);
     }
   }
   : undefined;
@@ -167,17 +175,25 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     event.stopPropagation();
   };
 
+  const onNodesDelete: OnNodesDelete = nodes => {
+    if (!preventKeyboardDelete) {
+      nodes.forEach(node => {
+        deleteNode(node.data.node);
+      });
+    }
+  };
+
   const onEdgesDelete = (edges: Edge[]) => {
-    edges.forEach(edge => {
-      const edgeModel = dqRoot.reactFlowEdges.find((e: Edge) => e.id === edge.id);
-      edgeModel && deleteEdge(edge);
-    });
+    if (!preventKeyboardDelete) {
+      edges.forEach(edge => {
+        const edgeModel = dqRoot.reactFlowEdges.find((e: Edge) => e.id === edge.id);
+        edgeModel && deleteEdge(edge);
+      });
+    }
   };
 
   const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
   const defaultViewport: Viewport = { x, y, zoom };
-
-  const interactive = !interactionLocked;
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
@@ -189,6 +205,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           defaultViewport={defaultViewport}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          onNodesDelete={onNodesDelete}
           onEdgesDelete={onEdgesDelete}
           onEdgeUpdate={onEdgeUpdate}
           onConnect={onConnect}
