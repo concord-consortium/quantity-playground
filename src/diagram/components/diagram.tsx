@@ -115,7 +115,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   : undefined;
 
   const onSelectionChange = ({ nodes, edges }: OnSelectionChangeParams) => {
-    // console.log(`selectionChange`, nodes, edges);
+    console.log(`selectionChange`, nodes?.[0]?.id, edges?.[0]?.id);
     if (nodes?.[0]?.type === "quantityNode" ) {
       dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(nodes[0].id));
     } else {

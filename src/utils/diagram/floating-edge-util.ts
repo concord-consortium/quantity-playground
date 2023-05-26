@@ -30,24 +30,22 @@ function getNodeIntersection(sourceNode: Node, targetNode: Node) {
 // returns the position (top,right,bottom or right) passed node compared to the intersection point
 function getEdgePosition(node: Node, intersectionPoint: any) {
   const n = { ...node.position, ...node };
-  const nx = Math.round(n.x);
-  const ny = Math.round(n.y);
   const px = Math.round(intersectionPoint.xIntersect);
   const py = Math.round(intersectionPoint.yIntersect);
-  if (px <= nx + 1) {
-    return Position.Left;
-  }
-  if (px >= nx + (n.width ?? 0) - 5) {
-    return Position.Right;
-  }
-  if (py <= ny + 1) {
-    return Position.Top;
-  }
-  if (py >= ny + (n.height ?? 0) - 5) {
-    return Position.Bottom;
-  }
 
-  return Position.Top;
+  const diffs = [
+    [Math.abs(px - n.x), Position.Left],
+    [Math.abs(px - (n.x + (n.width || 0))), Position.Right],
+    [Math.abs(py - n.y), Position.Top],
+    [Math.abs(py - (n.y + (n.height || 0))), Position.Bottom]
+  ];
+  let min: any;
+  diffs.forEach(diff => {
+    if (!min || diff[0] < min[0]) {
+      min = diff;
+    }
+  });
+  return min[1];
 }
 
 // returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) you need to create an edge

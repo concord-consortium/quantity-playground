@@ -10,7 +10,7 @@ describe("Floating Edge Utils", () => {
     expect(edgeParams.sy).toBeCloseTo(255,0);
     expect(edgeParams.tx).toBeCloseTo(532.5,0);
     expect(edgeParams.tx).toBeCloseTo(532.5,0);
-    expect(edgeParams.sourcePos).toEqual("top");
+    expect(edgeParams.sourcePos).toEqual("bottom");
     expect(edgeParams.targetPos).toEqual("top");
   });
 });
