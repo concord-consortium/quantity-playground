@@ -12,14 +12,17 @@ export class DiagramHelper {
 
   fitView() {
     this.rfInstance.fitView();
+    return this.rfInstance.getViewport();
   }
 
   zoomIn() {
     this.rfInstance.zoomIn();
+    return this.rfInstance.getViewport();
   }
 
   zoomOut() {
     this.rfInstance.zoomOut();
+    return this.rfInstance.getViewport();
   }
 
   convertClientToDiagramPosition({x, y}: {x: number, y: number}) {
@@ -48,5 +51,3 @@ export class DiagramHelper {
     return undefined;
   }
 }
-
-// export interface DiagramHelperType extends Instance<typeof DiagramHelper> {}

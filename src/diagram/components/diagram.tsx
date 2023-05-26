@@ -51,8 +51,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   const interactive = !interactionLocked;
 
-  const handleChangeFlowTransform = (transform?: MouseEvent | TouchEvent) => {
-    transform && dqRoot.setTransform(transform);
+  const handleViewportChange = (event: MouseEvent | TouchEvent, viewport: Viewport) => {
+    dqRoot.setTransform(viewport);
   };
 
   const onConnectStart: OnConnectStart = useCallback((event, { nodeId, handleType }) => {
@@ -194,6 +194,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
   const defaultViewport: Viewport = { x, y, zoom };
+  console.log(`defaultViewport`, defaultViewport);
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
@@ -216,7 +217,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
-          onMoveEnd={handleChangeFlowTransform}
+          onMoveEnd={handleViewportChange}
           nodesDraggable={interactive}
           nodesConnectable={interactive}
           elementsSelectable={interactive}

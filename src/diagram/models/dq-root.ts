@@ -1,5 +1,5 @@
 import { destroy, Instance, isValidReference, types } from "mobx-state-tree";
-import { Edge, Node } from "reactflow";
+import { Edge, Node, Viewport } from "reactflow";
 import { DQNode, DQNodeType } from "./dq-node";
 import { VariableType } from "./variable";
 
@@ -100,7 +100,7 @@ export const DQRoot = types.model("DQRoot", {
     }
     self.nodes.delete(node.id);
   },
-  setTransform(transform: MouseEvent | TouchEvent) {
+  setTransform(transform: Viewport) {
     self.flowTransform = transform;
   },
   setSelectedNode(node?: DQNodeType) {
