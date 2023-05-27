@@ -11,7 +11,7 @@ export interface VariablesAPI {
 
 export const DQRoot = types.model("DQRoot", {
   nodes: types.map(DQNode),
-  flowTransform: types.maybe(types.frozen<any>())
+  flowTransform: types.maybe(types.frozen<Viewport>())
 })
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
