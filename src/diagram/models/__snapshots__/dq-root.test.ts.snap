@@ -1,97 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DQRoot can generate react flow elements 1`] = `
+exports[`DQRoot can generate react flow edges 1`] = `
 Array [
-  Object {
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
-          },
-        },
-      },
-      "node": Object {
-        "id": "1",
-        "variable": "a",
-        "x": 100,
-        "y": 100,
-      },
-    },
-    "id": "a",
-    "position": Object {
-      "x": 100,
-      "y": 100,
-    },
-    "type": "quantityNode",
-  },
-  Object {
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
-          },
-        },
-      },
-      "node": Object {
-        "id": "2",
-        "variable": "b",
-        "x": 100,
-        "y": 300,
-      },
-    },
-    "id": "b",
-    "position": Object {
-      "x": 100,
-      "y": 300,
-    },
-    "type": "quantityNode",
-  },
   Object {
     "className": "",
     "data": Object {
@@ -217,6 +127,101 @@ Array [
     "source": "b",
     "target": "c",
     "type": "floatingEdge",
+  },
+]
+`;
+
+exports[`DQRoot can generate react flow nodes 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 300,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 550,
+            "y": 150,
+          },
+          "4": Object {
+            "id": "4",
+            "variable": "d",
+            "x": 150,
+            "y": 500,
+          },
+        },
+      },
+      "node": Object {
+        "id": "1",
+        "variable": "a",
+        "x": 100,
+        "y": 100,
+      },
+    },
+    "id": "a",
+    "position": Object {
+      "x": 100,
+      "y": 100,
+    },
+    "type": "quantityNode",
+  },
+  Object {
+    "data": Object {
+      "dqRoot": Object {
+        "flowTransform": undefined,
+        "nodes": Object {
+          "1": Object {
+            "id": "1",
+            "variable": "a",
+            "x": 100,
+            "y": 100,
+          },
+          "2": Object {
+            "id": "2",
+            "variable": "b",
+            "x": 100,
+            "y": 300,
+          },
+          "3": Object {
+            "id": "3",
+            "variable": "c",
+            "x": 550,
+            "y": 150,
+          },
+          "4": Object {
+            "id": "4",
+            "variable": "d",
+            "x": 150,
+            "y": 500,
+          },
+        },
+      },
+      "node": Object {
+        "id": "2",
+        "variable": "b",
+        "x": 100,
+        "y": 300,
+      },
+    },
+    "id": "b",
+    "position": Object {
+      "x": 100,
+      "y": 300,
+    },
+    "type": "quantityNode",
   },
   Object {
     "data": Object {

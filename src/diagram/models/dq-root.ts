@@ -31,16 +31,6 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
-  // TODO: Remove reactFlowElements if it's really no longer needed.
-  // reactFlowNodes and reactFlowEdges seem to be sufficient.
-  get reactFlowElements() {
-    const elements: any = [];
-    self.nodes.forEach((node) => {
-      elements.push(...node.getReactFlowEdges(self));
-      elements.push(...node.getReactFlowNodes(self));
-    });
-    return elements;
-  },
   get reactFlowNodes() {
     const nodes: Node[] = [];
     self.nodes.forEach((node) => {
