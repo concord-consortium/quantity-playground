@@ -45,12 +45,21 @@ context("Test Diagram interaction", () => {
 
   describe("Variable Cards", () => {
     it("can change color", async () => {
+      const cp = () => circlePicker(nodeIndex);
+      const clickButton = () => colorPaletteButton(nodeIndex).click();
       nodeToEdit().should("have.class", "light-gray");
-      circlePicker(nodeIndex).should("not.exist");
-      colorPaletteButton(nodeIndex).click();
-      circlePicker(nodeIndex).should("exist");
-      circlePicker(nodeIndex).find("span div span div").eq(5).click();
+      cp().should("not.exist");
+      clickButton();
+      cp().should("exist");
+      cp().find("span div span div").eq(5).click();
       nodeToEdit().should("have.class", "red");
+      cp().should("not.exist");
+
+      // Pressing the button closes the picker when it's open
+      clickButton();
+      cp().should("exist");
+      clickButton();
+      cp().should("not.exist");
     });
   });
 
