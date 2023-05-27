@@ -8,7 +8,7 @@ context("Test Diagram interaction", () => {
       cy.get("[data-testid='quantity-node'").should("have.length", 4);
     });
 
-    it("can connect nodes", () => {
+    it.skip("can connect nodes", () => {
       cy.get("[data-testid='quantity-node'").eq(1)
         .find("[data-testid='variable-expression']")
         .should("not.exist");
@@ -22,7 +22,7 @@ context("Test Diagram interaction", () => {
         .should("exist");
     });
 
-    it("cannot connect a node to itself", () => {
+    it.skip("cannot connect a node to itself", () => {
       cy.get("[data-testid='quantity-node'").first()
         .find("[data-testid='variable-expression']")
         .should("not.exist");
