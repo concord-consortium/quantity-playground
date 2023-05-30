@@ -14,6 +14,7 @@ import { DiagramHelper } from "../utils/diagram-helper";
 import { ConnectionLine } from "./connection-line";
 import { MarkerEnd } from "./marker-end";
 
+// These imports seem necessary so we can override default reactflow css.
 import "reactflow/dist/style.css";
 import "reactflow/dist/base.css";
 
