@@ -13,7 +13,7 @@ context("Test Diagram interaction", () => {
   const nodeToEdit = () => node(nodeIndex);
 
   describe("Variable Cards", () => {
-    it("can enter basic input", async () => {
+    it("can enter basic input", () => {
       // Enter name, value, and unit
       const variableName = "my variable name";
       enterName(nodeIndex, variableName);
@@ -44,7 +44,7 @@ context("Test Diagram interaction", () => {
   });
 
   describe("Variable Cards", () => {
-    it("can change color", async () => {
+    it("can change color", () => {
       const cp = () => circlePicker(nodeIndex);
       const clickButton = () => colorPaletteButton(nodeIndex).click();
       nodeToEdit().should("have.class", "light-gray");
@@ -64,7 +64,7 @@ context("Test Diagram interaction", () => {
   });
 
   describe("Variable Cards", () => {
-    it("can enter expressions", async () => {
+    it("can enter expressions", () => {
       expressionField(nodeIndex).should("not.exist");
       const variableExpression = "9+9";
       enterExpression(variableExpression);
