@@ -49,7 +49,7 @@ export const ExpandableInput = ({
 
   const getInputElement = () => {
     const inputClasses = classNames(
-      "variable-info variable-expression-area",
+      "variable-info variable-expression-area nodrag",
       title,
       {"invalid": !disabled && error}
     );

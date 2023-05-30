@@ -159,7 +159,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
         <div className="variable-info-container">
           <div className="variable-info-row name-row">
             <input
-              className="variable-info name"
+              className="variable-info name nodrag"
               type="text"
               placeholder="variable_name"
               autoComplete="off"
@@ -192,7 +192,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             {showDescription && 
               <TextareaAutosize
                 autoComplete="off"
-                className="variable-description-area"
+                className="variable-description-area nodrag"
                 value={variable.description || ""}
                 onChange={onDescriptionChange}
                 minRows={1}
