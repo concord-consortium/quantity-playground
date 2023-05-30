@@ -53,7 +53,6 @@ export const DQNode = types.model("DQNode", {
       data: { node: self, dqRoot },
       position: { x: self.position.x, y: self.position.y }
     });
-
     return nodes;    
   },
   // Circular reference with dqRoot and dqNode so typing as any
@@ -102,7 +101,6 @@ export const DQNode = types.model("DQNode", {
     self.tryVariable?.addInput((newInput as any)?.variable);
   },
   removeInput(input: VariableType) {
-    console.log(`--- removed input`, input);
     self.tryVariable?.removeInput((input));
   },
 }));
