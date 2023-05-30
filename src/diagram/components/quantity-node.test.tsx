@@ -1,12 +1,12 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-// import userEvent from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 import { DQNode } from "../models/dq-node";
 import { Variable } from "../models/variable";
 import { DQRoot } from "../models/dq-root";
 import { GenericContainer } from "../models/test-utils";
 import { Diagram } from "./diagram";
-// import { kMaxNotesCharacters, processName } from "../utils/validate";
+import { kMaxNotesCharacters, processName } from "../utils/validate";
 
 beforeAll(() => {
   // Setup ResizeObserver and offset* properties
