@@ -31,7 +31,8 @@
 
   &.selected {
     .react-flow__edge-path {
-      marker-end: url("#custom-arrow__selected-or-used");
+      stroke: $select-blue;
+      marker-end: url("#custom-arrow__dragging");
     }
   }
 
