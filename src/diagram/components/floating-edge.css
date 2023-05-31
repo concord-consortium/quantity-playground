@@ -8,3 +8,9 @@
 .floatingedges .react-flow__handle {
   opacity: 0;
 }
+
+.react-flow__edge-target {
+  stroke-width: 20;
+  pointer-events: all;
+  cursor: pointer;
+}
