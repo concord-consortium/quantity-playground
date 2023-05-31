@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent, memo, MouseEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
 import { Handle, Position } from "reactflow";
@@ -230,8 +230,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   );
 };
 
-// Reactflow recommends memoizing custom node types. See:
-// https://reactflow.dev/docs/guides/migrate-to-v10/#2-memoize-your-custom-nodetypes-and-edgetypes
-export const QuantityNode = memo(observer(_QuantityNode));
+export const QuantityNode = observer(_QuantityNode);
 // Because it is observed we have to set the display name
 QuantityNode.displayName = "QuantityNode";
