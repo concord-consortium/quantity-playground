@@ -1,9 +1,12 @@
 import { observer } from "mobx-react-lite";
-import React, { useRef, useState } from "react";
-import ReactFlow, { Edge, Elements, OnConnectFunc, isEdge,
-  OnEdgeUpdateFunc, MiniMap, Controls, ReactFlowProvider, FlowTransform, OnConnectStartFunc, OnConnectEndFunc } from "react-flow-renderer/nocss";
+import React, { useCallback, useRef, useState } from "react";
+import ReactFlow, {
+  Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
+  OnEdgeUpdateFunc, OnNodesDelete, ReactFlowProvider, Viewport
+} from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
+import { DQNodeType } from "../models/dq-node";
 import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
@@ -11,15 +14,12 @@ import { DiagramHelper } from "../utils/diagram-helper";
 import { ConnectionLine } from "./connection-line";
 import { MarkerEnd } from "./marker-end";
 
-// We use the nocss version of RF so we can manually load
-// the CSS. This way we can override it.
-// Otherwise RF injects its CSS after our CSS, so we can't
-// override it.
-import "react-flow-renderer/dist/style.css";
-import "react-flow-renderer/dist/theme-default.css";
+// These imports seem necessary so we can override default reactflow css.
+import "reactflow/dist/style.css";
+import "reactflow/dist/base.css";
 
-// The order matters the diagram css overrides some styles
-// from the react-flow css.
+// The order matters!
+// The diagram css overrides some styles from the react-flow css.
 import "./diagram.scss";
 
 const nodeTypes = {
@@ -35,6 +35,7 @@ export interface IProps {
   hideNavigator?: boolean;
   hideNewVariableButton?: boolean;
   interactionLocked?: boolean;
+  preventKeyboardDelete?: boolean;
   setDiagramHelper?: (dh: DiagramHelper) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
@@ -43,26 +44,28 @@ export interface IProps {
   getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator,
-  hideNewVariableButton, interactionLocked, setDiagramHelper, showDeleteCardButton,
+  hideNewVariableButton, interactionLocked, preventKeyboardDelete, setDiagramHelper, showDeleteCardButton,
   showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
-  const handleChangeFlowTransform = (transform?: FlowTransform) => {
-    transform && dqRoot.setTransform(transform);
+  const interactive = !interactionLocked;
+
+  const handleViewportChange = (event: MouseEvent | TouchEvent, viewport: Viewport) => {
+    dqRoot.setTransform(viewport);
   };
 
-  const onConnectStart: OnConnectStartFunc = (event, { nodeId, handleType }) => {
+  const onConnectStart: OnConnectStart = useCallback((event, { nodeId, handleType }) => {
     if (!nodeId) {
       return;
     }
     const node = dqRoot.getNodeFromVariableId(nodeId);
     dqRoot.setConnectingVariable(node.variable);
-  };
-  const onConnectEnd: OnConnectEndFunc = () => {
+  }, [dqRoot]);
+  const onConnectEnd: OnConnectEnd = useCallback(() => {
     dqRoot.setConnectingVariable(undefined);
-  };
+  }, [dqRoot]);
 
   // gets called after end of edge gets dragged to another source or target
   const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) => {
@@ -78,9 +81,8 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     newTargetNode?.addInput(newSourceNode);
   };
 
-  const onConnect: OnConnectFunc = (params) => {
-    const { source, target, targetHandle } = params;
-    console.log(`connection source: ${source} to target: ${target} on handle: ${targetHandle}`);
+  const onConnect = (connection: any) => {
+    const { source, target } = connection;
     if ( source && target ) {
       const targetModel = dqRoot.getNodeFromVariableId(target);
       const sourceModel = dqRoot.getNodeFromVariableId(source);
@@ -96,48 +98,30 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   };
 
   const deleteAllEdgesOfNode = (variableId: string) => {
-    const nodesEdges = dqRoot.reactFlowElements.filter((e) => {
-      return isEdge(e) && (e.source === variableId || e.target === variableId);
+    const nodesEdges = dqRoot.reactFlowEdges.filter((e: Edge) => {
+      return e.source === variableId || e.target === variableId;
     });
     for (const edge of nodesEdges as Edge[]) {
       deleteEdge(edge);
     }
   };
 
-  // onElementsRemove is called when the user's keyboard Delete key is pressed
-  // to delete a selected card or a selected connecting arrow (aka "edge").
-  const onElementsRemove = (elementsToRemove: Elements) => {
-    for (const element of elementsToRemove) {
-      if (isEdge((element as any))) {
-        const edge = element as Edge;
-        deleteEdge(edge);
-      } else {
-        const nodeToRemove = dqRoot.getNodeFromVariableId(element.id);
-        deleteAllEdgesOfNode(element.id);
-        dqRoot.removeNode(nodeToRemove);
-      }
-    }
+  const deleteNode = (node: DQNodeType) => {
+    deleteAllEdgesOfNode(node.variable.id);
+    dqRoot.removeNode(node);
   };
 
   // deleteCard is called when the UI's Delete Card button is clicked to
-  // delete a selected card.
+  // delete a selected card. It is not called when the user's keyboard Delete
+  // key is pressed.
   const deleteCard = showDeleteCardButton
   ? () => {
     const selectedNode = dqRoot.selectedNode;
     if (selectedNode) {
-      deleteAllEdgesOfNode(selectedNode.variable.id);
-      dqRoot.removeNode(selectedNode);
+      deleteNode(selectedNode);
     }
   }
   : undefined;
-
-  const onSelectionChange = (selectedElements: Elements | null) => {
-    if (selectedElements?.[0]?.type === "quantityNode" ) {
-      dqRoot.setSelectedNode(dqRoot.getNodeFromVariableId(selectedElements[0].id));
-    } else {
-      dqRoot.setSelectedNode(undefined);
-    }
-  };
 
   const onLoad = (_rfInstance: any) => {
     setRfInstance(_rfInstance);
@@ -173,6 +157,12 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   };
 
   const onNodeDrag = (event: React.MouseEvent<Element, MouseEvent>, node: any) => {
+    // Set the node's model's drag position
+    const mstNode = dqRoot.getNodeFromVariableId(node.id);
+    mstNode?.updateDragPosition(node.position.x, node.position.y);
+
+    dqRoot.setSelectedNode(node.data.node);
+
     event.stopPropagation();
   };
 
@@ -180,40 +170,68 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const onNodeDragStop = (event: any, node: any) => {
     const mstNode = dqRoot.getNodeFromVariableId(node.id);
     mstNode?.updatePosition(node.position.x, node.position.y);
+    // Clear the node's model's drag position
+    mstNode?.updateDragPosition();
+
     event.stopPropagation();
   };
 
-  const { zoom: defaultZoom, x, y } = dqRoot.flowTransform || {};
-  const defaultPosition: [number, number] | undefined = x != null && y != null ? [x, y] : undefined;
+  const onNodesDelete: OnNodesDelete = nodes => {
+    if (!preventKeyboardDelete) {
+      nodes.forEach(node => {
+        if (node.id === dqRoot.selectedNode?.variable.id) {
+          deleteNode(node.data.node);
+        }
+      });
+    }
+  };
 
-  const interactive = !interactionLocked;
+  const onEdgesDelete = (edges: Edge[]) => {
+    if (!preventKeyboardDelete) {
+      edges.forEach(edge => {
+        const edgeModel = dqRoot.reactFlowEdges.find((e: Edge) => e.id === edge.id);
+        if (edgeModel?.id === dqRoot.selectedEdgeId) {
+          deleteEdge(edge);
+        }
+      });
+    }
+  };
+
+  const onPaneClick = (event: React.MouseEvent<Element, MouseEvent>) => {
+    dqRoot.setSelectedNode();
+  };
+
+  const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
+  const defaultViewport: Viewport = { x, y, zoom };
 
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
         <ReactFlow
           connectionLineComponent={ConnectionLine}
-          elements={dqRoot.reactFlowElements}
-          defaultPosition={defaultPosition}
-          defaultZoom={defaultZoom}
+          nodes={dqRoot.reactFlowNodes}
+          edges={dqRoot.reactFlowEdges}
+          defaultViewport={defaultViewport}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          onNodesDelete={onNodesDelete}
+          onEdgesDelete={onEdgesDelete}
           onEdgeUpdate={onEdgeUpdate}
-          onConnect={onConnect as any}  // TODO: fix types
+          onConnect={onConnect}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
-          onElementsRemove={onElementsRemove}
-          onSelectionChange={onSelectionChange}
-          onLoad={onLoad}
+          onInit={onLoad}
           onDrop={onDrop}
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
-          onMoveEnd={handleChangeFlowTransform}
+          onMoveEnd={handleViewportChange}
+          onPaneClick={onPaneClick}
           nodesDraggable={interactive}
           nodesConnectable={interactive}
           elementsSelectable={interactive}
           selectNodesOnDrag={interactive}
+          attributionPosition="bottom-left"
         >
           {!hideNavigator && <MiniMap/>}
           {!hideControls && <Controls />}

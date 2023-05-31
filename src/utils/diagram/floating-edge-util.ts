@@ -1,17 +1,17 @@
-import { Position } from "react-flow-renderer/nocss";
+import { Node, Position } from "reactflow";
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
-function getNodeIntersection(sourceNode: any, targetNode: any) {
+function getNodeIntersection(sourceNode: Node, targetNode: Node) {
   // https://math.stackexchange.com/questions/1724792/an-algorithm-for-finding-the-intersection-point-between-a-center-of-vision-and-a
   const {
     width: intersectionNodeWidth,
     height: intersectionNodeHeight,
     position: intersectionNodePosition,
-  } = sourceNode.__rf;
-  const targetPosition = targetNode.__rf.position;
-  const w = intersectionNodeWidth / 2;
-  const h = intersectionNodeHeight / 2;
+  } = sourceNode;
+  const targetPosition = targetNode.position;
+  const w = (intersectionNodeWidth ?? 0) / 2;
+  const h = (intersectionNodeHeight ?? 0) / 2;
   const x2 = intersectionNodePosition.x + w;
   const y2 = intersectionNodePosition.y + h;
   const x1 = targetPosition.x + w;
@@ -28,42 +28,38 @@ function getNodeIntersection(sourceNode: any, targetNode: any) {
 }
 
 // returns the position (top,right,bottom or right) passed node compared to the intersection point
-function getEdgePosition(node: any, intersectionPoint: any) {
-  const n = { ...node.__rf.position, ...node.__rf };
-  const nx = Math.round(n.x);
-  const ny = Math.round(n.y);
+function getEdgePosition(node: Node, intersectionPoint: any) {
+  const n = { ...node.position, ...node };
   const px = Math.round(intersectionPoint.xIntersect);
   const py = Math.round(intersectionPoint.yIntersect);
-  if (px <= nx + 1) {
-    return Position.Left;
-  }
-  if (px >= nx + n.width - 5) {
-    return Position.Right;
-  }
-  if (py <= ny + 1) {
-    return Position.Top;
-  }
-  if (py >= node.y + n.height - 5) {
-    return Position.Bottom;
-  }
 
-  return Position.Top;
+  const diffs = [
+    [Math.abs(px - n.x), Position.Left],
+    [Math.abs(px - (n.x + (n.width || 0))), Position.Right],
+    [Math.abs(py - n.y), Position.Top],
+    [Math.abs(py - (n.y + (n.height || 0))), Position.Bottom]
+  ];
+  let min: any;
+  diffs.forEach(diff => {
+    if (!min || diff[0] < min[0]) {
+      min = diff;
+    }
+  });
+  return min[1];
 }
 
 // returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) you need to create an edge
-export function getEdgeParams(source: any, target: any) {
+export function getEdgeParams(source: Node, target: Node) {
   const sourceIntersectionPoint = getNodeIntersection(source, target);
   const targetIntersectionPoint = getNodeIntersection(target, source);
 
   const sourcePos = getEdgePosition(source, sourceIntersectionPoint);
   const targetPos = getEdgePosition(target, targetIntersectionPoint);
 
-  return {
-    sx: sourceIntersectionPoint.xIntersect,
-    sy: sourceIntersectionPoint.yIntersect,
-    tx: targetIntersectionPoint.xIntersect,
-    ty: targetIntersectionPoint.yIntersect,
-    sourcePos,
-    targetPos,
-  };
+  const sx = sourceIntersectionPoint.xIntersect;
+  const sy = sourceIntersectionPoint.yIntersect;
+  const tx = targetIntersectionPoint.xIntersect;
+  const ty = targetIntersectionPoint.yIntersect;
+
+  return { sx, sy, tx, ty, sourcePos, targetPos };
 }

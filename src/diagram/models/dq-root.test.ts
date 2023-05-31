@@ -8,11 +8,19 @@ describe("DQRoot", () => {
     expect(root.nodes).toBeDefined();
   });
 
-  it("can generate react flow elements", () => {
+  it("can generate react flow nodes", () => {
     const appStore = AppStore.create(defaultDiagram);
     const root = appStore.diagram;
-    const elements = root.reactFlowElements;
+    const nodes = root.reactFlowNodes;
 
-    expect(elements).toMatchSnapshot();
+    expect(nodes).toMatchSnapshot();
+  });
+
+  it("can generate react flow edges", () => {
+    const appStore = AppStore.create(defaultDiagram);
+    const root = appStore.diagram;
+    const edges = root.reactFlowEdges;
+
+    expect(edges).toMatchSnapshot();
   });
 });

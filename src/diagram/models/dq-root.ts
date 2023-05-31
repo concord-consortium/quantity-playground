@@ -1,5 +1,5 @@
 import { destroy, Instance, isValidReference, types } from "mobx-state-tree";
-import { Elements, FlowTransform } from "react-flow-renderer/nocss";
+import { Edge, Node, Viewport } from "reactflow";
 import { DQNode, DQNodeType } from "./dq-node";
 import { VariableType } from "./variable";
 
@@ -11,12 +11,13 @@ export interface VariablesAPI {
 
 export const DQRoot = types.model("DQRoot", {
   nodes: types.map(DQNode),
-  flowTransform: types.maybe(types.frozen<FlowTransform>())
+  flowTransform: types.maybe(types.frozen<Viewport>())
 })
 .volatile(self => ({
   variablesAPI: undefined as VariablesAPI | undefined,
   connectingVariable: undefined as VariableType | undefined,
-  selectedNode: undefined as DQNodeType | undefined
+  selectedNode: undefined as DQNodeType | undefined,
+  selectedEdgeId: undefined as string | undefined
 }))
 .actions(self => ({
   afterCreate() {
@@ -30,12 +31,19 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
-  get reactFlowElements() {
-    const elements: Elements = [];
+  get reactFlowNodes() {
+    const nodes: Node[] = [];
     self.nodes.forEach((node) => {
-      elements.push(...node.getReactFlowElements(self));
+      nodes.push(...node.getReactFlowNodes(self));
     });
-    return elements;
+    return nodes;
+  },
+  get reactFlowEdges() {
+    const edges: Edge[] = [];
+    self.nodes.forEach((node) => {
+      edges.push(...node.getReactFlowEdges(self));
+    });
+    return edges;
   },
   get nodeFromVariableMap() {
     const map: Record<string, DQNodeType> = {};
@@ -82,11 +90,16 @@ export const DQRoot = types.model("DQRoot", {
     }
     self.nodes.delete(node.id);
   },
-  setTransform(transform: FlowTransform) {
+  setTransform(transform: Viewport) {
     self.flowTransform = transform;
   },
   setSelectedNode(node?: DQNodeType) {
     self.selectedNode = node;
+    self.selectedEdgeId = undefined;
+  },
+  setSelectedEdgeId(id?: string) {
+    self.selectedEdgeId = id;
+    self.selectedNode = undefined;
   }
 }))
 .actions(self => ({

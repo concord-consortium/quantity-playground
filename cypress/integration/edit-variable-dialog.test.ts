@@ -1,4 +1,5 @@
-import { kMaxNotesCharacters, processName } from "../../src/diagram/utils/validate";
+import { processName } from "../../src/diagram/utils/validate";
+import { longNotes, legalNotes } from "../support/diagram-helpers";
 
 context("Test Edit Variable Dialog", () => {
   before(() => {
@@ -49,8 +50,6 @@ context("Test Edit Variable Dialog", () => {
       valueField().should("have.class", "invalid");
 
       // Enter notes that are too long (should truncate)
-      const longNotes = "a".repeat(kMaxNotesCharacters + 5);
-      const legalNotes = "a".repeat(kMaxNotesCharacters);
       notesField().clear();
       notesField().type(longNotes);
 

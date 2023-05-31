@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { isAlive } from "mobx-state-tree";
-import { Handle, Position } from "react-flow-renderer/nocss";
+import { Handle, Position } from "reactflow";
 import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
 
@@ -58,6 +58,10 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     setShowDescription(!showDescription);
   };
 
+  const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
+    data.dqRoot.setSelectedNode(data.node);
+  };
+
   const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
     variable.setUnit(evt.target.value);
   };
@@ -86,10 +90,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     }
   };
 
-  const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-    // Stopping propagation allows the user to select text in the input field without 
-    // inadvertently dragging the card/node.
-    evt.stopPropagation();
+  const handleClick = (event: MouseEvent) => {
     data.dqRoot.setSelectedNode(data.node);
   };
 
@@ -132,7 +133,9 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const nodeHeight = hasExpression ? "155px" : "120px";
   const nodeWidth = "220px";
-  const targetNodeHandleStyle = {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0};
+  const targetNodeHandleStyle = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable
+                                  ? {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0}
+                                  : {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0, pointerEvents: ("none" as React.CSSProperties["pointerEvents"])};
   const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
@@ -147,11 +150,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           errorMessage={errorMessage}
         />
       }
-      <div className={nodeClasses} data-testid="quantity-node">
+      <div className={nodeClasses} data-testid="quantity-node" onClick={handleClick} >
         <div className="variable-info-container">
           <div className="variable-info-row name-row">
             <input
-              className="variable-info name"
+              className="variable-info name nodrag"
               type="text"
               placeholder="variable_name"
               autoComplete="off"
@@ -184,7 +187,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             {showDescription && 
               <TextareaAutosize
                 autoComplete="off"
-                className="variable-description-area"
+                className="variable-description-area nodrag"
                 value={variable.description || ""}
                 onChange={onDescriptionChange}
                 minRows={1}
@@ -201,16 +204,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
             </button>
           </div>
         </div>
-        {data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable &&
-          <Handle
-            type="target"
-            position={Position.Left}
-            style={{...targetNodeHandleStyle}}
-            onConnect={(params) => console.log("handle onConnect", params)}
-            isConnectable={isConnectable}
-            id="a"
-          />
-        }
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{...targetNodeHandleStyle}}
+          isConnectable={isConnectable}
+          id="a" // is this supposed to be here?
+        />
         <Handle
           className="flow-handle"
           type="source"
@@ -230,19 +230,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   );
 };
 
-// In the custom node example memo is used here, but when I
-// used it then the component was updating when it was marked
-// as an observer and its model changed. So I'd guess memo
-// might get in the way of observer.
-// export const QuantityNode = memo(observer(_QuantityNode));
-
-// Also with testing the observer isn't needed for simple changes
-// like deleting edges or connecting edges.
-// My guess is that Flow re-renders on all changes like this
-// as long as the change triggers this re-render we are fine.
-//
-// But if the model gets changed without a flow re-render
-// then, it doesn't update without the observer
 export const QuantityNode = observer(_QuantityNode);
 // Because it is observed we have to set the display name
 QuantityNode.displayName = "QuantityNode";

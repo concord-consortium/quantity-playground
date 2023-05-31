@@ -1,6 +1,6 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { ArrowHeadType, Elements } from "react-flow-renderer/nocss";
+import { Edge, Node, MarkerType } from "reactflow";
 import { Variable, VariableType } from "./variable";
 
 export const kDefaultNodeWidth = 194;
@@ -17,6 +17,10 @@ export const DQNode = types.model("DQNode", {
   x: types.number,
   y: types.number
 })
+.volatile(self => ({
+  dragX: undefined as number | undefined,
+  dragY: undefined as number | undefined
+}))
 .views(self => ({
   get tryVariable() {
     return tryReference(() => self.variable);
@@ -30,19 +34,31 @@ export const DQNode = types.model("DQNode", {
     const snapshot = getSnapshot(self);
     return snapshot.variable as string;
   },
+  get position() {
+    // Uses the volatile dragX and dragY while the node is being dragged
+    return {
+      x: self.dragX ?? self.x,
+      y: self.dragY ?? self.y
+    };
+  }
 }))
 .views(self => ({
   // Circular reference with dqRoot and dqNode so typing as any
-  getReactFlowElements(dqRoot: any) {
-    const elements: Elements = [];
+  getReactFlowNodes(dqRoot: any) {
+    const nodes: Node[] = [];
     const id = self.variableId;
-    elements.push({
+    nodes.push({
       id,
       type: "quantityNode",
       data: { node: self, dqRoot },
-      position: { x: self.x, y: self.y },
+      position: { x: self.position.x, y: self.position.y }
     });
-
+    return nodes;    
+  },
+  // Circular reference with dqRoot and dqNode so typing as any
+  getReactFlowEdges(dqRoot: any) {
+    const edges: Edge[] = [];
+    const id = self.variableId;
     const variable = self.tryVariable;
     if (variable) {
       const inputs = self.variable.inputs as unknown as VariableType[] | undefined;
@@ -50,20 +66,23 @@ export const DQNode = types.model("DQNode", {
       inputs?.forEach((input) => {
         if (input) {
           const usedInExpression = input.name && usedInputs?.includes(input.name);
-          elements.push({
-            id: `e${input.id}-target${id}-a`,
+          const edgeId = `e${input.id}-target${id}-a`;
+          edges.push({
+            id: edgeId,
+            selected: edgeId === dqRoot.selectedEdgeId,
             source: input.id,
             target: id,
-            arrowHeadType: ArrowHeadType.ArrowClosed,
             type: "floatingEdge",
+            markerEnd: {
+              type: MarkerType.Arrow,
+            },
             data: { dqRoot },
-            className: usedInExpression ? "used-in-expression" : "",
+            className: usedInExpression ? "used-in-expression" : ""
           });
         }
       });
     }
-
-    return elements;
+    return edges;
   }
 }))
 .actions(self => ({
@@ -74,7 +93,10 @@ export const DQNode = types.model("DQNode", {
     self.x = x;
     self.y = y;
   },
-
+  updateDragPosition(x?: number, y?: number) {
+    self.dragX = x;
+    self.dragY = y;
+  },
   addInput(newInput: Instance<IAnyComplexType> | undefined) {
     self.tryVariable?.addInput((newInput as any)?.variable);
   },

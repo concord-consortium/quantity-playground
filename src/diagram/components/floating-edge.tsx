@@ -1,19 +1,17 @@
-import React, { useMemo } from "react";
-import { getBezierPath, useStoreState } from "react-flow-renderer/nocss";
+import React, { MouseEventHandler, useMemo } from "react";
+import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
+
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
-interface IProps {
-  id: string;
-  source: string;
-  target: string;
-}
+export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
+  const { dqRoot } = data;
+  const nodes = useStore((store) => {
+    return store.nodeInternals;
+  });
+  const sourceNode: Node | undefined = useMemo(() => nodes.get(source), [source, nodes]);
+  const targetNode: Node | undefined = useMemo(() => nodes.get(target), [target, nodes]);
 
-export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
-  const nodes = useStoreState((state) => state.nodes);
-  const sourceNode = useMemo(() => nodes.find((n) => n.id === source), [source, nodes]);
-  const targetNode = useMemo(() => nodes.find((n) => n.id === target), [target, nodes]);
-
-  if (!source || !target) {
+  if (!sourceNode || !targetNode) {
     return null;
   }
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
@@ -29,10 +27,14 @@ export const FloatingEdge: React.FC<IProps> = ({ id, source, target }) =>  {
     targetY,
   });
 
+  const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
+    dqRoot.setSelectedEdgeId(id);
+  };
+
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (
     <g className="react-flow__connection" tabIndex={-1}>
-      <path id={id} className="react-flow__edge-path react-flow__edgeupdater" d={d}/>
+      <path id={id} className="react-flow__edge-path react-flow__edgeupdater" d={d[0]} onMouseDown={handleMouseDown} />
     </g>
   );
 };
