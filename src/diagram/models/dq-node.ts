@@ -3,8 +3,12 @@ import { nanoid } from "nanoid";
 import { Edge, Node, MarkerType } from "reactflow";
 import { Variable, VariableType } from "./variable";
 
+// Make sure to update corresponding variables in components/quantity-node.scss when you change these constants.
 export const kDefaultNodeWidth = 194;
 export const kDefaultNodeHeight = 98;
+export const kDefaultNodeRowHeight = 26;
+
+export const kExpandedNotesHeight = 67;
 
 export const DQNode = types.model("DQNode", {
   id: types.optional(types.identifier, () => nanoid(16)),

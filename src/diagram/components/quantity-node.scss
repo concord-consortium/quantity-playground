@@ -1,9 +1,10 @@
 @import "../../scss/vars.scss";
 @import "../../scss/mixins.scss";
 
-// Make sure to update kDefaultNodeWidth and kDefaultNodeHeight in models/dq-node.ts when you change these constants.
+// Make sure to update corresponding constants in models/dq-node.ts when you change these constants.
 $node-width: 194px;
 $node-height: 98px;
+$node-row-height: 26px;
 
 $node-inner-width: 164px;
 $input-half-width: calc(($node-inner-width/2) - 2px);
@@ -107,7 +108,7 @@ $color-gray-dark: #3f3f3f;
   gap: 6px;
   height: auto;
   margin-bottom: 6px;
-  min-height: 26px;
+  min-height: $node-row-height;
   position: relative;
 
   &.name-row { border: solid 2px white; }
@@ -177,7 +178,7 @@ $color-gray-dark: #3f3f3f;
       border-radius: 5px;
       font-family: $default-font-family;
       font-size: 14px;
-      min-height: 26px;
+      min-height: $node-row-height;
       overflow-y: scroll;
       padding: 3.5px 6px;
       resize: none;
@@ -195,7 +196,7 @@ $color-gray-dark: #3f3f3f;
     color: $default-fg-color;
     display: flex;
     font-size: 14px;
-    height: 26px;
+    height: $node-row-height;
     text-align: left;
     white-space: nowrap;
 
