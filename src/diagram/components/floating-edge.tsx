@@ -1,9 +1,9 @@
-import React, { MouseEventHandler, useMemo } from "react";
+import React, { MouseEventHandler, useMemo, useState } from "react";
 import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
 
 import { getEdgeParams } from "../utils/floating-edge-util";
 
-import "./floating-edge.css";
+import "./floating-edge.scss";
 
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
   const { dqRoot } = data;
@@ -12,6 +12,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   });
   const sourceNode: Node | undefined = useMemo(() => nodes.get(source), [source, nodes]);
   const targetNode: Node | undefined = useMemo(() => nodes.get(target), [target, nodes]);
+  const [mouseOver, setMouseOver] = useState(false);
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -33,13 +34,21 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     dqRoot.setSelectedEdgeId(id);
   };
 
-  // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
+  const className = `react-flow__edge-path ${mouseOver ? "react-flow__edge-hover" : ""}`;
   return (
     <g className="react-flow__connection" tabIndex={-1}>
       {/* The visible arrow */}
-      <path id={id} className="react-flow__edge-path" d={d[0]} />
+      <path id={id} className={className} d={d[0]} />
       {/* The clickable target */}
-      <path id={id} className="react-flow__edge-target" d={d[0]} fill="transparent" onMouseDown={handleMouseDown} />
+      <path
+        id={`${id}-target`}
+        className="react-flow__edge-target"
+        d={d[0]}
+        fill="transparent"
+        onMouseDown={handleMouseDown}
+        onMouseOver={() => setMouseOver(true)}
+        onMouseLeave={() => setMouseOver(false)}
+      />
     </g>
   );
 };
