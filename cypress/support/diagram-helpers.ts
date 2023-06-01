@@ -9,6 +9,7 @@ export const nodes = () => cy.get(nodeClass);
 export const node = (index: number) => nodes().eq(index);
 export const selectedNodes = () => cy.get(`${nodeClass} .selected`);
 export const connection = (index: number) => cy.get(".react-flow__edge-path").eq(index);
+export const connectionTarget = (index: number) => cy.get(".react-flow__edge-target").eq(index);
 export const edge = (index: number) => cy.get(edgeClass).eq(index);
 export const selectedEdges = () => cy.get(`${edgeClass}.selected`);
 

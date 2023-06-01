@@ -1,4 +1,4 @@
-import { connection, node, nodes, pane, selectedNodes, selectedEdges } from "../support/diagram-helpers";
+import { connectionTarget, node, nodes, pane, selectedNodes, selectedEdges } from "../support/diagram-helpers";
 
 context("Test Diagram interaction", () => {
   before(() => {
@@ -42,7 +42,7 @@ context("Test Diagram interaction", () => {
 
     it("can select and delete an edge", () => {
       selectedEdges().should("not.exist");
-      connection(1).click({force: true});
+      connectionTarget(1).click({force: true});
       selectedEdges().should("have.length", 1);
       cy.get("body").type("{backspace}");
       selectedEdges().should("not.exist");
