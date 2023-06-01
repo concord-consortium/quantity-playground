@@ -217,6 +217,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           defaultViewport={defaultViewport}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          edgesUpdatable={false}
           onNodesDelete={onNodesDelete}
           onEdgesDelete={onEdgesDelete}
           onEdgeUpdate={onEdgeUpdate}
