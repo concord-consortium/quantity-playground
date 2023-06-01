@@ -64,17 +64,20 @@ $color-gray-dark: #3f3f3f;
     resize: none;
   }
 
-  // TODO: Find a way to drop use of !important here.
-  // React Flow's Handle component doesn't seem to provide a way to set
-  // hover and active styling without interfering with its functionality.
   .flow-handle {
+    border: none;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    right: -5px;
+    background-color: $color-light-gray-2;
     &:hover {
-      background-color: $hover-blue !important;
+      background-color: $hover-blue;
       box-sizing: content-box;
       cursor: pointer;
     }
     &:active {
-      background-color: $select-blue !important;
+      background-color: $select-blue;
       cursor: grab;
     }
   }

@@ -21,6 +21,8 @@ import "reactflow/dist/base.css";
 // The order matters!
 // The diagram css overrides some styles from the react-flow css.
 import "./diagram.scss";
+import "./quantity-node.scss";
+import "./floating-edge.scss";
 
 const nodeTypes = {
   quantityNode: QuantityNode,

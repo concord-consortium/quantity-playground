@@ -14,8 +14,6 @@ import { IconColorMenu } from "./icons/icon-color-menu";
 import { IconExpand } from "./icons/icon-expand";
 import { ErrorMessageComponent } from "./error-message";
 
-import "./quantity-node.scss";
-
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
   isConnectable: boolean;
@@ -136,7 +134,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetNodeHandleStyle = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable
                                   ? {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0}
                                   : {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0, pointerEvents: ("none" as React.CSSProperties["pointerEvents"])};
-  const sourceHandleStyle = {border: "none", borderRadius: "50%", width: "12px", height: "12px", background: "#949494", right: "-5px"};
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
   const nodeClasses = classNames("node", {
@@ -216,7 +213,6 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           type="source"
           position={Position.Right}
           isConnectable={isConnectable}
-          style={sourceHandleStyle}
           title="drag to connect"
         />
         <div className="variable-info-floater">

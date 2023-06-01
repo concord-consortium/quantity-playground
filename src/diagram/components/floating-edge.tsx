@@ -3,8 +3,6 @@ import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
 
 import { getEdgeParams } from "../utils/floating-edge-util";
 
-import "./floating-edge.scss";
-
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
   const { dqRoot } = data;
   const nodes = useStore((store) => {
