@@ -13,6 +13,7 @@ import { ToolBar } from "./toolbar";
 import { DiagramHelper } from "../utils/diagram-helper";
 import { ConnectionLine } from "./connection-line";
 import { MarkerEnd } from "./marker-end";
+import { gray1, lightGray2, selectedBlue } from "../utils/theme-utils";
 
 // These imports seem necessary so we can override default reactflow css.
 import "reactflow/dist/style.css";
@@ -245,9 +246,9 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           {/* These custom arrowheads are used to change the connecting line/edge arrowhead
               color as needed. See default.scss for usage. If we upgrade to a newer version
               of React Flow, there may be a cleaner way to change the arrow colors. */}
-          <MarkerEnd markerId="custom-arrow" markerColor="#949494" />
-          <MarkerEnd markerId="custom-arrow__selected-or-used" markerColor="#5a5a5a" />
-          <MarkerEnd markerId="custom-arrow__dragging" markerColor="#0081ff" />
+          <MarkerEnd markerId="custom-arrow" markerColor={lightGray2} />
+          <MarkerEnd markerId="custom-arrow__used" markerColor={gray1} />
+          <MarkerEnd markerId="custom-arrow__selected" markerColor={selectedBlue} />
         </defs>
       </svg>
     </div>

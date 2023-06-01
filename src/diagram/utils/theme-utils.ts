@@ -1,3 +1,7 @@
+export const lightGray2 = "#949494";
+export const gray1 = "#5a5a5a";
+export const selectedBlue = "#0081ff";
+
 export enum Colors {
   Blue = "blue",
   Red = "red",

@@ -11,7 +11,7 @@
 // markers' IDs in the style rules below.
 
 .react-flow__connection-path {
-  marker-end: url("#custom-arrow__dragging");
+  marker-end: url("#custom-arrow__selected");
   stroke: $select-blue;
   stroke-dasharray: 0, 10;
   stroke-linecap: round;
@@ -21,7 +21,7 @@
 .react-flow__edge {
   &.used-in-expression {
     .react-flow__edge-path {
-      marker-end: url("#custom-arrow__selected-or-used");
+      marker-end: url("#custom-arrow__used");
       stroke: $color-gray-1;
       stroke-dasharray: 0;
       stroke-width: 2;
@@ -40,7 +40,7 @@
     .react-flow__edge-hover {
       opacity: .5;
       stroke: $select-blue;
-      marker-end: url("#custom-arrow__dragging");
+      marker-end: url("#custom-arrow__selected");
     }
 
     .react-flow__edge-target {
@@ -54,7 +54,7 @@
     .react-flow__edge-path {
       opacity: 1;
       stroke: $select-blue;
-      marker-end: url("#custom-arrow__dragging");
+      marker-end: url("#custom-arrow__selected");
     }
   }
 }
