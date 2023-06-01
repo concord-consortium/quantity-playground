@@ -1,9 +1,23 @@
 import React from "react";
-import { ConnectionLineComponent, ConnectionLineComponentProps } from "reactflow";
+import { ConnectionLineComponent, ConnectionLineComponentProps, getBezierPath, Position } from "reactflow";
 
 import { selectedBlue } from "../utils/theme-utils";
 
 export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY, ...rest }: ConnectionLineComponentProps) =>  {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const targetPosition = Math.abs(dx) >= Math.abs(dy)
+    ? dx >= 0 ? Position.Left : Position.Right
+    : dy >= 0 ? Position.Top : Position.Bottom;
+  const d = getBezierPath({
+    sourceX: fromX,
+    sourceY: fromY,
+    sourcePosition: Position.Right,
+    targetPosition,
+    targetX: toX,
+    targetY: toY,
+  });
+
   return (
     <g className="react-flow__connection">
       <path
@@ -12,7 +26,8 @@ export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY
         fill="none"
         stroke={selectedBlue}
         strokeWidth={2}
-        d={`M${fromX},${fromY} C ${fromX} ${toY} ${fromX} ${toY} ${toX},${toY}`}
+        d={d[0]}
+        // d={`M${fromX},${fromY} C ${fromX} ${toY} ${fromX} ${toY} ${toX},${toY}`}
       />
     </g>
   );
