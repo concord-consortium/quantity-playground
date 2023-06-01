@@ -1,17 +1,41 @@
 @import "../../scss/vars.scss";
 
-.floatingedges {
-  flex-direction: column;
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
+.react-flow__connection:focus,
+.react-flow__connection:focus * {
+  outline: none;
 }
 
-.floatingedges .react-flow__handle {
-  opacity: 0;
+// While some stroke settings affect the path markers (arrowheads), stroke color
+// settings do not. To support different colored arrowheads, we define custom SVG
+// markers in the Diagram component and set marker-end properties to the custom 
+// markers' IDs in the style rules below.
+
+.react-flow__connection-path {
+  marker-end: url("#custom-arrow__dragging");
+  stroke: $select-blue;
+  stroke-dasharray: 0, 10;
+  stroke-linecap: round;
+  stroke-width: 3;
 }
 
 .react-flow__edge {
+  &.used-in-expression {
+    .react-flow__edge-path {
+      marker-end: url("#custom-arrow__selected-or-used");
+      stroke: $color-gray-1;
+      stroke-dasharray: 0;
+      stroke-width: 2;
+    }
+  }
+
+  .react-flow__edge-path {
+    marker-end: url("#custom-arrow");
+    stroke: $color-light-gray-2;
+    stroke-dasharray: 0, 10;
+    stroke-linecap: round;
+    stroke-width: 3;
+  }
+
   .react-flow__connection {
     .react-flow__edge-hover {
       opacity: .5;
@@ -23,6 +47,14 @@
       stroke-width: 20;
       pointer-events: all;
       cursor: pointer;
+    }
+  }
+
+  &.selected {
+    .react-flow__edge-path {
+      opacity: 1;
+      stroke: $select-blue;
+      marker-end: url("#custom-arrow__dragging");
     }
   }
 }

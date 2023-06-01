@@ -5,54 +5,6 @@
   width: 0;
 }
 
-// .react-flow__node.selected {
-//   border: 1px solid black;
-//   border-radius: 5px;
-// }
-
-.react-flow__connection:focus,
-.react-flow__connection:focus * {
-  outline: none;
-}
-
-// While some stroke settings affect the path markers (arrowheads), stroke color
-// settings do not. To support different colored arrowheads, we define custom SVG
-// markers in the Diagram component and set marker-end properties to the custom 
-// markers' IDs in the style rules below. 
-.react-flow__edge {
-  &.used-in-expression {
-    .react-flow__edge-path {
-      marker-end: url("#custom-arrow__selected-or-used");
-      stroke: $color-gray-1;
-      stroke-dasharray: 0;
-      stroke-width: 2;
-    }
-  }
-
-  &.selected {
-    .react-flow__edge-path {
-      stroke: $select-blue;
-      marker-end: url("#custom-arrow__dragging");
-    }
-  }
-
-  .react-flow__edge-path {
-    marker-end: url("#custom-arrow");
-    stroke: $color-light-gray-2;
-    stroke-dasharray: 0, 10;
-    stroke-linecap: round;
-    stroke-width: 3;
-  }
-}
-
-.react-flow__connection-path {
-  marker-end: url("#custom-arrow__dragging");
-  stroke: $select-blue;
-  stroke-dasharray: 0, 10;
-  stroke-linecap: round;
-  stroke-width: 3;
-}
-
 .nested-set-node {
   display: inline-block;
   border: 1px solid black;
