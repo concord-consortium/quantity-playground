@@ -6,7 +6,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import classNames from "classnames";
 
 import { ColorEditor } from "./color-editor";
-import { DQNodeType } from "../models/dq-node";
+import { DQNodeType, kDefaultNodeHeight, kDefaultNodeRowHeight, kDefaultNodeWidth, kExpandedNotesHeight } from "../models/dq-node";
 import { DQRootType } from "../models/dq-root";
 import { kMaxNameCharacters, kMaxNotesCharacters, processName } from "../utils/validate";
 import { ExpandableInput } from "./ui/expandable-input";
@@ -129,11 +129,19 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
     );
   };
 
-  const nodeHeight = hasExpression ? "155px" : "120px";
-  const nodeWidth = "220px";
-  const targetNodeHandleStyle = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable
-                                  ? {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0}
-                                  : {height: nodeHeight, width: nodeWidth, left: "1px", opacity: 0, borderRadius: 0, pointerEvents: ("none" as React.CSSProperties["pointerEvents"])};
+  // Determine size and styling of target handle
+  const yPadding = 15;
+  const nodeHeight =
+    kDefaultNodeHeight
+    + (showDescription ? kExpandedNotesHeight : 0)
+    + (hasExpression ? kDefaultNodeRowHeight : 0)
+    + 2 * yPadding;
+  const targetHeight = `${nodeHeight}px`;
+  const xPadding = 15;
+  const targetWidth = `${kDefaultNodeWidth + 2 * xPadding}px`;
+  const targetNodeHandleStyle = {height: targetHeight, width: targetWidth, left: `-${xPadding}px`};
+  const allowPointerEvents = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable;
+  const targetClassName = classNames("node-target-handle", allowPointerEvents && "can-be-connected");
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
   const nodeClasses = classNames("node", {
@@ -202,11 +210,11 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           </div>
         </div>
         <Handle
+          className={targetClassName}
           type="target"
           position={Position.Left}
-          style={{...targetNodeHandleStyle}}
+          style={targetNodeHandleStyle}
           isConnectable={isConnectable}
-          id="a" // is this supposed to be here?
         />
         <Handle
           className="flow-handle"
