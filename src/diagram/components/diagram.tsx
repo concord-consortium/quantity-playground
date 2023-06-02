@@ -95,22 +95,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   const deleteEdge = (edge: Edge) => {
     const { source, target } = edge;
-    const targetModel = dqRoot.getNodeFromVariableId(target);
-    const sourceModel = dqRoot.getNodeFromVariableId(source);
-    sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
-  };
-
-  const deleteAllEdgesOfNode = (variableId: string) => {
-    const nodesEdges = dqRoot.reactFlowEdges.filter((e: Edge) => {
-      return e.source === variableId || e.target === variableId;
-    });
-    for (const edge of nodesEdges as Edge[]) {
-      deleteEdge(edge);
-    }
+    dqRoot.deleteEdge(source, target);
   };
 
   const deleteNode = (node: DQNodeType) => {
-    deleteAllEdgesOfNode(node.variable.id);
     dqRoot.removeNode(node);
   };
 

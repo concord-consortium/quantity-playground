@@ -62,5 +62,9 @@
       stroke: $select-blue;
       marker-end: url("#custom-arrow__selected");
     }
+
+    .delete-button {
+      pointer-events: all;
+    }
   }
 }

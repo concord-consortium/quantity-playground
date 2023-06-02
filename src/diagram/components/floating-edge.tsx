@@ -34,6 +34,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   const displayDelete = mouseOver || selected;
   const deleteX = (tx - sx) / 2 + sx;
   const deleteY = (ty - sy) / 2 + sy;
+  const onDeleteButtonClick = selected ? () => dqRoot.deleteEdge(source, target) : undefined;
 
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
     dqRoot.setSelectedEdgeId(id);
@@ -55,7 +56,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
         onMouseOver={() => setMouseOver(true)}
         onMouseLeave={() => setMouseOver(false)}
       />
-      { displayDelete && <IconDeleteButton x={deleteX} y={deleteY} /> }
+      { displayDelete && <IconDeleteButton onClick={onDeleteButtonClick} x={deleteX} y={deleteY} /> }
     </g>
   );
 };
