@@ -6,7 +6,6 @@ function validInputs(variable: VariableType) {
 
 // Returns true if possibleDescendent is dependent on possibleAncestor
 function isAncestor(possibleAncestor: VariableType, possibleDescendant: VariableType) {
-  console.log(`--- checking ancestry between ${possibleAncestor.id} and ${possibleDescendant.id}`);
   const ancestors = validInputs(possibleDescendant);
   const seenVariableIds: string[] = [];
 
@@ -16,7 +15,6 @@ function isAncestor(possibleAncestor: VariableType, possibleDescendant: Variable
       seenVariableIds.push(input.id);
 
       if (input.id === possibleAncestor.id) {
-        console.log(`${possibleAncestor.id} ancestor ${possibleDescendant.id}`, possibleAncestor, possibleDescendant);
         return true;
       } else {
         const ancestorInputs = validInputs(input);
@@ -34,14 +32,12 @@ function isAncestor(possibleAncestor: VariableType, possibleDescendant: Variable
 }
 
 export function canAddInput(source: VariableType, target: VariableType) {
-  console.log(`+++ canAddInput ${source.id} ${target.id}`);
   // Cannot connect to oneself
   if (target.id === source.id) return false;
 
   // Cannot add a connection if one already exists
   const inputVariableIds = (validInputs(target)).map(inputVariable => inputVariable.id);
   if (inputVariableIds.includes(source.id)) {
-    console.log(` ++ ${source.id} among ${inputVariableIds}`);
     return false;
   }
 
