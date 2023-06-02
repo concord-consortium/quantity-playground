@@ -13,6 +13,7 @@ import { ExpandableInput } from "./ui/expandable-input";
 import { IconColorMenu } from "./icons/icon-color-menu";
 import { IconExpand } from "./icons/icon-expand";
 import { ErrorMessageComponent } from "./error-message";
+import { canAddInput } from "../utils/graph-utils";
 
 interface IProps {
   data: {node: DQNodeType, dqRoot: DQRootType};
@@ -141,7 +142,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const targetWidth = `${kDefaultNodeWidth + 2 * xPadding}px`;
   const targetNodeHandleStyle = {height: targetHeight, width: targetWidth, left: `-${xPadding}px`};
   const connectingVariable = data.dqRoot.connectingVariable;
-  const allowConnection = connectingVariable && variable.canAddInput(connectingVariable);
+  const allowConnection = connectingVariable && canAddInput(connectingVariable, variable);
   const targetClassName = classNames("node-target-handle", allowConnection && "can-connect");
 
   const nodeContainerClasses = classNames(variable.color, "node-container");

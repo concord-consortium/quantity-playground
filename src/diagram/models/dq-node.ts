@@ -1,7 +1,9 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 import { Edge, Node, MarkerType } from "reactflow";
+
 import { Variable, VariableType } from "./variable";
+import { canAddInput } from "../utils/graph-utils";
 
 // Make sure to update corresponding variables in components/quantity-node.scss when you change these constants.
 export const kDefaultNodeWidth = 194;
@@ -51,7 +53,7 @@ export const DQNode = types.model("DQNode", {
   getReactFlowNodes(dqRoot: any) {
     const nodes: Node[] = [];
     const id = self.variableId;
-    const connectable = !dqRoot.connectingVariable || self.variable.canAddInput(dqRoot.connectingVariable);
+    const connectable = !dqRoot.connectingVariable || canAddInput(dqRoot.connectingVariable, self.variable);
     nodes.push({
       connectable,
       id,
