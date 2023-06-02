@@ -1,5 +1,5 @@
 import { DQNode } from "./dq-node";
-import { GenericContainer } from "./test-utils";
+import { GenericContainer } from "../utils/test-utils";
 import { Variable } from "./variable";
 
 describe("DQNode", () => {

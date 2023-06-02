@@ -1,7 +1,7 @@
 import { types } from "mobx-state-tree";
-import { DQNode } from "./dq-node";
-import { Variable } from "./variable";
-import { DQRoot, DQRootType } from "./dq-root";
+import { DQNode } from "../models/dq-node";
+import { Variable } from "../models/variable";
+import { DQRoot, DQRootType } from "../models/dq-root";
 
 // references have to be within the same tree so we need some container
 export const GenericContainer = types.model("GenericContainer", {
