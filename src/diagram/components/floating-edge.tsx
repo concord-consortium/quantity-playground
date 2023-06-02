@@ -1,10 +1,13 @@
 import React, { MouseEventHandler, useMemo, useState } from "react";
 import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
+import classNames from "classnames";
 
+import { IconDeleteButton } from "./icons/delete-button";
 import { getEdgeParams } from "../utils/floating-edge-util";
 
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
   const { dqRoot } = data;
+  const selected = dqRoot.selectedEdgeId === id;
   const nodes = useStore((store) => {
     return store.nodeInternals;
   });
@@ -28,15 +31,20 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     targetY,
   });
 
+  const displayDelete = mouseOver || selected;
+  const deleteX = (tx - sx) / 2 + sx;
+  const deleteY = (ty - sy) / 2 + sy;
+
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
     dqRoot.setSelectedEdgeId(id);
   };
 
-  const className = `react-flow__edge-path ${mouseOver ? "react-flow__edge-hover" : ""}`;
+  const groupClassName = classNames("react-flow__connection", mouseOver && "hover");
+  const displayArrowClassName = classNames("react-flow__edge-path", mouseOver && "react-flow__edge-hover");
   return (
-    <g className="react-flow__connection" tabIndex={-1}>
+    <g className={groupClassName} tabIndex={-1}>
       {/* The visible arrow */}
-      <path id={id} className={className} d={d[0]} />
+      <path id={id} className={displayArrowClassName} d={d[0]} />
       {/* The clickable target */}
       <path
         id={`${id}-target`}
@@ -47,6 +55,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
         onMouseOver={() => setMouseOver(true)}
         onMouseLeave={() => setMouseOver(false)}
       />
+      { displayDelete && <IconDeleteButton x={deleteX} y={deleteY} /> }
     </g>
   );
 };

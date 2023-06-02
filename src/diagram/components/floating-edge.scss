@@ -37,12 +37,6 @@
   }
 
   .react-flow__connection {
-    .react-flow__edge-hover {
-      opacity: .5;
-      stroke: $select-blue;
-      marker-end: url("#custom-arrow__selected");
-    }
-
     .react-flow__edge-target {
       stroke-width: 20;
       pointer-events: all;
@@ -50,9 +44,21 @@
     }
   }
 
+  &:not(.selected) {
+    .react-flow__connection {
+      .react-flow__edge-hover {
+        stroke: $select-blue;
+        marker-end: url("#custom-arrow__selected");
+      }
+
+      &.hover {
+        opacity: .5;
+      }
+    }
+  }
+
   &.selected {
     .react-flow__edge-path {
-      opacity: 1;
       stroke: $select-blue;
       marker-end: url("#custom-arrow__selected");
     }
