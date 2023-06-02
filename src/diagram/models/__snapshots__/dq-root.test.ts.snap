@@ -134,6 +134,7 @@ Array [
 exports[`DQRoot can generate react flow nodes 1`] = `
 Array [
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -179,6 +180,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -224,6 +226,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -269,6 +272,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
