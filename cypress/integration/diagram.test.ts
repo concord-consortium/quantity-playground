@@ -1,4 +1,4 @@
-import { connectionTarget, node, nodes, pane, selectedNodes, selectedEdges } from "../support/diagram-helpers";
+import { connectionTarget, deleteEdgeButton, edge, edges, node, nodes, pane, selectedNodes, selectedEdges } from "../support/diagram-helpers";
 
 context("Test Diagram interaction", () => {
   before(() => {
@@ -10,6 +10,7 @@ context("Test Diagram interaction", () => {
       cy.get("[data-testid='quantity-node'").should("have.length", 4);
     });
 
+    // TODO: Fix the following two tests. After fixing them, the three tests afterwards may need to be updated.
     it.skip("can connect nodes", () => {
       cy.get("[data-testid='quantity-node'").eq(1)
         .find("[data-testid='variable-expression']")
@@ -59,6 +60,14 @@ context("Test Diagram interaction", () => {
       node(1).click();
       cy.get("body").type("{backspace}");
       nodes().should("have.length", 3);
+    });
+
+    it("can use delete button to delete an edge", () => {
+      edges().should("have.length", 1);
+      edge(0).click();
+      deleteEdgeButton(0).should("exist");
+      deleteEdgeButton(0).click();
+      edges().should("have.length", 0);
     });
   });
 });

@@ -10,8 +10,10 @@ export const node = (index: number) => nodes().eq(index);
 export const selectedNodes = () => cy.get(`${nodeClass} .selected`);
 export const connection = (index: number) => cy.get(".react-flow__edge-path").eq(index);
 export const connectionTarget = (index: number) => cy.get(".react-flow__edge-target").eq(index);
-export const edge = (index: number) => cy.get(edgeClass).eq(index);
+export const edges = () => cy.get(edgeClass);
+export const edge = (index: number) => edges().eq(index);
 export const selectedEdges = () => cy.get(`${edgeClass}.selected`);
+export const deleteEdgeButton = (index: number) => cy.get(".delete-button").eq(index);
 
 export const colorPaletteButton = (index: number) => node(index).find(".color-palette-toggle");
 export const notesButton = (index: number) => node(index).find(".variable-description-toggle");
