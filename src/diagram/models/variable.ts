@@ -54,12 +54,29 @@ export const Variable = types.model("Variable", {
   return snClone;
 })
 .views(self => ({
+  get validInputs() {
+    return self.inputs.filter(input => !!input);
+  }
+}))
+.views(self => ({
   get math() {
     return createMath();
   },
   get numberOfInputs() {
-    const validInputs = self.inputs.filter(input => !!input);
-    return validInputs.length;
+    return self.validInputs.length;
+  },
+  canAddInput(variable: any /* VariableType */) {
+    // Cannot connect to oneself
+    if (self.id === variable.id) return false;
+
+    const validInputs = self.validInputs as any[];
+
+    // Cannot add a connection if one already exists
+    if (validInputs.map(inputVariable => inputVariable.id).includes(variable.id)) return false;
+
+    // Cannot add a connection if target is already an ancestor of this.
+
+    return true;
   }
 }))
 .views(self => ({

@@ -140,12 +140,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const xPadding = 15;
   const targetWidth = `${kDefaultNodeWidth + 2 * xPadding}px`;
   const targetNodeHandleStyle = {height: targetHeight, width: targetWidth, left: `-${xPadding}px`};
-  const allowPointerEvents = data.dqRoot.connectingVariable && data.dqRoot.connectingVariable !== variable;
-  const targetClassName = classNames("node-target-handle", allowPointerEvents && "can-be-connected");
+  const connectingVariable = data.dqRoot.connectingVariable;
+  const allowConnection = connectingVariable && variable.canAddInput(connectingVariable);
+  const targetClassName = classNames("node-target-handle", allowConnection && "can-connect");
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
-  const nodeClasses = classNames("node", {
-    selected: data.dqRoot.selectedNode === data.node
+  const cannotConnect = connectingVariable && !allowConnection;
+  const nodeClasses = classNames("node", cannotConnect && "cannot-connect", {
+    selected: data.dqRoot.selectedNode === data.node,
   });
 
   return (

@@ -51,7 +51,9 @@ export const DQNode = types.model("DQNode", {
   getReactFlowNodes(dqRoot: any) {
     const nodes: Node[] = [];
     const id = self.variableId;
+    const connectable = !dqRoot.connectingVariable || self.variable.canAddInput(dqRoot.connectingVariable);
     nodes.push({
+      connectable,
       id,
       type: "quantityNode",
       data: { node: self, dqRoot },

@@ -40,6 +40,7 @@ $color-gray-dark: #3f3f3f;
   z-index: 4;
 
   &:hover { outline: 2px solid $hover-blue; }
+  &.cannot-connect:hover { outline: 2px solid $disabled-red; }
   &.selected {
     outline: 2px solid $select-blue;
     &:active { cursor: grabbing; }
@@ -88,7 +89,7 @@ $color-gray-dark: #3f3f3f;
     border-radius: 0;
     pointer-events: none;
 
-    &.can-be-connected {
+    &.can-connect {
       pointer-events: all;
     }
   }
