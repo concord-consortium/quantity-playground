@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useMemo, useState } from "react";
-import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
+import { EdgeProps, getBezierPath, Node, Position, useStore } from "reactflow";
 import classNames from "classnames";
 
 import { IconDeleteButton } from "./icons/delete-button";
@@ -32,8 +32,17 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   });
 
   const displayDelete = mouseOver || selected;
-  const deleteX = (tx - sx) / 2 + sx;
-  const deleteY = (ty - sy) / 2 + sy;
+  const width = tx - sx;
+  const height = ty - sy;
+  let deleteX = width / 2 + sx;
+  let deleteY = height / 2 + sy;
+  // When curves go from top/bottom to left/right, they form a single curve (like the quarter of an oval).
+  // In this case, the curve will not go through the center, so we have to offset it.
+  // I wasn't able to get a left/right to top/bottom connection, but this math might not work if those combinations were possible.
+  if ([Position.Top, Position.Bottom].includes(sourcePos) && [Position.Left, Position.Right].includes(targetPos)) {
+    deleteY += height * 3 / 16;
+    deleteX += -width * 3 / 16;
+  }
   const onDeleteButtonClick = selected ? () => dqRoot.deleteEdge(source, target) : undefined;
 
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
