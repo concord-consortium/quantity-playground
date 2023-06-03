@@ -27,7 +27,6 @@ export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY
         stroke={selectedBlue}
         strokeWidth={2}
         d={d[0]}
-        // d={`M${fromX},${fromY} C ${fromX} ${toY} ${fromX} ${toY} ${toX},${toY}`}
       />
     </g>
   );
