@@ -103,7 +103,7 @@ module.exports = (env, argv) => {
                   plugins: [
                     {
                       // cf. https://github.com/svg/svgo/releases/tag/v2.4.0
-                      name: 'preset-default',
+                      name: "preset-default",
                       params: {
                         overrides: {
                           // don't minify "id"s (i.e. turn randomly-generated unique ids into "a", "b", ...)
@@ -130,6 +130,9 @@ module.exports = (env, argv) => {
       ]
     },
     resolve: {
+      alias: {
+        "mobx-state-tree": "@concord-consortium/mobx-state-tree"
+      },
       extensions: [ ".ts", ".tsx", ".js" ]
     },
     // stats: {

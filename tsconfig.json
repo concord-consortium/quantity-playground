@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
@@ -10,6 +11,9 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "strict": true,
+    "paths": {
+      "mobx-state-tree": ["node_modules/@concord-consortium/mobx-state-tree/dist"]
+    },
     "types": ["jest", "@testing-library/jest-dom"],
     "jsx": "react",
     "lib": [
