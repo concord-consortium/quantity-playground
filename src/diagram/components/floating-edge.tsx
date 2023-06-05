@@ -4,7 +4,7 @@ import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
-  const { dqRoot } = data;
+  const { dqRoot, readOnly } = data;
   const nodes = useStore((store) => {
     return store.nodeInternals;
   });
@@ -28,7 +28,9 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   });
 
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
-    dqRoot.setSelectedEdgeId(id);
+    if (!readOnly) {
+      dqRoot.setSelectedEdgeId(id);
+    }
   };
 
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted

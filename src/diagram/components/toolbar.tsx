@@ -8,12 +8,13 @@ interface IProps {
   dqRoot: DQRootType;
   getDiagramExport?: () => unknown;
   hideNewVariableButton?: boolean;
+  readOnly?: boolean;
   showEditVariableDialog?: () => void;
   showUnusedVariableDialog?: () => void;
 }
 
 export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard, dqRoot, getDiagramExport, hideNewVariableButton,
-  showEditVariableDialog, showUnusedVariableDialog })
+  readOnly, showEditVariableDialog, showUnusedVariableDialog })
 {
   const onDragStart = (event: React.DragEvent<HTMLDivElement>) => {
       event.dataTransfer.setData("application/reactflow", "quantity");
@@ -33,7 +34,7 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard,
   return (
     <div style={{zIndex: 4, position: "absolute", right: 0, top: 0, display: "flex", flexDirection:"column"}} >
       { getDiagramExport && <button className="action" onClick={copyDiagramURL}>Copy Diagram URL</button> }
-      { !hideNewVariableButton &&
+      { !(hideNewVariableButton || readOnly) &&
         <div className="add-variable-button" style={{border: "1px", borderStyle: "solid", textAlign: "center"}} onDragStart={(event) => onDragStart(event)} draggable>
             Drag to Add
         </div>
@@ -41,7 +42,7 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard,
       { showEditVariableDialog &&
         <button
           className="edit-variable-button"
-          disabled={!dqRoot.selectedNode}
+          disabled={readOnly || !dqRoot.selectedNode}
           onClick={showEditVariableDialog}
         >
           Edit Variable
@@ -50,7 +51,7 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard,
       { showUnusedVariableDialog &&
         <button
           className="unused-variable-button"
-          disabled={dqRoot.unusedVariables.length <= 0}
+          disabled={readOnly || dqRoot.unusedVariables.length <= 0}
           onClick={showUnusedVariableDialog}
         >
           Unused Variables
@@ -59,7 +60,7 @@ export const ToolBar: React.FC<IProps> = observer(function ToolBar({ deleteCard,
       { deleteCard &&
         <button
           className="delete-card-button"
-          disabled={!dqRoot.selectedNode}
+          disabled={readOnly || !dqRoot.selectedNode}
           onClick={deleteCard}
         >
           Delete Card
