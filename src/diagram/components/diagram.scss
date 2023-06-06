@@ -26,12 +26,20 @@
       stroke: $color-gray-1;
       stroke-dasharray: 0;
       stroke-width: 2;
+
+      .readonly {
+        marker-end: url("custom-arrow__selected-or-used-readonly");
+      }
     }
   }
 
   &.selected {
     .react-flow__edge-path {
       marker-end: url("#custom-arrow__selected-or-used");
+
+      .readonly {
+        marker-end: url("#custom-arrow__selected-or-used-readonly");
+      }
     }
   }
 
@@ -41,6 +49,10 @@
     stroke-dasharray: 0, 10;
     stroke-linecap: round;
     stroke-width: 3;
+
+    .readonly {
+      marker-end: url("#custom-arrow-readonly");
+    }
   }
 }
 
@@ -50,6 +62,10 @@
   stroke-dasharray: 0, 10;
   stroke-linecap: round;
   stroke-width: 3;
+
+  .readonly {
+    marker-end: url("#custom-arrow__dragging-readonly");
+  }
 }
 
 .nested-set-node {

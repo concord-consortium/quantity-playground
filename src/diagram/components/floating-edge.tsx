@@ -1,5 +1,6 @@
 import React, { MouseEventHandler, useMemo } from "react";
 import { EdgeProps, getBezierPath, Node, useStore } from "reactflow";
+import classNames from "classnames";
 
 import { getEdgeParams } from "../../utils/diagram/floating-edge-util";
 
@@ -32,11 +33,12 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
       dqRoot.setSelectedEdgeId(id);
     }
   };
+  const className = classNames("react-flow__edgeupdater", "react-flow__edge-path", readOnly && "readonly");
 
   // used the react-flow__edgeupdater class because it has some react-flow-renderer event handler that allows the edge to be deleted
   return (
     <g className="react-flow__connection" tabIndex={-1}>
-      <path id={id} className="react-flow__edge-path react-flow__edgeupdater" d={d[0]} onMouseDown={handleMouseDown} />
+      <path id={id} className={className} d={d[0]} onMouseDown={handleMouseDown} />
     </g>
   );
 };

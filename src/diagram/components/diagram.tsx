@@ -208,6 +208,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const rfEdges = dqRoot.reactFlowEdges.map(edge => {
     return { ...edge, data: { ...edge.data, readOnly }};
   });
+  const idSuffix = readOnly ? "-readonly" : "";
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
@@ -251,9 +252,9 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           {/* These custom arrowheads are used to change the connecting line/edge arrowhead
               color as needed. See default.scss for usage. If we upgrade to a newer version
               of React Flow, there may be a cleaner way to change the arrow colors. */}
-          <MarkerEnd markerId="custom-arrow" markerColor="#949494" />
-          <MarkerEnd markerId="custom-arrow__selected-or-used" markerColor="#5a5a5a" />
-          <MarkerEnd markerId="custom-arrow__dragging" markerColor="#0081ff" />
+          <MarkerEnd markerId={`custom-arrow${idSuffix}`} markerColor="#949494" />
+          <MarkerEnd markerId={`custom-arrow__selected-or-used${idSuffix}`} markerColor="#5a5a5a" />
+          <MarkerEnd markerId={`custom-arrow__dragging${idSuffix}`} markerColor="#0081ff" />
         </defs>
       </svg>
     </div>
