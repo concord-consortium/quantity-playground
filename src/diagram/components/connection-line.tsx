@@ -1,6 +1,7 @@
 import React from "react";
 import { ConnectionLineComponent, ConnectionLineComponentProps, getBezierPath, Position } from "reactflow";
 
+import { Arrowhead } from "./arrowhead";
 import { selectedBlue } from "../utils/theme-utils";
 
 export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY, ...rest }: ConnectionLineComponentProps) =>  {
@@ -28,6 +29,7 @@ export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY
         strokeWidth={2}
         d={d[0]}
       />
+      <Arrowhead targetPosition={targetPosition} targetX={toX} targetY={toY} />
     </g>
   );
 };
