@@ -5,9 +5,10 @@ import classNames from "classnames";
 import { Arrowhead, kArrowheadSize } from "./arrowhead";
 import { IconDeleteButton } from "./icons/delete-button";
 import { getEdgeParams } from "../utils/floating-edge-util";
+import { gray1, lightGray2, selectedBlue } from "../utils/theme-utils";
 
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
-  const { dqRoot } = data;
+  const { dqRoot, usedInExpression } = data;
   const selected = dqRoot.selectedEdgeId === id;
   const nodes = useStore((store) => {
     return store.nodeInternals;
@@ -56,13 +57,15 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     dqRoot.setSelectedEdgeId(id);
   };
 
+  const arrowheadColor = selected || mouseOver ? selectedBlue
+    : usedInExpression ? gray1 : lightGray2;
   const groupClassName = classNames("react-flow__connection", mouseOver && "hover");
   const displayArrowClassName = classNames("react-flow__edge-path", mouseOver && "react-flow__edge-hover");
   return (
     <g className={groupClassName} tabIndex={-1}>
       {/* The visible arrow */}
       <path id={id} className={displayArrowClassName} d={d[0]} />
-      <Arrowhead targetPosition={targetPos} targetX={targetX} targetY={targetY} />
+      <Arrowhead color={arrowheadColor} targetPosition={targetPos} targetX={targetX} targetY={targetY} />
       {/* The clickable target */}
       <path
         id={`${id}-target`}

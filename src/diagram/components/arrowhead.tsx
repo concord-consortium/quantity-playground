@@ -4,12 +4,13 @@ import { Position } from "reactflow";
 export const kArrowheadSize = 10;
 
 interface IArrowheadProps {
+  color?: string;
   targetPosition: Position;
   targetX: number;
   targetY: number;
 }
-export const Arrowhead = ({ targetPosition, targetX, targetY }: IArrowheadProps) => {
-  const color = "#ffff00";
+export const Arrowhead = ({ color, targetPosition, targetX, targetY }: IArrowheadProps) => {
+  const _color = color || "#ff0000";
   const width = 10;
   const height = 10;
 
@@ -29,9 +30,9 @@ export const Arrowhead = ({ targetPosition, targetX, targetY }: IArrowheadProps)
   return (
     <polygon
       // data-testid="marker-end-polygon"
-      fill={color}
+      fill={_color}
       points={arrowheadPoints}
-      stroke={color}
+      stroke={_color}
       strokeLinecap="square"
       strokeLinejoin="miter"
       strokeWidth="2.5"

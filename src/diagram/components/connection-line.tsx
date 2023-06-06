@@ -29,7 +29,7 @@ export const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY
         strokeWidth={2}
         d={d[0]}
       />
-      <Arrowhead targetPosition={targetPosition} targetX={toX} targetY={toY} />
+      <Arrowhead color={selectedBlue} targetPosition={targetPosition} targetX={toX} targetY={toY} />
     </g>
   );
 };

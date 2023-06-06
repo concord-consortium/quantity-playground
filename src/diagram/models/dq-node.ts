@@ -1,6 +1,6 @@
 import { getSnapshot, IAnyComplexType, Instance, SnapshotIn, tryReference, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
-import { Edge, Node, MarkerType } from "reactflow";
+import { Edge, Node } from "reactflow";
 
 import { Variable, VariableType } from "./variable";
 import { canAddInput } from "../utils/graph-utils";
@@ -81,10 +81,7 @@ export const DQNode = types.model("DQNode", {
             source: input.id,
             target: id,
             type: "floatingEdge",
-            markerEnd: {
-              type: MarkerType.Arrow,
-            },
-            data: { dqRoot },
+            data: { dqRoot, usedInExpression },
             className: usedInExpression ? "used-in-expression" : ""
           });
         }
