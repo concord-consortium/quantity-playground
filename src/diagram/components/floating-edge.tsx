@@ -2,6 +2,7 @@ import React, { MouseEventHandler, useMemo, useState } from "react";
 import { EdgeProps, getBezierPath, Node, Position, useStore } from "reactflow";
 import classNames from "classnames";
 
+import { Arrowhead, kArrowheadSize } from "./arrowhead";
 import { IconDeleteButton } from "./icons/delete-button";
 import { getEdgeParams } from "../utils/floating-edge-util";
 
@@ -19,9 +20,15 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     return null;
   }
   const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
-  const arrowHeadOffset = 3;
-  const targetX = sx < tx ? tx - arrowHeadOffset : tx + arrowHeadOffset;
-  const targetY = sy < ty ? ty - arrowHeadOffset : ty + arrowHeadOffset;
+  const arrowheadOffset = kArrowheadSize / 2 - 1;
+  const targetX = tx +
+    (targetPos === Position.Left ? -arrowheadOffset
+    : targetPos === Position.Right ? arrowheadOffset
+    : 0);
+  const targetY = ty + 
+    (targetPos === Position.Top ? -arrowheadOffset
+    : targetPos === Position.Bottom ? arrowheadOffset
+    : 0);
   const d = getBezierPath({
     sourceX: sx,
     sourceY: sy,
@@ -55,6 +62,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     <g className={groupClassName} tabIndex={-1}>
       {/* The visible arrow */}
       <path id={id} className={displayArrowClassName} d={d[0]} />
+      <Arrowhead targetPosition={targetPos} targetX={targetX} targetY={targetY} />
       {/* The clickable target */}
       <path
         id={`${id}-target`}
