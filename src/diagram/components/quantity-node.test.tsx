@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { DQNode } from "../models/dq-node";
 import { Variable } from "../models/variable";
 import { DQRoot } from "../models/dq-root";
-import { GenericContainer } from "../models/test-utils";
+import { GenericContainer } from "../utils/test-utils";
 import { Diagram } from "./diagram";
 
 beforeAll(() => {

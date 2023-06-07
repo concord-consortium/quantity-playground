@@ -34,11 +34,9 @@ Array [
           },
         },
       },
+      "usedInExpression": undefined,
     },
     "id": "ea-targetc-a",
-    "markerEnd": Object {
-      "type": "arrow",
-    },
     "selected": false,
     "source": "a",
     "target": "c",
@@ -76,11 +74,9 @@ Array [
           },
         },
       },
+      "usedInExpression": undefined,
     },
     "id": "ed-targetc-a",
-    "markerEnd": Object {
-      "type": "arrow",
-    },
     "selected": false,
     "source": "d",
     "target": "c",
@@ -118,11 +114,9 @@ Array [
           },
         },
       },
+      "usedInExpression": undefined,
     },
     "id": "eb-targetc-a",
-    "markerEnd": Object {
-      "type": "arrow",
-    },
     "selected": false,
     "source": "b",
     "target": "c",
@@ -134,6 +128,7 @@ Array [
 exports[`DQRoot can generate react flow nodes 1`] = `
 Array [
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -179,6 +174,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -224,6 +220,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,
@@ -269,6 +266,7 @@ Array [
     "type": "quantityNode",
   },
   Object {
+    "connectable": true,
     "data": Object {
       "dqRoot": Object {
         "flowTransform": undefined,

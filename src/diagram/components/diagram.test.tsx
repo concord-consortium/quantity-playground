@@ -3,7 +3,7 @@ import { screen, render } from "@testing-library/react";
 import React from "react";
 import { DQNode } from "../models/dq-node";
 import { DQRoot } from "../models/dq-root";
-import { GenericContainer } from "../models/test-utils";
+import { GenericContainer } from "../utils/test-utils";
 import { Variable } from "../models/variable";
 import { Diagram } from "./diagram";
 

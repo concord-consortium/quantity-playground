@@ -58,8 +58,7 @@ export const Variable = types.model("Variable", {
     return createMath();
   },
   get numberOfInputs() {
-    const validInputs = self.inputs.filter(input => !!input);
-    return validInputs.length;
+    return self.inputs.filter(input => !!input).length;
   }
 }))
 .views(self => ({

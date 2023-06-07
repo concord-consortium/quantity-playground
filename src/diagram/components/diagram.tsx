@@ -12,7 +12,6 @@ import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
 import { DiagramHelper } from "../utils/diagram-helper";
 import { ConnectionLine } from "./connection-line";
-import { MarkerEnd } from "./marker-end";
 
 // These imports seem necessary so we can override default reactflow css.
 import "reactflow/dist/style.css";
@@ -21,6 +20,8 @@ import "reactflow/dist/base.css";
 // The order matters!
 // The diagram css overrides some styles from the react-flow css.
 import "./diagram.scss";
+import "./quantity-node.scss";
+import "./floating-edge.scss";
 
 const nodeTypes = {
   quantityNode: QuantityNode,
@@ -92,22 +93,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   const deleteEdge = (edge: Edge) => {
     const { source, target } = edge;
-    const targetModel = dqRoot.getNodeFromVariableId(target);
-    const sourceModel = dqRoot.getNodeFromVariableId(source);
-    sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
-  };
-
-  const deleteAllEdgesOfNode = (variableId: string) => {
-    const nodesEdges = dqRoot.reactFlowEdges.filter((e: Edge) => {
-      return e.source === variableId || e.target === variableId;
-    });
-    for (const edge of nodesEdges as Edge[]) {
-      deleteEdge(edge);
-    }
+    dqRoot.deleteEdge(source, target);
   };
 
   const deleteNode = (node: DQNodeType) => {
-    deleteAllEdgesOfNode(node.variable.id);
     dqRoot.removeNode(node);
   };
 
@@ -214,6 +203,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           defaultViewport={defaultViewport}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          edgesUpdatable={false}
           onNodesDelete={onNodesDelete}
           onEdgesDelete={onEdgesDelete}
           onEdgeUpdate={onEdgeUpdate}
@@ -238,16 +228,6 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           <ToolBar {...{deleteCard, dqRoot, getDiagramExport, hideNewVariableButton, showEditVariableDialog, showUnusedVariableDialog}}/>
         </ReactFlow>
       </ReactFlowProvider>
-      <svg className="def-container">
-        <defs>
-          {/* These custom arrowheads are used to change the connecting line/edge arrowhead
-              color as needed. See default.scss for usage. If we upgrade to a newer version
-              of React Flow, there may be a cleaner way to change the arrow colors. */}
-          <MarkerEnd markerId="custom-arrow" markerColor="#949494" />
-          <MarkerEnd markerId="custom-arrow__selected-or-used" markerColor="#5a5a5a" />
-          <MarkerEnd markerId="custom-arrow__dragging" markerColor="#0081ff" />
-        </defs>
-      </svg>
     </div>
   );
 };
