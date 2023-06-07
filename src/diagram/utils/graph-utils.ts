@@ -1,5 +1,6 @@
 import { VariableType } from "../models/variable";
 
+// TODO Make this a get view on the node model.
 function validInputs(variable: VariableType) {
   return variable.inputs.filter(input => !!input) as VariableType[];
 }
