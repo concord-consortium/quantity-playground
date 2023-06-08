@@ -3,6 +3,7 @@ import visualizer from "rollup-plugin-visualizer";
 import dts from "rollup-plugin-dts";
 import external from "rollup-plugin-peer-deps-external";
 import replace from "rollup-plugin-re";
+import alias from "@rollup/plugin-alias";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "rollup-plugin-typescript2";
 import commonjs from "@rollup/plugin-commonjs";
@@ -31,6 +32,12 @@ export default [
       warn(warning);
     },
     plugins: [
+      alias({
+        entries: [{
+          find: "mobx-state-tree",
+          replacement: "@concord-consortium/mobx-state-tree"
+        }]
+      }),
       // exclude peer dependencies from bundle
       external(),
       resolve({
