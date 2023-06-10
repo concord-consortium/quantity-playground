@@ -1,9 +1,10 @@
 @import "../../scss/vars.scss";
 @import "../../scss/mixins.scss";
 
-// Make sure to update kDefaultNodeWidth and kDefaultNodeHeight in models/dq-node.ts when you change these constants.
+// Make sure to update corresponding constants in models/dq-node.ts when you change these constants.
 $node-width: 194px;
 $node-height: 98px;
+$node-row-height: 26px;
 
 $node-inner-width: 164px;
 $input-half-width: calc(($node-inner-width/2) - 2px);
@@ -39,6 +40,7 @@ $color-gray-dark: #3f3f3f;
   z-index: 4;
 
   &:hover { outline: 2px solid $hover-blue; }
+  &.cannot-connect:hover { outline: 2px solid $disabled-red; }
   &.selected {
     outline: 2px solid $select-blue;
     &:active { cursor: grabbing; }
@@ -64,18 +66,31 @@ $color-gray-dark: #3f3f3f;
     resize: none;
   }
 
-  // TODO: Find a way to drop use of !important here.
-  // React Flow's Handle component doesn't seem to provide a way to set
-  // hover and active styling without interfering with its functionality.
   .flow-handle {
+    border: none;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    right: -5px;
+    background-color: $color-light-gray-2;
     &:hover {
-      background-color: $hover-blue !important;
+      background-color: $hover-blue;
       box-sizing: content-box;
       cursor: pointer;
     }
     &:active {
-      background-color: $select-blue !important;
+      background-color: $select-blue;
       cursor: grab;
+    }
+  }
+
+  .node-target-handle {
+    opacity: 0;
+    border-radius: 0;
+    pointer-events: none;
+
+    &.can-connect {
+      pointer-events: all;
     }
   }
 
@@ -107,7 +122,7 @@ $color-gray-dark: #3f3f3f;
   gap: 6px;
   height: auto;
   margin-bottom: 6px;
-  min-height: 26px;
+  min-height: $node-row-height;
   position: relative;
 
   &.name-row { border: solid 2px white; }
@@ -177,7 +192,7 @@ $color-gray-dark: #3f3f3f;
       border-radius: 5px;
       font-family: $default-font-family;
       font-size: 14px;
-      min-height: 26px;
+      min-height: $node-row-height;
       overflow-y: scroll;
       padding: 3.5px 6px;
       resize: none;
@@ -195,7 +210,7 @@ $color-gray-dark: #3f3f3f;
     color: $default-fg-color;
     display: flex;
     font-size: 14px;
-    height: 26px;
+    height: $node-row-height;
     text-align: left;
     white-space: nowrap;
 

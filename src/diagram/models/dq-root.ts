@@ -76,6 +76,23 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .actions(self => ({
+  deleteEdge(sourceId: string, targetId: string) {
+    const sourceModel = self.getNodeFromVariableId(sourceId);
+    const targetModel = self.getNodeFromVariableId(targetId);
+    sourceModel?.tryVariable && targetModel?.removeInput(sourceModel.variable);
+  },
+}))
+.actions(self => ({
+  deleteAllEdgesOfNode(variableId: string) {
+    const nodesEdges = self.reactFlowEdges.filter((e: Edge) => {
+      return e.source === variableId || e.target === variableId;
+    });
+    for (const edge of nodesEdges as Edge[]) {
+      self.deleteEdge(edge.source, edge.target);
+    }
+  },
+}))
+.actions(self => ({
   addNode(newNode: DQNodeType) {
     self.nodes.put(newNode);
   },
@@ -88,6 +105,7 @@ export const DQRoot = types.model("DQRoot", {
     if (self.selectedNode === node) {
       self.selectedNode = undefined;
     }
+    self.deleteAllEdgesOfNode(node.id);
     self.nodes.delete(node.id);
   },
   setTransform(transform: Viewport) {

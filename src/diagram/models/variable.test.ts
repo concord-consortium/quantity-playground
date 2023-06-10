@@ -1,5 +1,5 @@
 import { getSnapshot } from "mobx-state-tree";
-import { GenericContainer } from "./test-utils";
+import { GenericContainer } from "../utils/test-utils";
 import { Operation, Variable, VariableType } from "./variable";
 import { incompatibleUnitsShort, getUnknownSymbolShort } from "../utils/error";
 import { addCustomUnit } from "../custom-mathjs-units";
