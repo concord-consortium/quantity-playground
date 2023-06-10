@@ -1,3 +1,4 @@
+
 import React, { MouseEventHandler, useMemo, useState } from "react";
 import { EdgeProps, getBezierPath, Node, Position, useStore } from "reactflow";
 import classNames from "classnames";
@@ -8,7 +9,7 @@ import { getEdgeParams } from "../utils/floating-edge-util";
 import { gray1, lightGray2, selectedBlue } from "../utils/theme-utils";
 
 export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) =>  {
-  const { dqRoot, usedInExpression } = data;
+  const { dqRoot, readOnly, usedInExpression } = data;
   const selected = dqRoot.selectedEdgeId === id;
   const nodes = useStore((store) => {
     return store.nodeInternals;
@@ -16,6 +17,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   const sourceNode: Node | undefined = useMemo(() => nodes.get(source), [source, nodes]);
   const targetNode: Node | undefined = useMemo(() => nodes.get(target), [target, nodes]);
   const [mouseOver, setMouseOver] = useState(false);
+  const hoverDisplay = mouseOver && !readOnly && !dqRoot.connectingVariable;
 
   if (!sourceNode || !targetNode) {
     return null;
@@ -39,7 +41,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     targetY,
   });
 
-  const displayDelete = mouseOver || selected;
+  const displayDelete = hoverDisplay || selected;
   const dx = tx - sx;
   const dy = ty - sy;
   let deleteX = dx / 2 + sx;
@@ -54,13 +56,15 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   const onDeleteButtonClick = selected ? () => dqRoot.deleteEdge(source, target) : undefined;
 
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
-    dqRoot.setSelectedEdgeId(id);
+    if (!readOnly) {
+      dqRoot.setSelectedEdgeId(id);
+    }
   };
 
-  const arrowheadColor = selected || mouseOver ? selectedBlue
+  const arrowheadColor = selected || hoverDisplay ? selectedBlue
     : usedInExpression ? gray1 : lightGray2;
-  const groupClassName = classNames("react-flow__connection", mouseOver && "hover");
-  const displayArrowClassName = classNames("react-flow__edge-path", mouseOver && "react-flow__edge-hover");
+  const groupClassName = classNames("react-flow__connection", hoverDisplay && "hover");
+  const displayArrowClassName = classNames("react-flow__edge-path", hoverDisplay && "react-flow__edge-hover", readOnly && "readonly");
   return (
     <g className={groupClassName} tabIndex={-1}>
       {/* The visible arrow */}

@@ -37,6 +37,7 @@ export interface IProps {
   hideNewVariableButton?: boolean;
   interactionLocked?: boolean;
   preventKeyboardDelete?: boolean;
+  readOnly?: boolean;
   setDiagramHelper?: (dh: DiagramHelper) => void;
   showDeleteCardButton?: boolean;
   showEditVariableDialog?: () => void;
@@ -45,13 +46,13 @@ export interface IProps {
   getDiagramExport?: () => unknown;
 }
 export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator,
-  hideNewVariableButton, interactionLocked, preventKeyboardDelete, setDiagramHelper, showDeleteCardButton,
+  hideNewVariableButton, interactionLocked, preventKeyboardDelete, readOnly, setDiagramHelper, showDeleteCardButton,
   showEditVariableDialog, showUnusedVariableDialog }: IProps) => 
 {
   const reactFlowWrapper = useRef<any>(null);
   const [rfInstance, setRfInstance] = useState<any>();
 
-  const interactive = !interactionLocked;
+  const interactive = !(interactionLocked || readOnly);
 
   const handleViewportChange = (event: MouseEvent | TouchEvent, viewport: Viewport) => {
     dqRoot.setTransform(viewport);
@@ -193,17 +194,24 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
   const defaultViewport: Viewport = { x, y, zoom };
 
+  const rfEdges = dqRoot.reactFlowEdges.map(edge => {
+    return { ...edge, data: { ...edge.data, readOnly }};
+  });
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
         <ReactFlow
+          attributionPosition="bottom-left"
           connectionLineComponent={ConnectionLine}
-          nodes={dqRoot.reactFlowNodes}
-          edges={dqRoot.reactFlowEdges}
           defaultViewport={defaultViewport}
-          nodeTypes={nodeTypes}
+          edges={rfEdges}
           edgeTypes={edgeTypes}
           edgesUpdatable={false}
+          elementsSelectable={interactive}
+          nodes={dqRoot.reactFlowNodes}
+          nodesConnectable={interactive}
+          nodesDraggable={interactive}
+          nodeTypes={nodeTypes}
           onNodesDelete={onNodesDelete}
           onEdgesDelete={onEdgesDelete}
           onEdgeUpdate={onEdgeUpdate}
@@ -217,11 +225,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onNodeDragStop={onNodeDragStop}
           onMoveEnd={handleViewportChange}
           onPaneClick={onPaneClick}
-          nodesDraggable={interactive}
-          nodesConnectable={interactive}
-          elementsSelectable={interactive}
+          panOnDrag={!readOnly}
           selectNodesOnDrag={interactive}
-          attributionPosition="bottom-left"
+          zoomOnDoubleClick={false}
+          zoomOnPinch={!readOnly}
+          zoomOnScroll={false}
         >
           {!hideNavigator && <MiniMap/>}
           {!hideControls && <Controls />}
