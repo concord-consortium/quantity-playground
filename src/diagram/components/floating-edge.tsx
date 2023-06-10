@@ -17,7 +17,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
   const sourceNode: Node | undefined = useMemo(() => nodes.get(source), [source, nodes]);
   const targetNode: Node | undefined = useMemo(() => nodes.get(target), [target, nodes]);
   const [mouseOver, setMouseOver] = useState(false);
-  const hoverDisplay = mouseOver && !readOnly;
+  const hoverDisplay = mouseOver && !readOnly && !dqRoot.connectingVariable;
 
   if (!sourceNode || !targetNode) {
     return null;
