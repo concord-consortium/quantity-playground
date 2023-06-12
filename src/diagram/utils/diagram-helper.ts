@@ -1,28 +1,36 @@
 import { kDefaultNodeWidth, kDefaultNodeHeight } from "../models/dq-node";
+import { DQRootType } from "../models/dq-root";
 
 // A class to give clients access to functions that modify or access private information from a diagram
 export class DiagramHelper {
   reactFlowWrapper: any;
   rfInstance: any;
+  dqRoot: DQRootType;
 
-  constructor(_reactFlowWrapper: any, _rfInstance: any) {
+  constructor(_reactFlowWrapper: any, _rfInstance: any, _dqRoot: DQRootType) {
     this.reactFlowWrapper = _reactFlowWrapper;
     this.rfInstance = _rfInstance;
+    this.dqRoot = _dqRoot;
+  }
+
+  // TODO Zoom in and zoom out are not properly saving changes to the dqRoot
+  changeView(func: () => void) {
+    func();
+    const newView = this.rfInstance.getViewport();
+    this.dqRoot.setTransform(newView);
+    return newView;
   }
 
   fitView() {
-    this.rfInstance.fitView();
-    return this.rfInstance.getViewport();
+    return this.changeView(this.rfInstance.fitView);
   }
 
   zoomIn() {
-    this.rfInstance.zoomIn();
-    return this.rfInstance.getViewport();
+    return this.changeView(this.rfInstance.zoomIn);
   }
 
   zoomOut() {
-    this.rfInstance.zoomOut();
-    return this.rfInstance.getViewport();
+    return this.changeView(this.rfInstance.zoomOut);
   }
 
   convertClientToDiagramPosition({x, y}: {x: number, y: number}) {
