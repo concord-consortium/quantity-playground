@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
   OnEdgeUpdateFunc, OnNodesDelete, ReactFlowProvider, Viewport
@@ -11,6 +11,7 @@ import { QuantityNode } from "./quantity-node";
 import { FloatingEdge } from "./floating-edge";
 import { ToolBar } from "./toolbar";
 import { DiagramHelper } from "../utils/diagram-helper";
+import { viewportsEqual } from "../utils/reactflow-utils";
 import { ConnectionLine } from "./connection-line";
 
 // These imports seem necessary so we can override default reactflow css.
@@ -54,8 +55,22 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   const interactive = !(interactionLocked || readOnly);
 
+  // Update the viewport when the model's viewport changes (for example, when undoing)
+  useEffect(() => {
+    const lastViewport = rfInstance?.getViewport();
+    const modelViewport = dqRoot.flowTransform;
+    if (lastViewport && modelViewport && !viewportsEqual(lastViewport, modelViewport)) {
+      rfInstance.setViewport(modelViewport);
+    }
+  }, [dqRoot.flowTransform, rfInstance]);
+
+  // TODO This is only being called when the user pans, but should be called in other contexts
+  // (for example, pinching to zoom)
   const handleViewportChange = (event: MouseEvent | TouchEvent, viewport: Viewport) => {
-    dqRoot.setTransform(viewport);
+    const rootViewport = dqRoot.flowTransform as Viewport;
+    if (rootViewport && !viewportsEqual(viewport, rootViewport)) {
+      dqRoot.setTransform(viewport);
+    }
   };
 
   const onConnectStart: OnConnectStart = useCallback((event, { nodeId, handleType }) => {
@@ -116,7 +131,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const onLoad = (_rfInstance: any) => {
     setRfInstance(_rfInstance);
     if (setDiagramHelper) {
-      const dh = new DiagramHelper(reactFlowWrapper, _rfInstance);
+      const dh = new DiagramHelper(reactFlowWrapper, _rfInstance, dqRoot);
       setDiagramHelper(dh);
     }
   };
