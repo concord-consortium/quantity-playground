@@ -57,21 +57,18 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
 
   // Update the viewport when the model's viewport changes (for example, when undoing)
   useEffect(() => {
-    console.log(`--- useEffect`);
     const lastViewport = rfInstance?.getViewport();
     const modelViewport = dqRoot.flowTransform;
-    console.log(`  - rfInstance.getViewport`, lastViewport);
-    console.log(`  - dqRoot.flowTransform`, modelViewport);
-    if (lastViewport && modelViewport) {
-      console.log(`  - equal`, viewportsEqual(lastViewport, modelViewport));
-      if (!viewportsEqual(lastViewport, modelViewport)) {
-        rfInstance.setViewport(modelViewport);
-      }
+    if (lastViewport && modelViewport && !viewportsEqual(lastViewport, modelViewport)) {
+      rfInstance.setViewport(modelViewport);
     }
   }, [dqRoot.flowTransform, rfInstance]);
 
+  // TODO This is only being called when the user pans, but should be called in other contexts
+  // (for example, pinching to zoom)
   const handleViewportChange = (event: MouseEvent | TouchEvent, viewport: Viewport) => {
-    if (!viewportsEqual(viewport, dqRoot.flowTransform as Viewport)) {
+    const rootViewport = dqRoot.flowTransform as Viewport;
+    if (rootViewport && !viewportsEqual(viewport, rootViewport)) {
       dqRoot.setTransform(viewport);
     }
   };
