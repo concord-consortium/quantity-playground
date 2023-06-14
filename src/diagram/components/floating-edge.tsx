@@ -53,7 +53,7 @@ export const FloatingEdge: React.FC<EdgeProps> = ({ id, source, target, data }) 
     deleteX += -dx * 3 / 16;
     deleteY += dy * 3 / 16;
   }
-  const onDeleteButtonClick = selected ? () => dqRoot.deleteEdge(source, target) : undefined;
+  const onDeleteButtonClick = selected && !readOnly ? () => dqRoot.deleteEdge(source, target) : undefined;
 
   const handleMouseDown: MouseEventHandler<SVGPathElement> = event => {
     if (!readOnly) {

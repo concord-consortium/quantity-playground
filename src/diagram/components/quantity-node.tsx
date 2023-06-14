@@ -16,12 +16,14 @@ import { ErrorMessageComponent } from "./error-message";
 import { canAddInput } from "../utils/graph-utils";
 
 interface IProps {
-  data: {node: DQNodeType, dqRoot: DQRootType};
+  data: {node: DQNodeType, dqRoot: DQRootType, readOnly?: boolean };
   isConnectable: boolean;
 }
 
 const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
-  const variable = data.node.variable;
+  const { dqRoot, node, readOnly } = data;
+  const canConnect = isConnectable && !readOnly;
+  const variable = node.variable;
   const kDefaultExpandLength = 10;
   const kExpressionExpandLength = 18;
 
@@ -31,7 +33,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   // When the node is removed from MST, this component gets
   // re-rendered for some reason, so we check here to make sure we
   // aren't working with a destroyed model
-  const nodeAlive = isAlive(data.node) && data.node.tryVariable;
+  const nodeAlive = isAlive(node) && node.tryVariable;
 
   // State used to track updates to the unit before they're ready to be committed to the model.
   const variableUnit = nodeAlive ? variable.unit : undefined;
@@ -58,7 +60,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const handleFieldFocus = (evt: FocusEvent<HTMLInputElement|HTMLTextAreaElement>|MouseEvent<HTMLInputElement|HTMLTextAreaElement>) => {
-    data.dqRoot.setSelectedNode(data.node);
+    dqRoot.setSelectedNode(node);
   };
 
   const onUnitBlur = (evt: FocusEvent<HTMLTextAreaElement>) => {
@@ -90,7 +92,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   };
 
   const handleClick = (event: MouseEvent) => {
-    data.dqRoot.setSelectedNode(data.node);
+    dqRoot.setSelectedNode(node);
   };
 
   const renderValueUnitInput = (params: {disabled: boolean}) => {
@@ -141,14 +143,14 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
   const xPadding = 15;
   const targetWidth = `${kDefaultNodeWidth + 2 * xPadding}px`;
   const targetNodeHandleStyle = {height: targetHeight, width: targetWidth, left: `-${xPadding}px`};
-  const connectingVariable = data.dqRoot.connectingVariable;
+  const connectingVariable = dqRoot.connectingVariable;
   const allowConnection = connectingVariable && canAddInput(connectingVariable, variable);
   const targetClassName = classNames("node-target-handle", allowConnection && "can-connect");
 
   const nodeContainerClasses = classNames(variable.color, "node-container");
   const cannotConnect = connectingVariable && !allowConnection;
   const nodeClasses = classNames("node", cannotConnect && "cannot-connect", {
-    selected: data.dqRoot.selectedNode === data.node,
+    selected: dqRoot.selectedNode === node,
   });
 
   return (
@@ -217,13 +219,13 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           type="target"
           position={Position.Left}
           style={targetNodeHandleStyle}
-          isConnectable={isConnectable}
+          isConnectable={canConnect}
         />
         <Handle
           className="flow-handle"
           type="source"
           position={Position.Right}
-          isConnectable={isConnectable}
+          isConnectable={canConnect}
           title="drag to connect"
         />
         <div className="variable-info-floater">

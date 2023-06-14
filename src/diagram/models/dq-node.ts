@@ -50,7 +50,7 @@ export const DQNode = types.model("DQNode", {
 }))
 .views(self => ({
   // Circular reference with dqRoot and dqNode so typing as any
-  getReactFlowNodes(dqRoot: any) {
+  getReactFlowNodes(dqRoot: any, readOnly?: boolean) {
     const nodes: Node[] = [];
     const id = self.variableId;
     const connectable = !dqRoot.connectingVariable || canAddInput(dqRoot.connectingVariable, self.variable);
@@ -58,7 +58,7 @@ export const DQNode = types.model("DQNode", {
       connectable,
       id,
       type: "quantityNode",
-      data: { node: self, dqRoot },
+      data: { node: self, dqRoot, readOnly },
       position: { x: self.position.x, y: self.position.y }
     });
     return nodes;    
