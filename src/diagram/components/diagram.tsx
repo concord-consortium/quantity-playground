@@ -223,7 +223,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           edgeTypes={edgeTypes}
           edgesUpdatable={false}
           elementsSelectable={interactive}
-          nodes={dqRoot.reactFlowNodes}
+          nodes={dqRoot.getReactFlowNodes(readOnly)}
           nodesConnectable={interactive}
           nodesDraggable={interactive}
           nodeTypes={nodeTypes}
@@ -240,10 +240,10 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onNodeDragStop={onNodeDragStop}
           onMoveEnd={handleViewportChange}
           onPaneClick={onPaneClick}
-          panOnDrag={!readOnly}
+          panOnDrag={true}
           selectNodesOnDrag={interactive}
           zoomOnDoubleClick={false}
-          zoomOnPinch={!readOnly}
+          zoomOnPinch={true}
           zoomOnScroll={false}
         >
           {!hideNavigator && <MiniMap/>}

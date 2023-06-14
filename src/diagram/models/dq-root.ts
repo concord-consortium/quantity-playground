@@ -31,10 +31,10 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
-  get reactFlowNodes() {
+  getReactFlowNodes(readOnly?: boolean) {
     const nodes: Node[] = [];
     self.nodes.forEach((node) => {
-      nodes.push(...node.getReactFlowNodes(self));
+      nodes.push(...node.getReactFlowNodes(self, readOnly));
     });
     return nodes;
   },

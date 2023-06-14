@@ -165,6 +165,7 @@ Array [
         "x": 100,
         "y": 100,
       },
+      "readOnly": undefined,
     },
     "id": "a",
     "position": Object {
@@ -211,6 +212,7 @@ Array [
         "x": 100,
         "y": 300,
       },
+      "readOnly": undefined,
     },
     "id": "b",
     "position": Object {
@@ -257,6 +259,7 @@ Array [
         "x": 550,
         "y": 150,
       },
+      "readOnly": undefined,
     },
     "id": "c",
     "position": Object {
@@ -303,6 +306,7 @@ Array [
         "x": 150,
         "y": 500,
       },
+      "readOnly": undefined,
     },
     "id": "d",
     "position": Object {

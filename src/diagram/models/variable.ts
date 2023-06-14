@@ -1,5 +1,5 @@
 import math, { parse, SymbolNode } from "mathjs";
-import { IAnyComplexType, Instance, types } from "mobx-state-tree";
+import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
 import { getMathUnit, getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
@@ -401,3 +401,4 @@ export const Variable = types.model("Variable", {
   },
 }));
 export interface VariableType extends Instance<typeof Variable> {}
+export interface VariableSnapshot extends SnapshotIn<typeof Variable> {}
