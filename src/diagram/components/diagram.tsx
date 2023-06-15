@@ -212,6 +212,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
   const rfEdges = dqRoot.reactFlowEdges.map(edge => {
     return { ...edge, data: { ...edge.data, readOnly }};
   });
+  const rfNodes = readOnly ? dqRoot.reactFlowNodesReadOnly : dqRoot.reactFlowNodes;
   return (
     <div className="diagram" ref={reactFlowWrapper} data-testid="diagram">
       <ReactFlowProvider>
@@ -223,7 +224,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           edgeTypes={edgeTypes}
           edgesUpdatable={false}
           elementsSelectable={interactive}
-          nodes={dqRoot.getReactFlowNodes(readOnly)}
+          nodes={rfNodes}
           nodesConnectable={interactive}
           nodesDraggable={interactive}
           nodeTypes={nodeTypes}
