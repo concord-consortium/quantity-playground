@@ -61,6 +61,12 @@ export const DQRoot = types.model("DQRoot", {
   }
 }))
 .views(self => ({
+  get reactFlowNodes() {
+    return self.getReactFlowNodes();
+  },
+  get reactFlowNodesReadOnly() {
+    return self.getReactFlowNodes(true);
+  },
   get unusedVariables() {
     const variables = self.variablesAPI?.getVariables();
     const unusedVariables: VariableType[] = [];

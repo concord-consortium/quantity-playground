@@ -11,9 +11,10 @@ describe("DQRoot", () => {
   it("can generate react flow nodes", () => {
     const appStore = AppStore.create(defaultDiagram);
     const root = appStore.diagram;
-    const nodes = root.getReactFlowNodes();
+    const nodes = root.reactFlowNodes;
+    const readOnlyNodes = root.reactFlowNodesReadOnly;
 
-    expect(nodes).toMatchSnapshot();
+    expect({ nodes, readOnlyNodes }).toMatchSnapshot();
   });
 
   it("can generate react flow edges", () => {

@@ -126,194 +126,386 @@ Array [
 `;
 
 exports[`DQRoot can generate react flow nodes 1`] = `
-Array [
-  Object {
-    "connectable": true,
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
+Object {
+  "nodes": Array [
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
           },
         },
+        "node": Object {
+          "id": "1",
+          "variable": "a",
+          "x": 100,
+          "y": 100,
+        },
+        "readOnly": undefined,
       },
-      "node": Object {
-        "id": "1",
-        "variable": "a",
+      "id": "a",
+      "position": Object {
         "x": 100,
         "y": 100,
       },
-      "readOnly": undefined,
+      "type": "quantityNode",
     },
-    "id": "a",
-    "position": Object {
-      "x": 100,
-      "y": 100,
-    },
-    "type": "quantityNode",
-  },
-  Object {
-    "connectable": true,
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
           },
         },
+        "node": Object {
+          "id": "2",
+          "variable": "b",
+          "x": 100,
+          "y": 300,
+        },
+        "readOnly": undefined,
       },
-      "node": Object {
-        "id": "2",
-        "variable": "b",
+      "id": "b",
+      "position": Object {
         "x": 100,
         "y": 300,
       },
-      "readOnly": undefined,
+      "type": "quantityNode",
     },
-    "id": "b",
-    "position": Object {
-      "x": 100,
-      "y": 300,
-    },
-    "type": "quantityNode",
-  },
-  Object {
-    "connectable": true,
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
           },
         },
+        "node": Object {
+          "id": "3",
+          "variable": "c",
+          "x": 550,
+          "y": 150,
+        },
+        "readOnly": undefined,
       },
-      "node": Object {
-        "id": "3",
-        "variable": "c",
+      "id": "c",
+      "position": Object {
         "x": 550,
         "y": 150,
       },
-      "readOnly": undefined,
+      "type": "quantityNode",
     },
-    "id": "c",
-    "position": Object {
-      "x": 550,
-      "y": 150,
-    },
-    "type": "quantityNode",
-  },
-  Object {
-    "connectable": true,
-    "data": Object {
-      "dqRoot": Object {
-        "flowTransform": undefined,
-        "nodes": Object {
-          "1": Object {
-            "id": "1",
-            "variable": "a",
-            "x": 100,
-            "y": 100,
-          },
-          "2": Object {
-            "id": "2",
-            "variable": "b",
-            "x": 100,
-            "y": 300,
-          },
-          "3": Object {
-            "id": "3",
-            "variable": "c",
-            "x": 550,
-            "y": 150,
-          },
-          "4": Object {
-            "id": "4",
-            "variable": "d",
-            "x": 150,
-            "y": 500,
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
           },
         },
+        "node": Object {
+          "id": "4",
+          "variable": "d",
+          "x": 150,
+          "y": 500,
+        },
+        "readOnly": undefined,
       },
-      "node": Object {
-        "id": "4",
-        "variable": "d",
+      "id": "d",
+      "position": Object {
         "x": 150,
         "y": 500,
       },
-      "readOnly": undefined,
+      "type": "quantityNode",
     },
-    "id": "d",
-    "position": Object {
-      "x": 150,
-      "y": 500,
+  ],
+  "readOnlyNodes": Array [
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
+          },
+        },
+        "node": Object {
+          "id": "1",
+          "variable": "a",
+          "x": 100,
+          "y": 100,
+        },
+        "readOnly": true,
+      },
+      "id": "a",
+      "position": Object {
+        "x": 100,
+        "y": 100,
+      },
+      "type": "quantityNode",
     },
-    "type": "quantityNode",
-  },
-]
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
+          },
+        },
+        "node": Object {
+          "id": "2",
+          "variable": "b",
+          "x": 100,
+          "y": 300,
+        },
+        "readOnly": true,
+      },
+      "id": "b",
+      "position": Object {
+        "x": 100,
+        "y": 300,
+      },
+      "type": "quantityNode",
+    },
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
+          },
+        },
+        "node": Object {
+          "id": "3",
+          "variable": "c",
+          "x": 550,
+          "y": 150,
+        },
+        "readOnly": true,
+      },
+      "id": "c",
+      "position": Object {
+        "x": 550,
+        "y": 150,
+      },
+      "type": "quantityNode",
+    },
+    Object {
+      "connectable": true,
+      "data": Object {
+        "dqRoot": Object {
+          "flowTransform": undefined,
+          "nodes": Object {
+            "1": Object {
+              "id": "1",
+              "variable": "a",
+              "x": 100,
+              "y": 100,
+            },
+            "2": Object {
+              "id": "2",
+              "variable": "b",
+              "x": 100,
+              "y": 300,
+            },
+            "3": Object {
+              "id": "3",
+              "variable": "c",
+              "x": 550,
+              "y": 150,
+            },
+            "4": Object {
+              "id": "4",
+              "variable": "d",
+              "x": 150,
+              "y": 500,
+            },
+          },
+        },
+        "node": Object {
+          "id": "4",
+          "variable": "d",
+          "x": 150,
+          "y": 500,
+        },
+        "readOnly": true,
+      },
+      "id": "d",
+      "position": Object {
+        "x": 150,
+        "y": 500,
+      },
+      "type": "quantityNode",
+    },
+  ],
+}
 `;
