@@ -753,6 +753,7 @@ describe("Variable", () => {
       inputs: [inputA.id, inputB.id],
       value: 123.5,
       unit: "m",
+      labels: [],
       name: "my variable",
       operation: "+",
       color: "light-gray",
@@ -771,6 +772,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      labels: [],
       color: "light-gray",
     });
 
@@ -781,6 +783,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      labels: [],
       name: undefined,
       operation: undefined,
       unit: undefined,
@@ -796,6 +799,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      labels: [],
       name: undefined,
       operation: undefined,
       unit: undefined,
@@ -809,6 +813,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      labels: [],
       name: undefined,
       operation: undefined,
       unit: undefined,
@@ -821,6 +826,7 @@ describe("Variable", () => {
       expression: undefined,
       id: expect.stringMatching(/^.{16}$/),
       inputs: [],
+      labels: [],
       name: undefined,
       operation: undefined,
       unit: undefined,
@@ -840,6 +846,39 @@ describe("Variable", () => {
     const variable = container.items[1] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual(getUnknownSymbolShort("b"));
+  });
+
+  it("display name works correctly", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "variable", name: "variable_name"}
+      ]
+    });
+    const variable = container.items[0] as VariableType;
+
+    expect(variable.displayName).toBeUndefined();
+    const displayName = "A name with spaces";
+    variable.setDisplayName(displayName);
+    expect(variable.displayName).toEqual(displayName);
+  });
+
+  it("labels work correctly", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "variable", name: "variable_name"}
+      ]
+    });
+    const variable = container.items[0] as VariableType;
+
+    expect(variable.labels.length).toEqual(0);
+    const type = "sensor";
+    const value = "EMG";
+    const label = `${type}:${value}`;
+    variable.addLabel(label);
+    expect(variable.labels.length).toEqual(1);
+    expect(variable.hasLabel(label)).toBe(true);
+    expect(variable.hasLabelType(type)).toBe(true);
+    expect(variable.getType(type)).toEqual(value);
   });
 
   // TODO: need tests about partially created units. When the user is typing a
