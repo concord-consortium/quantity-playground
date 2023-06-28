@@ -358,6 +358,9 @@ export const Variable = types.model("Variable", {
   // Type labels are like "sensor:EMG"
   getTypeLabel(type: string) {
     return self.labels.find(val => val.startsWith(`${type}:`));
+  },
+  getAllTypeLabels(type: string) {
+    return self.labels.filter(val => val.startsWith(`${type}:`));
   }
 }))
 .views(self => ({
@@ -385,6 +388,10 @@ export const Variable = types.model("Variable", {
     if (label) {
       return label.slice(type.length + 1);
     }
+  },
+  getAllOfType(type: string) {
+    const labels = self.getAllTypeLabels(type);
+    return labels.map(label => label.slice(type.length + 1));
   }
 }))
 .actions(self => ({

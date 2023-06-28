@@ -862,6 +862,20 @@ describe("Variable", () => {
     expect(variable.displayName).toEqual(displayName);
   });
 
+  it("icons work correctly", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "variable", name: "variable_name"}
+      ]
+    });
+    const variable = container.items[0] as VariableType;
+
+    expect(variable.icon).toBeUndefined();
+    const icon = "url/to/icon.svg";
+    variable.setIcon(icon);
+    expect(variable.icon).toEqual(icon);
+  });
+
   it("labels work correctly", () => {
     const container = GenericContainer.create({
       items: [
@@ -879,6 +893,19 @@ describe("Variable", () => {
     expect(variable.hasLabel(label)).toBe(true);
     expect(variable.hasLabelType(type)).toBe(true);
     expect(variable.getType(type)).toEqual(value);
+
+    const type2 = "live-output";
+    const val1 = "gripper";
+    const val2 = "gripper2.0";
+    const label1 = `${type2}:${val1}`;
+    const label2 = `${type2}:${val2}`;
+    variable.addLabel(label1);
+    variable.addLabel(label2);
+    expect(variable.labels.length).toEqual(3);
+    const outputs = variable.getAllOfType(type2);
+    expect(outputs.length).toEqual(2);
+    expect(outputs.includes(val1) && outputs.includes(val2)).toBe(true);
+    expect(outputs.includes(value)).toBe(false);
   });
 
   // TODO: need tests about partially created units. When the user is typing a
