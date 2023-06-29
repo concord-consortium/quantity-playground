@@ -27,13 +27,16 @@ export interface IVariable  { // build needs to know dq-node to have access to t
 export const Variable = types.model("Variable", {
   id: types.optional(types.identifier, () => nanoid(16)),
   name: types.maybe(types.string),
+  displayName: types.maybe(types.string),
   description: types.maybe(types.string),
   unit: types.maybe(types.string),
   value: types.maybe(types.number),
   inputs: types.array(types.maybe(types.safeReference(types.late((): IAnyComplexType => Variable)))),
   operation: types.maybe(types.enumeration<Operation>(Object.values(Operation))),
   expression: types.maybe(types.string),
-  color: types.optional(types.string, Colors.LightGray)
+  color: types.optional(types.string, Colors.LightGray),
+  icon: types.maybe(types.string),
+  labels: types.optional(types.array(types.string), [])
 })
 .preProcessSnapshot(sn => {
   // Make sure color value is valid.
@@ -352,6 +355,13 @@ export const Variable = types.model("Variable", {
   get computedUnitMessage() {
     return self.computedUnitIncludingMessageAndError.message;
   },
+  // Type labels are like "sensor:EMG"
+  getTypeLabel(type: string) {
+    return self.labels.find(val => val.startsWith(`${type}:`));
+  },
+  getAllTypeLabels(type: string) {
+    return self.labels.filter(val => val.startsWith(`${type}:`));
+  }
 }))
 .views(self => ({
   get errorMessage() {
@@ -362,6 +372,26 @@ export const Variable = types.model("Variable", {
   },
   get displayUnit() {
     return self.hasInputs ? self.computedUnit : self.unit;
+  },
+  hasLabel(label: string) {
+    return !!self.labels.find(val => val === label);
+  },
+  hasLabelType(type: string) {
+    return !!self.getTypeLabel(type);
+  }
+}))
+.views(self => ({
+  // Returns the specific part of a type label. For example, returns "EMG" if called with "sensor" and the
+  // variable has a label like "sensor:EMG".
+  getType(type: string) {
+    const label = self.getTypeLabel(type);
+    if (label) {
+      return label.slice(type.length + 1);
+    }
+  },
+  getAllOfType(type: string) {
+    const labels = self.getAllTypeLabels(type);
+    return labels.map(label => label.slice(type.length + 1));
   }
 }))
 .actions(self => ({
@@ -379,6 +409,9 @@ export const Variable = types.model("Variable", {
   setName(newName?: string) {
     self.name = newName;
   },
+  setDisplayName(newDisplayName?: string) {
+    self.displayName = newDisplayName;
+  },
   setDescription(newDescription?: string) {
     self.description = newDescription;
   },
@@ -390,6 +423,14 @@ export const Variable = types.model("Variable", {
   },
   setColor(newColor:string) {
     self.color = newColor;
+  },
+  setIcon(newIcon?: string) {
+    self.icon = newIcon;
+  },
+  addLabel(newLabel: string) {
+    if (!self.hasLabel(newLabel)) {
+      self.labels.push(newLabel);
+    }
   }
 }))
 .actions(self => ({
