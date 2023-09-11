@@ -24,7 +24,7 @@ export function VariableSlider({ className, max, min, step, variable}: IVariable
       onAfterChange={handleAfterChange}
       onChange={handleChange}
       step={step}
-      value={variable?.value ?? min}
+      value={variable?.currentValue ?? min}
     />
   );
 }
