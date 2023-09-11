@@ -3,7 +3,7 @@ import React from "react";
 
 import { VariableType } from "../../models/variable";
 
-import 'rc-slider/assets/index.css';
+import "rc-slider/assets/index.css";
 
 interface IVariableSliderProps {
   className?: string;
