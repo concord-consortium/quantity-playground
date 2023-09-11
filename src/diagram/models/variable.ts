@@ -38,6 +38,9 @@ export const Variable = types.model("Variable", {
   icon: types.maybe(types.string),
   labels: types.optional(types.array(types.string), [])
 })
+.volatile(self => ({
+  temporaryValue: undefined as number | undefined
+}))
 .preProcessSnapshot(sn => {
   // Make sure color value is valid.
   const snClone = { ...sn };
@@ -57,6 +60,9 @@ export const Variable = types.model("Variable", {
   return snClone;
 })
 .views(self => ({
+  get currentValue() {
+    return self.temporaryValue !== undefined ? self.temporaryValue : self.value;
+  },
   get math() {
     return createMath();
   },
@@ -68,8 +74,6 @@ export const Variable = types.model("Variable", {
   get hasInputs() {
     return self.numberOfInputs > 0;
   },
-}))
-.views(self => ({
   get inputNames() {
     const nodeInputs = self.inputs as IVariable[];
     return nodeInputs.map(input => input.name);
@@ -146,7 +150,7 @@ export const Variable = types.model("Variable", {
   get computedValueIncludingMessageAndError(): {value?: number, error?: ErrorMessage, message?: ErrorMessage} {
     const nodeInputs = self.inputs as IVariable[];
     if (self.numberOfInputs === 0) {
-      return {value: self.value};
+      return {value: self.currentValue};
     }
 
     const expression = self.processedExpression;
@@ -368,7 +372,7 @@ export const Variable = types.model("Variable", {
     return self.computedUnitError ?? self.computedValueError;
   },
   get displayValue() {
-    return self.hasInputs ? self.computedValue : self.value;
+    return self.hasInputs ? self.computedValue : self.currentValue;
   },
   get displayUnit() {
     return self.hasInputs ? self.computedUnit : self.unit;
@@ -402,6 +406,11 @@ export const Variable = types.model("Variable", {
     // NaN and Infinity are not valid JSON, we can probably fix MST to handle this correctly
     // but for now we just convert it to undefined to be safe.
     self.value = newValue != null && isFinite(newValue) ? newValue : undefined;
+  },
+  setTemporaryValue(newValue?: number) {
+    // NaN and Infinity are not valid JSON, we can probably fix MST to handle this correctly
+    // but for now we just convert it to undefined to be safe.
+    self.temporaryValue = newValue != null && isFinite(newValue) ? newValue : undefined;
   },
   setUnit(newUnit?: string) {
     self.unit = newUnit;
@@ -440,6 +449,10 @@ export const Variable = types.model("Variable", {
     const inputIdx = self.inputs.indexOf(inputToRemove);
     inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },
+  commitTemporaryValue() {
+    self.setValue(self.temporaryValue);
+    self.setTemporaryValue(undefined);
+  }
 }));
 export interface VariableType extends Instance<typeof Variable> {}
 export interface VariableSnapshot extends SnapshotIn<typeof Variable> {}
