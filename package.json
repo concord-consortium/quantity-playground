@@ -135,6 +135,7 @@
     "nanoid": "^3.3.1",
     "patch-package": "^6.5.1",
     "pluralize": "^8.0.0",
+    "rc-slider": "^10.2.1",
     "react": "^17.0.2",
     "react-color": "^2.19.3",
     "react-dom": "^17.0.2",

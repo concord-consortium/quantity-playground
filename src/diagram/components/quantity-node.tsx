@@ -48,7 +48,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
 
   const hasExpression = !!(variable.numberOfInputs > 0);
   const errorMessage = variable.errorMessage;
-  const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.value;
+  const shownValue = hasExpression ? variable.computedValue?.toString() || "" : variable.currentValue;
   const shownUnit = hasExpression ? variable.computedUnit : displayUnit;
 
   const handleEditColor = () => {
@@ -111,7 +111,7 @@ const _QuantityNode: React.FC<IProps> = ({ data, isConnectable }) => {
           maxLength={kMaxNameCharacters}
           placeholder="value"
           title="value"
-          value={!disabled ? variable.value : staticValue}
+          value={!disabled ? variable.currentValue : staticValue}
           handleFocus={handleFieldFocus}
           setRealValue={variable.setValue}
         />

@@ -13,6 +13,18 @@ describe("Variable", () => {
     expect(variable.id).toHaveLength(16);
   });
 
+  it("Temporary values work", () => {
+    const variable = Variable.create({value: 1});
+    expect(variable.currentValue).toEqual(1);
+    variable.setTemporaryValue(-1);
+    expect(variable.currentValue).toEqual(-1);
+    expect(variable.value).toEqual(1);
+    variable.commitTemporaryValue();
+    expect(variable.currentValue).toEqual(-1);
+    expect(variable.value).toEqual(-1);
+    expect(variable.temporaryValue).toBe(undefined);
+  });
+
   it("with no inputs, its own value, and no unit", () => {
     const variable = Variable.create({value: 123.5});
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 123.5});
