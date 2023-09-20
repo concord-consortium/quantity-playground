@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "description": "Concord Consortium Diagram View",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

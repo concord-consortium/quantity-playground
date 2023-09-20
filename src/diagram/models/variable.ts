@@ -450,8 +450,10 @@ export const Variable = types.model("Variable", {
     inputIdx > -1 && self.inputs.splice(inputIdx, 1);
   },
   commitTemporaryValue() {
-    self.setValue(self.temporaryValue);
-    self.setTemporaryValue(undefined);
+    if (self.temporaryValue !== undefined) {
+      self.setValue(self.temporaryValue);
+      self.setTemporaryValue(undefined);
+    }
   }
 }));
 export interface VariableType extends Instance<typeof Variable> {}
