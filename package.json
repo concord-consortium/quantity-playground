@@ -74,7 +74,7 @@
     "report-dir": "coverage-cypress"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.9.11",
+    "@cypress/code-coverage": "^3.12.6",
     "@cypress/webpack-preprocessor": "^5.9.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.0",
