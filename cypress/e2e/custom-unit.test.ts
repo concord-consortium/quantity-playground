@@ -6,10 +6,9 @@ import {
 } from "../../src/diagram/utils/error";
 
 context("Test custom units", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
   it("Custom units", () => {
+    cy.visit("");
+
     cy.log("adds custom units");
     enterName(0, "a");
     enterUnit(0, "foo");

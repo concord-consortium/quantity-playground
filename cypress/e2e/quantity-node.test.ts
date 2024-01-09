@@ -5,14 +5,12 @@ import {
 import { processName } from "../../src/diagram/utils/validate";
 
 context("Test Diagram interaction", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
-
   const nodeIndex = 1;
   const nodeToEdit = () => node(nodeIndex);
 
   it("Variable Cards", () => {
+    cy.visit("");
+
     cy.log("can enter basic input");
     // Enter name, value, and unit
     const variableName = "my variable name";

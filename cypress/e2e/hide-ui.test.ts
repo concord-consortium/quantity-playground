@@ -1,9 +1,7 @@
 context("Test hiding default Diagram UI", () => {
-  beforeEach(() => {
-    cy.visit("?hideUI");
-  });
-
   it("Diagram renders without UI elements", () => {
+    cy.visit("?hideUI");
+
     cy.log("UI elements are not rendered");
     // Minimap does not render
     cy.get(".react-flow__minimap").should("not.exist");

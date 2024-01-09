@@ -8,10 +8,9 @@ import {
 } from "../../src/diagram/utils/error";
 
 context("Test error messages", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
   it("Custom error messages", () => {
+    cy.visit("");
+
     cy.log("renders full incomplete error");
     morePromptButton().should("not.exist");
     enterExpression("a+");

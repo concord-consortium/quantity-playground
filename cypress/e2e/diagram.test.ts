@@ -1,11 +1,9 @@
 import { connectionTarget, deleteEdgeButton, edge, edges, node, nodes, pane, selectedNodes, selectedEdges } from "../support/diagram-helpers";
 
 context("Test Diagram interaction", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
-
   it("Interactions with the Diagram", () => {
+    cy.visit("");
+
     cy.log("renders with 4 nodes");
     cy.get("[data-testid='quantity-node'").should("have.length", 4);
 

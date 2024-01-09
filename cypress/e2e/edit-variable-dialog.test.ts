@@ -2,9 +2,6 @@ import { processName } from "../../src/diagram/utils/validate";
 import { longNotes, legalNotes } from "../support/diagram-helpers";
 
 context("Test Edit Variable Dialog", () => {
-  beforeEach(() => {
-    cy.visit("");
-  });
 
   const editVariableButton = () => cy.get(".edit-variable-button");
   const editVariableDialog = () => cy.get(".qp-dialog");
@@ -17,6 +14,8 @@ context("Test Edit Variable Dialog", () => {
   const notesField = () => cy.get("#evd-notes");
   const unitsField = () => cy.get("#evd-units");
   it("Edit Variable Dialog", () => {
+    cy.visit("");
+    
     cy.log("Edit variable button present and active when a node is selected");
     editVariableButton().should("exist");
     editVariableButton().should("be.disabled");
