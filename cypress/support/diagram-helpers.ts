@@ -26,10 +26,10 @@ export const valueField = (index: number) => valueUnit(index).eq(0);
 export const unitField = (index: number) => valueUnit(index).eq(1);
 
 // Enters the given field into the node with the given index
-export const enterName = (index: number, name: string) => nameField(index).type(name);
-export const enterNotes = (index: number, notes: string) => notesField(index).type(notes);
-export const enterValue = (index: number, value: string) => valueField(index).type(value);
-export const enterUnit = (index: number, unit: string) => unitField(index).type(unit);
+export const enterName = (index: number, name: string) => nameField(index).clear().type(name);
+export const enterNotes = (index: number, notes: string) => notesField(index).clear().type(notes);
+export const enterValue = (index: number, value: string) => valueField(index).clear().type(value);
+export const enterUnit = (index: number, unit: string) => unitField(index).clear().type(unit);
 
 export const circlePicker = (index: number) => node(index).find(".circle-picker");
 
@@ -37,7 +37,7 @@ export const circlePicker = (index: number) => node(index).find(".circle-picker"
 export const computedNodeIndex = 2;
 export const computedNode = () => node(computedNodeIndex);
 export const expressionField = (nodeIndex = computedNodeIndex) => node(nodeIndex).find(".expression-row textarea");
-export const enterExpression = (text: string) => expressionField().type(text);
+export const enterExpression = (text: string) => expressionField().clear().type(text);
 export const morePromptButton = () => computedNode().find(".more-prompt-button");
 export const errorBottom = () => computedNode().find(".error-bottom");
 
