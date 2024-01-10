@@ -218,13 +218,14 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
       <ReactFlowProvider>
         <ReactFlow
           attributionPosition="bottom-left"
+          autoPanOnNodeDrag={false}
           connectionLineComponent={ConnectionLine}
           defaultViewport={defaultViewport}
           edges={rfEdges}
           edgeTypes={edgeTypes}
           edgesUpdatable={false}
           elementsSelectable={interactive}
-          minZoom={.001}
+          minZoom={.1}
           nodes={rfNodes}
           nodesConnectable={interactive}
           nodesDraggable={interactive}
