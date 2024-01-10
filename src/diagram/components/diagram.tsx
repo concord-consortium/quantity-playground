@@ -224,6 +224,7 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           edgeTypes={edgeTypes}
           edgesUpdatable={false}
           elementsSelectable={interactive}
+          minZoom={.001}
           nodes={rfNodes}
           nodesConnectable={interactive}
           nodesDraggable={interactive}
