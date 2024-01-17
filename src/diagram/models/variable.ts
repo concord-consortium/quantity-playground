@@ -168,16 +168,15 @@ export const Variable = types.model("Variable", {
         continue;
       }
 
-      // TODO: you can make an expression that only uses one input and the other
-      // input is connected but not used. In that case the unused input should be skipped.
-      //
-      // Currently if an unused input doesn't have a value, the output will show
-      // NaN because of the validation below.
-
       // The mathValue could be a number so a falsy check can't be used
       try {
         if (input.mathValue !== undefined) {
-          // this input should be fine
+          // Input has a value; it should be fine
+          continue;
+        }
+        if (!input.name || !self.inputsInExpression?.includes(input.name)) {
+          // Undefined is also fine if the connected input is not actually used in the expression.
+          // If it has no name, it _cannot_ be used.
           continue;
         }
       } catch (error) {
