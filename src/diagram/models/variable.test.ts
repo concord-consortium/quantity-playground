@@ -114,6 +114,38 @@ describe("Variable", () => {
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
   });
 
+  it("with 2 inputs one of which is valueless, result is valueless", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", name: "a", value: 111.1},
+        {id: "inputB", name: "b"},
+        {id: "variable", value: 123.5, unit: "m", inputs: ["inputA", "inputB"], expression: "a+b"}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.numberOfInputs).toBe(2);
+    expect(variable.computedValueIncludingMessageAndError).toEqual({});
+    expect(variable.computedValueIncludingMessageAndError.error?.short).toBeUndefined();
+    expect(variable.computedValue).toBeUndefined();
+  });
+
+  it("with 2 inputs only one of which is used, the other can be valueless", () => {
+    const container = GenericContainer.create({
+      items: [
+        {id: "inputA", name: "a", value: 111.1},
+        {id: "inputB", name: "b"},
+        {id: "variable", value: 123.5, unit: "m", inputs: ["inputA", "inputB"], expression: "a"}
+      ]
+    });
+    const variable = container.items[2] as VariableType;
+
+    expect(variable.numberOfInputs).toBe(2);
+    expect(variable.computedValueIncludingMessageAndError).toEqual({value: 111.1});
+  });
+
+
+
   it("with 2 inputs and operation Multiply it returns result", () => {
     const container = GenericContainer.create({
       items: [
