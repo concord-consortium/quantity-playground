@@ -30,7 +30,7 @@ describe("Variable", () => {
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 123.5});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({});
     expect(variable.computedValue).toBe(123.5);
-    expect(variable.computedValueWithSignificantDigits).toBe("123.5");
+    expect(variable.computedValueWithSignificantDigits).toBe("124");
     expect(variable.computedValueError).toBeUndefined();
     expect(variable.computedValueMessage).toBeUndefined();
     expect(variable.computedUnit).toBeUndefined();
@@ -177,7 +177,7 @@ describe("Variable", () => {
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 999.9});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "mm"});
     expect(variable.computedValue).toBe(999.9);
-    expect(variable.computedValueWithSignificantDigits).toBe("999.9");
+    expect(variable.computedValueWithSignificantDigits).toBe("1,000");
     expect(variable.computedValueError).toBeUndefined();
     expect(variable.computedUnit).toBe("mm");
     expect(variable.computedUnitError).toBeUndefined();
