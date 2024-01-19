@@ -771,7 +771,7 @@ describe("Variable", () => {
 
     expect(variable.computedValueIncludingMessageAndError.error?.short).toEqual("Warning: cycles or loops between cards is not supported");
     expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: cycles or loops between cards is not supported");
-    expect(warn).toBeCalledTimes(3);
+    expect(warn).toHaveBeenCalledTimes(3);
   });
 
   it("can be modified after being created", () => {

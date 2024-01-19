@@ -29,7 +29,7 @@ describe("MathJS", () => {
       a: unit("m"),
       b: unit("cm")
     };
-    expect(() => evaluate("a+b", scope)).toThrowError();
+    expect(() => evaluate("a+b", scope)).toThrow();
   });
 
   it("sort of handles simple unit conversion with evaluate and a valueless unit", () => {
@@ -183,8 +183,8 @@ describe("MathJS", () => {
         a: unit(1, "m"),
         b: unit(1, "s")
       };
-      expect(() => evaluate("a+b", scope)).toThrowError("Units do not match");
-      expect(() => evaluate("a-b", scope)).toThrowError("Units do not match");
+      expect(() => evaluate("a+b", scope)).toThrow("Units do not match");
+      expect(() => evaluate("a-b", scope)).toThrow("Units do not match");
     });
 
     test("a unit-less value is added or subtracted from a value with a unit", () => {
@@ -192,9 +192,9 @@ describe("MathJS", () => {
         a: 1,
         b: unit(1, "s")
       };
-      expect(() => evaluate("a+b", scope)).toThrowError("Unexpected type of argument");
-      expect(() => evaluate("a-b", scope)).toThrowError("Unexpected type of argument");
-      expect(() => evaluate("b-a", scope)).toThrowError("Unexpected type of argument");
+      expect(() => evaluate("a+b", scope)).toThrow("Unexpected type of argument");
+      expect(() => evaluate("a-b", scope)).toThrow("Unexpected type of argument");
+      expect(() => evaluate("b-a", scope)).toThrow("Unexpected type of argument");
     });
   });
 
