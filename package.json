@@ -69,7 +69,9 @@
     "yalc:publish": "npx yalc publish --push",
     "yalc:unpublish": "npx yalc installations clean @concord-consortium/diagram-view",
     "prepublishOnly": "npm-run-all clean tsc copycss",
-    "publish:beta": "npm publish --tag beta --access public"
+    "publish:test": "npm publish --access public --dry-run",
+    "publish:beta": "npm publish --tag beta --access public",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
