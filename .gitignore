@@ -1,5 +1,6 @@
 coverage
 coverage-cypress
+cypress/screenshots
 dist
 node_modules
 npm-error.log

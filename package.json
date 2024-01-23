@@ -1,8 +1,12 @@
 {
-  "name": "quantity-playground",
-  "version": "0.0.1",
+  "name": "@concord-consortium/diagram-view",
+  "version": "1.0.0-beta.1",
   "description": "Concord Consortium quantity playground",
-  "main": "index.js",
+  "main": "./dist/cjs/diagram/index.js",
+  "module": "./dist/esm/diagram/index.js",
+  "files": [
+    "dist"
+  ],
   "jest": {
     "testURL": "https://quantity-playground.unexisting.url.com",
     "setupFilesAfterEnv": [
@@ -56,7 +60,18 @@
     "test:cypress:open": "cypress open",
     "test:coverage:cypress:open": "cypress open --env coverage=true",
     "test:full": "npm-run-all test test:cypress",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "clean": "rimraf dist",
+    "tsc": "tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
+    "copycss-esm": "copyfiles -u 1 \"src/**/*.scss\" dist/esm",
+    "copycss-cjs": "copyfiles -u 1 \"src/**/*.scss\" dist/cjs",
+    "copycss": "npm-run-all copycss-esm copycss-cjs",
+    "yalc:publish": "npx yalc publish --push",
+    "yalc:unpublish": "npx yalc installations clean @concord-consortium/diagram-view",
+    "prepublishOnly": "npm-run-all clean tsc copycss",
+    "publish:test": "npm publish --access public --dry-run",
+    "publish:beta": "npm publish --tag beta --access public",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
@@ -73,6 +88,16 @@
     "all": true,
     "report-dir": "coverage-cypress"
   },
+  "peerDependencies": {
+    "@concord-consortium/mobx-state-tree": "^5.1.8-cc.1",
+    "mobx": "^6.4.2",
+    "mobx-react-lite": "^3.3.0",
+    "nanoid": "^3.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "tslib": "^2.3.1",
+    "rc-slider": "^10.2.1"
+  },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.6",
     "@cypress/webpack-preprocessor": "^5.9.1",
@@ -84,26 +109,27 @@
     "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/user-event": "^14.2.0",
     "@types/jest": "^27.4.1",
-    "@types/react": "^17.0.38",
+    "@types/react": "^17.0.75",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^17.0.11",
-    "@typescript-eslint/eslint-plugin": "^5.9.0",
-    "@typescript-eslint/parser": "^5.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "autoprefixer": "^10.4.2",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^9.1.0",
+    "copyfiles": "^2.4.1",
     "css-loader": "^6.5.1",
     "cypress": "^13.6.2",
-    "eslint": "^7.32.0",
+    "eslint": "^8.22.0",
     "eslint-config-react": "^1.1.7",
     "eslint-plugin-chai-friendly": "^0.7.2",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-jest": "^24.7.0",
+    "eslint-plugin-jest": "27.6.3",
     "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-webpack-plugin": "^3.1.1",
+    "eslint-plugin-react": "^7.31.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-webpack-plugin": "^3.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
@@ -126,19 +152,12 @@
     "webpack-dev-server": "^4.7.2"
   },
   "dependencies": {
-    "@concord-consortium/mobx-state-tree": "^5.1.8-cc.1",
     "classnames": "^2.3.2",
     "iframe-phone": "^1.3.1",
     "mathjs": "^10.4.1",
-    "mobx": "^6.4.2",
-    "mobx-react-lite": "^3.3.0",
-    "nanoid": "^3.3.1",
     "patch-package": "^6.5.1",
     "pluralize": "^8.0.0",
-    "rc-slider": "^10.2.1",
-    "react": "^17.0.2",
     "react-color": "^2.19.3",
-    "react-dom": "^17.0.2",
     "react-textarea-autosize": "^8.3.4",
     "reactflow": "^11.7.2"
   }
