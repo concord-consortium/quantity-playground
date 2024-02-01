@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Concord Consortium quantity playground",
   "main": "./dist/cjs/diagram/index.js",
   "module": "./dist/esm/diagram/index.js",
@@ -93,10 +93,10 @@
     "mobx": "^6.4.2",
     "mobx-react-lite": "^3.3.0",
     "nanoid": "^3.3.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "tslib": "^2.3.1",
-    "rc-slider": "^10.2.1"
+    "rc-slider": "^10.2.1",
+    "react": ">=18",
+    "react-dom": "^18.2.0",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.6",
@@ -110,8 +110,8 @@
     "@testing-library/user-event": "^14.2.0",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.75",
-    "@types/react-color": "^3.0.6",
-    "@types/react-dom": "^17.0.11",
+    "@types/react-color": "^3.0.11",
+    "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "autoprefixer": "^10.4.2",
@@ -138,6 +138,7 @@
     "mini-css-extract-plugin": "^2.4.6",
     "npm-run-all": "^4.1.5",
     "postcss-loader": "^6.2.1",
+    "react": "^18.2.0",
     "sass": "^1.47.0",
     "sass-loader": "^12.4.0",
     "script-loader": "^0.7.2",
@@ -157,7 +158,7 @@
     "mathjs": "^10.4.1",
     "patch-package": "^6.5.1",
     "pluralize": "^8.0.0",
-    "react-color": "^2.19.3",
+    "react-color": ">=2.19.3",
     "react-textarea-autosize": "^8.3.4",
     "reactflow": "^11.7.2"
   }
