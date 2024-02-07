@@ -125,12 +125,12 @@ To deploy a production release:
 1. Test a dry-run of publishing the package to the npm repository
     - `npm run publish:test`
 1. Publish the package to the npm repository
-    - `npm run publish`
+    - `npm run publish:npm`
 
 The updates should show up on NPM at <https://www.npmjs.com/package/@concord-consortium/diagram-view> .
 
 ## License
 
-Quantity Playground is Copyright 2021 (c) by the Concord Consortium and is distributed under the [MIT license](http://www.opensource.org/licenses/MIT).
+Quantity Playground is Copyright 2024 (c) by the Concord Consortium and is distributed under the [MIT license](http://www.opensource.org/licenses/MIT).
 
 See license.md for the complete license text.
