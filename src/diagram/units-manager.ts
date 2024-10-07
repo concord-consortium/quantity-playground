@@ -84,37 +84,48 @@ export class UnitsManager {
   @action
   getMathUnit(value: number, unitString: string, mathLib: IMathLib): math.Unit | undefined {
     try {
+      const isValidUnknownUnitName = (name: string) => {
+        // MathJS doesn't handle empty string units.        
+        return name && !mathLib.Unit.isValuelessUnit(name);
+      };
+
+      const isNamePluralizeCanHandle = (name: string) => {
+        return /^[a-zA-Z]\w*$/.test(name);
+      };
+      
+      const registerUnit = (name: string, options?: CreateUnitOptions) => {
+        this.addUnit(name, options);
+        // NOTE: this `createUnit` call only adds the unit to the passed in mathLib. 
+        // Each variable has its own mathLib, so the other variable's mathLibs are not
+        // updated here.
+        // The system relies on MobX observing so those other variables can update their mathLibs
+        // when a new unit is added by the `this.addUnit` above.
+        if (options) {
+          mathLib.createUnit(name, options);
+        } else {
+          // mathLib.createUnit fails if options is undefined
+          mathLib.createUnit(name);
+        }
+      };
+
       // Look for unknown units in the unit string
       const unitNode = mathLib.parse(unitString);
       const symbols = unitNode.filter(node => "isSymbolNode" in node && node.isSymbolNode) as SymbolNode[];
       for(const symbol of symbols) {
         // if the symbol isn't already a unit, make a unit for it
-        if (!mathLib.Unit.isValuelessUnit(symbol.name)) {
-          try {
-            if (/^[a-zA-Z]\w*$/.test(symbol.name)) {
-              const singular = pluralize.singular(symbol.name);
-              const plural = pluralize.plural(symbol.name);
-              if (mathLib.Unit.isValuelessUnit(singular) || mathLib.Unit.isValuelessUnit(plural)) {
-                // If the singular or plural is already a unit, just add the base
-                this.addUnit(symbol.name);
-                // NOTE: this `createUnit` call and the 2 other below are only adding the unit to the passed 
-                // in mathLib. Each variable has its own mathLib, so the other variable's mathLibs are not be
-                // updated here.
-                // The system relies on MobX observing for those other variables to update their mathLibs
-                // when a new unit is added by the `this.addUnit` above.
-                mathLib.createUnit(symbol.name);
-              } else {
-                // Otherwise, add them both as synonyms
-                const options = { aliases: [plural] };
-                this.addUnit(singular, options);
-                mathLib.createUnit(singular, options);
-              }
+        if (isValidUnknownUnitName(symbol.name)) {
+          if (isNamePluralizeCanHandle(symbol.name)) {
+            const singular = pluralize.singular(symbol.name);
+            const plural = pluralize.plural(symbol.name);
+            if (!isValidUnknownUnitName(singular) || !isValidUnknownUnitName(plural)) {
+              // If the singular or plural is already a unit or not a valid unit, just add the initial name
+              registerUnit(symbol.name);
             } else {
-              this.addUnit(symbol.name);
-              mathLib.createUnit(symbol.name);
+              // Otherwise, add them both as synonyms
+              registerUnit(singular, { aliases: [plural] });
             }
-          } catch (e: any) {
-            console.log(`Error creating unit`, e);
+          } else {
+            registerUnit(symbol.name);
           }
         }
       }
@@ -187,3 +198,7 @@ export const deleteUnits = [
   // Binary
   "b", "bit", "bits", "B", "byte", "bytes",
 ];
+
+function isValidUnitName(name: string) {
+  return /^[a-zA-Z]\w*$/.test(name);
+}
