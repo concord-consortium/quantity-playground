@@ -1,40 +1,42 @@
 import { createMath } from "../custom-mathjs";
-import {getMathUnit, replaceInputNames, getUsedInputs} from "./mathjs-utils";
+import { UnitsManager } from "../units-manager";
+import {replaceInputNames, getUsedInputs} from "./mathjs-utils";
 
 describe("mathjs-utils", () => {
-  const math = createMath();
+  const unitsManager = new UnitsManager();
+  const math = createMath(unitsManager);
   describe("getMathUnit", () => {
     it("get standard unit", () => {
-      const result = getMathUnit(0,"mm", math);
+      const result = unitsManager.getMathUnit(0,"mm", math);
       expect(result?.toString()).toBe("0 mm");
     });
     it("get custom unit", () => {
-      const result = getMathUnit(0, "cat", math);
+      const result = unitsManager.getMathUnit(0, "cat", math);
       expect(result?.toString()).toBe("0 cat");
     });
     it("plural of existing custom unit is same", () => {
-      const singU = getMathUnit(0, "mouse", math);
-      const plurU = getMathUnit(0, "mice", math);
+      const singU = unitsManager.getMathUnit(0, "mouse", math);
+      const plurU = unitsManager.getMathUnit(0, "mice", math);
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
     it("plural of unit can be named first", () => {
-      const plurU = getMathUnit(0, "halves", math);
-      const singU = getMathUnit(0, "half", math);
+      const plurU = unitsManager.getMathUnit(0, "halves", math);
+      const singU = unitsManager.getMathUnit(0, "half", math);
       expect(singU && plurU?.equals(singU)).toBe(true);
     });
     it("new unit with singular that is already a unit doesn't crash", () => {
-      expect(getMathUnit(0, "yds", math)).toBeTruthy();
+      expect(unitsManager.getMathUnit(0, "yds", math)).toBeTruthy();
     });
     it("permits the '$' unit", () => {
-      const u = getMathUnit(0,"$",math);
+      const u = unitsManager.getMathUnit(0,"$",math);
       expect(u?.toString()).toBe("0 $");
     });
     it("doesn't permit the '*' unit", () => {
-      const u = getMathUnit(0,"*",math);
+      const u = unitsManager.getMathUnit(0,"*",math);
       expect(u).toBe(undefined);
     });
     it("can create multiple units from an expression", () => {
-      const u = getMathUnit(0,"$/year",math);
+      const u = unitsManager.getMathUnit(0,"$/year",math);
       expect(u?.toString()).toBe("0 $ / year");
     });
   });

@@ -1,11 +1,12 @@
 import math, { parse, SymbolNode } from "mathjs";
-import { IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
+import { getParent, IAnyComplexType, Instance, SnapshotIn, types } from "mobx-state-tree";
 import { nanoid } from "nanoid";
 
-import { getMathUnit, getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
+import { getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
 import { createMath } from "../custom-mathjs";
 import { basicErrorMessage, ErrorMessage, getErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
+import { UnitsManager } from "../units-manager";
 
 export enum Operation {
   Divide = "÷",
@@ -22,6 +23,10 @@ export interface IVariable  { // build needs to know dq-node to have access to t
   computedUnit?: string;
   mathValue?: number | math.Unit;
   mathValueWithValueOr1?: number | math.Unit;
+}
+
+interface IVariablesContainer {
+  unitsManager: UnitsManager,
 }
 
 export const Variable = types.model("Variable", {
@@ -60,11 +65,20 @@ export const Variable = types.model("Variable", {
   return snClone;
 })
 .views(self => ({
+  get unitsManager() {
+    const container = getParent(getParent(self));
+    if (!("unitsManager" in container)) {
+      throw new Error("container of variables doesn't have a unitsManager");
+    }
+    return (container as IVariablesContainer).unitsManager;
+  }
+}))
+.views(self => ({
   get currentValue() {
     return self.temporaryValue !== undefined ? self.temporaryValue : self.value;
   },
   get math() {
-    return createMath();
+    return createMath(self.unitsManager);
   },
   get numberOfInputs() {
     return self.inputs.filter(input => !!input).length;
@@ -125,7 +139,7 @@ export const Variable = types.model("Variable", {
     if (selfComputedValue !== undefined) {
       if (selfComputedUnit) {
         // This will add any custom units
-        return getMathUnit(selfComputedValue, selfComputedUnit, self.math);
+        return self.unitsManager.getMathUnit(selfComputedValue, selfComputedUnit, self.math);
       } else {
         return selfComputedValue;
       }
@@ -141,7 +155,7 @@ export const Variable = types.model("Variable", {
     const value = this.computedValueIncludingMessageAndError.value ?? 1;
     if (selfComputedUnit) {
       // This will add any custom units
-      return getMathUnit(value, selfComputedUnit, self.math);
+      return self.unitsManager.getMathUnit(value, selfComputedUnit, self.math);
     } else {
       return value;
     }
