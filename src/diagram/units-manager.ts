@@ -198,7 +198,3 @@ export const deleteUnits = [
   // Binary
   "b", "bit", "bits", "B", "byte", "bytes",
 ];
-
-function isValidUnitName(name: string) {
-  return /^[a-zA-Z]\w*$/.test(name);
-}
