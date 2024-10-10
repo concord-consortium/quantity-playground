@@ -14,6 +14,7 @@ export const edges = () => cy.get(edgeClass);
 export const edge = (index: number) => edges().eq(index);
 export const selectedEdges = () => cy.get(`${edgeClass}.selected`);
 export const deleteEdgeButton = (index: number) => cy.get(".delete-button").eq(index);
+export const deleteCardButton = () => cy.get(".delete-card-button");
 
 export const colorPaletteButton = (index: number) => node(index).find(".color-palette-toggle");
 export const notesButton = (index: number) => node(index).find(".variable-description-toggle");
