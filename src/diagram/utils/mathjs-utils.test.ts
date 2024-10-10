@@ -27,6 +27,10 @@ describe("mathjs-utils", () => {
     it("new unit with singular that is already a unit doesn't crash", () => {
       expect(unitsManager.getMathUnit(0, "yds", math)).toBeTruthy();
     });
+    it("permits the 'S' unit even though pluralize returns '' for the singluar", () => {
+      const u = unitsManager.getMathUnit(0,"S",math);
+      expect(u?.toString()).toBe("0 S");
+    });
     it("permits the '$' unit", () => {
       const u = unitsManager.getMathUnit(0,"$",math);
       expect(u?.toString()).toBe("0 $");
