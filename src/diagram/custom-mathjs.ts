@@ -3,19 +3,10 @@ import { create, simplifyDependencies, unitDependencies,
   parseDependencies, evaluateDependencies, toDependencies,
   createUnitDependencies } from "mathjs";
 
-import { customUnitsArray, deleteUnits, IUnit } from "./custom-mathjs-units";
+import { UnitsManager } from "./units-manager";
+import { IMathLib } from "./utils/mathjs-utils";
 
-export interface IMathLib {
-  simplify: math.Simplify;
-  unit: any;
-  parse: math.ParseFunction;
-  createUnit: (name: string, definition?: string | math.UnitDefinition | undefined, options?: math.CreateUnitOptions | undefined) => math.Unit;
-  evaluate: (expr: math.MathExpression | math.MathExpression[], scope?: object | undefined) => any;
-  number: (value?: string | number | boolean | math.MathArray | math.Matrix | math.Unit | math.BigNumber | math.Fraction | null | undefined) => number | math.MathArray | math.Matrix;
-  isUnit: (x: unknown) => x is math.Unit;
-  Unit: any;
-}
-function createMath(): IMathLib {
+export function createMath(unitsManager: UnitsManager): IMathLib {
   // This reduces the size of the bundle, see:
   // https://mathjs.org/docs/custom_bundling.html
   const m = create({ simplifyDependencies, unitDependencies, parseDependencies,
@@ -28,27 +19,7 @@ function createMath(): IMathLib {
   // import { create , all } from "mathjs";
   // const m = create({ all });
 
-  // The types don't give access to the Unit class object, but it is there.
-  const mathUnit = (m as any).Unit;
-
-  const isAlphaOriginal = mathUnit.isValidAlpha;
-  mathUnit.isValidAlpha = function (c: string): boolean {
-    return isAlphaOriginal(c) || c === "$";
-  };
-
-  deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
-  customUnitsArray.forEach((u: IUnit) => {
-    // createUnit has two versions:
-    //   createUnit(name: string, definition?: string | UnitDefinition, options?: CreateUnitOptions): Unit;
-    //   createUnit(units: Record<string, string | UnitDefinition>, options?: CreateUnitOptions): Unit;
-    // If u.options is undefined and we call `m.createUnit(u.unit, u.options);` Typescript's overloading
-    // support fails for some reason. So this is split out to 2 function calls.
-    if (u.options) {
-      m.createUnit(u.unit, u.options);
-    } else {
-      m.createUnit(u.unit);
-    }
-  });
+  const mathUnit = unitsManager.initializeMath(m);
 
   return {
     simplify: m.simplify,
@@ -61,5 +32,3 @@ function createMath(): IMathLib {
     Unit: mathUnit
   };
 }
-
-export { createMath, };

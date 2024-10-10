@@ -1,5 +1,5 @@
 import { destroy, types, flow } from "mobx-state-tree";
-import { DQRoot } from "../diagram";
+import { DQRoot, UnitsManager } from "../diagram";
 import { Variable, VariableType } from "../diagram/models/variable";
 
 export const AppStore = types.model("AppStore", {
@@ -7,6 +7,9 @@ export const AppStore = types.model("AppStore", {
   diagram: DQRoot,
   variables: types.map(Variable),
 })
+.volatile(self => ({
+  unitsManager: new UnitsManager()
+}))
 .actions(self => {
   const removeVariable = flow(function* removeVariable(variable?: VariableType) {
     if (variable) {

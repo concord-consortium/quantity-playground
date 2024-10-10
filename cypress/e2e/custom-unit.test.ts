@@ -15,6 +15,11 @@ context("Test custom units", () => {
     enterExpression("a");
     unitField(computedNodeIndex).should("contain.html", "foo");
     
+    // constants can be included in the expression with custom units
+    // as long as the custom unit is used by an input variable.
+    enterExpression("a + 1 foo");
+    unitField(computedNodeIndex).should("contain.html", "foo");
+
     enterExpression("a*2");
     unitField(computedNodeIndex).should("contain.html", "foo");
 

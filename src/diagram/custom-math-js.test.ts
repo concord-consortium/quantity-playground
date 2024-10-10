@@ -1,8 +1,9 @@
 import { createMath } from "./custom-mathjs";
-import { addCustomUnit } from "./custom-mathjs-units";
+import { UnitsManager } from "./units-manager";
 
 describe("MathJS", () => {
-  const { evaluate, unit } = createMath();
+  const unitsManager = new UnitsManager();
+  const { evaluate, unit } = createMath(unitsManager);
 
   it("can handle unit conversion with evaluate and unit values", () => {
     const scope = {
@@ -29,7 +30,7 @@ describe("MathJS", () => {
       a: unit("m"),
       b: unit("cm")
     };
-    expect(() => evaluate("a+b", scope)).toThrowError();
+    expect(() => evaluate("a+b", scope)).toThrow();
   });
 
   it("sort of handles simple unit conversion with evaluate and a valueless unit", () => {
@@ -183,8 +184,8 @@ describe("MathJS", () => {
         a: unit(1, "m"),
         b: unit(1, "s")
       };
-      expect(() => evaluate("a+b", scope)).toThrowError("Units do not match");
-      expect(() => evaluate("a-b", scope)).toThrowError("Units do not match");
+      expect(() => evaluate("a+b", scope)).toThrow("Units do not match");
+      expect(() => evaluate("a-b", scope)).toThrow("Units do not match");
     });
 
     test("a unit-less value is added or subtracted from a value with a unit", () => {
@@ -192,17 +193,17 @@ describe("MathJS", () => {
         a: 1,
         b: unit(1, "s")
       };
-      expect(() => evaluate("a+b", scope)).toThrowError("Unexpected type of argument");
-      expect(() => evaluate("a-b", scope)).toThrowError("Unexpected type of argument");
-      expect(() => evaluate("b-a", scope)).toThrowError("Unexpected type of argument");
+      expect(() => evaluate("a+b", scope)).toThrow("Unexpected type of argument");
+      expect(() => evaluate("a-b", scope)).toThrow("Unexpected type of argument");
+      expect(() => evaluate("b-a", scope)).toThrow("Unexpected type of argument");
     });
   });
 
   describe("our customizations", () => {
 
     it("handles '$'", () => {
-      addCustomUnit("$");
-      const localMath = createMath();
+      unitsManager.addUnit("$");
+      const localMath = createMath(unitsManager);
       const scope = {
         a: localMath.unit(1, "m/$"),
         b: localMath.unit(1, "$")
@@ -213,8 +214,8 @@ describe("MathJS", () => {
     });
 
     it("handles units with options", () => {
-      addCustomUnit("cat", { aliases: ["cats"]});
-      const localMath = createMath();
+      unitsManager.addUnit("cat", { aliases: ["cats"]});
+      const localMath = createMath(unitsManager);
       const scope = {
         a: localMath.unit(1, "cat"),
         b: localMath.unit(2, "cats")
@@ -225,8 +226,8 @@ describe("MathJS", () => {
     });
 
     it("shares units across math instances", () => {
-      addCustomUnit("bags");
-      const localMath = createMath();
+      unitsManager.addUnit("bags");
+      const localMath = createMath(unitsManager);
       const scope = {
         a: localMath.unit(2, "bags"),
         b: localMath.unit(3, "bags")
@@ -235,7 +236,7 @@ describe("MathJS", () => {
       const simpl = result.simplify();
       expect(simpl.toString()).toEqual("5 bags");
 
-      const localMath2 = createMath();
+      const localMath2 = createMath(unitsManager);
       const result2 = localMath2.evaluate("a+b+4 bags", scope);
       const simpl2 = result2.simplify();
       expect(simpl2.toString()).toEqual("9 bags");
