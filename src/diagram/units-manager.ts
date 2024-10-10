@@ -52,17 +52,20 @@ export class UnitsManager {
     return mathUnit;
   }
 
-  // NOTE: this is both an action and a view. It is called by MST views to get the math.Unit
-  // object. At the same time is possibly adding units to the units array of `this`. The addition
-  // of these new units triggers updates in other views that are observing the units via the 
-  // initializeMath method above.
-  // The `getMathUnit` function does not actually "read" any observable state. So it is OK that it is treated
-  // as an action by MobX.
+  // NOTE: This method functions both as an action and a view. Technically it is only a MobX action because
+  // it is tagged as an action. It is updating `this.units` which is an observable array, so it needs to
+  // be an action so MobX is happy with this update. 
+  // But it is functioning a view because it is called by other views. Specifically the MST views:
+  // `Variable#mathValue` and `Variable#mathValueWithValueOr1` call it. Views should not call actions
+  // because that can cause an infinite loop.
+  // Even though getMathUnit is reading `this.units`, it won't *directly* 
+  // trigger updates when `this.units` changes because it is tagged as an action.
+  // However, it can trigger updates because it is updating `this.units`. 
   //
-  // The interaction of this within the full system is complex. Below is a list of what happens current.
-  // However if the code is changed slightly, this might be out of date. When a equation is entered that uses
+  // The interaction of this within the full system is complex. Below is a list of what happens currently.
+  // However if the code is changed slightly, this might be out of date. When an equation is entered that uses
   // an input variable that has units:
-  // - `computedValueIncludingMessageAndError` called on equation variable 
+  // - `computedValueIncludingMessageAndError` is called on equation variable 
   // - this calls `mathValue` on the input variable
   // - `mathValue` calls `self.math` which causes `unitsManager.initializeMath` to be called on the 
   //   mathLib of the input variable.
@@ -70,10 +73,12 @@ export class UnitsManager {
   // - this adds the units of the input variable to the unitsManager.units array.
   // - a temporary `mathValue` is returned for the input variable
   // - `computedValueIncludingMessageAndError` returns a value for the equation variable.
-  // - because the units array was updated, and `self.math` is used by `mathValue`, both this triggers
+  // - because the units array was updated, and `self.math` is used by `mathValue`, this triggers
   //   any observers of the mathValue to be recomputed.
-  // - this includes the `computedValueIncludingMessageAndError` on the equation variable.
-  // - because of this, `unitsManager.getMathUnit` is called again, but this time the units exist
+  // - this includes the `computedValueIncludingMessageAndError` called on the equation variable.
+  // - so in other words a call to the view `computedValueIncludingMessageAndError` is triggering 
+  //   update which means `computedValueIncludingMessageAndError` needs to be called again.
+  // - in this second call, `unitsManager.getMathUnit` is called again, but this time the units exist
   //   so an endless loop does not happen.
   // 
   // TODO: Find a way to separate the action and view so the complex interaction above is simplified.
