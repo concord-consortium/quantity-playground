@@ -8,10 +8,24 @@ import { DQRoot } from "./models/dq-root";
 import { Variable, VariableSnapshot, VariableType } from "./models/variable";
 import { DiagramHelper } from "./utils/diagram-helper";
 import { useSelectMultipleVariables } from "../hooks/use-select-multiple-variables";
+import { UnitsManager } from "./units-manager";
 
 import "./components/diagram.scss";
 
 export {
-  Diagram, DiagramHelper, EditVariableDialogContent, updateVariable, DQNode, DQRoot, useSelectMultipleVariables,
-  Variable, VariableChip, VariableChipList, VariableSlider, VariableSnapshot, VariableType
+  Diagram, 
+  DiagramHelper, 
+  DQNode, 
+  DQRoot, 
+  EditVariableDialogContent,
+  UnitsManager,
+  Variable, 
+  VariableChip, 
+  VariableChipList, 
+  VariableSlider, 
+  VariableSnapshot, 
+  VariableType,
+
+  updateVariable, 
+  useSelectMultipleVariables,
 };
