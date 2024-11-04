@@ -338,25 +338,10 @@ describe("Variable", () => {
         {id: "variable", inputs: ["input"], expression: "a to cm/things"}
       ]
     });
-    container.unitsManager.addUnit("thing", { aliases: ["things"] });
     const variable = container.items[1] as VariableType;
 
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 900});
     expect(variable.computedUnitIncludingMessageAndError).toEqual({unit: "cm / things"});
-  });
-
-  it("with a invalid unit in A it returns without crashing", () => {
-    const container = VariablesContainer.create({
-      items: [
-        {id: "input", name: "a", value: 9, unit: "m/"},
-        {id: "variable", inputs: ["input"], expression: "a to cm"}
-      ]
-    });
-    const variable = container.items[1] as VariableType;
-
-    expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
-
   });
 
   it("with 2 inputs with units and operation multiply it returns result", () => {
@@ -644,20 +629,71 @@ describe("Variable", () => {
     expect(variable.computedValueIncludingMessageAndError).toEqual({value: 0.01});
   });
 
-  it("handles invalid units", () => {
-    // This can happen when a user is typing a unit
-    const container = VariablesContainer.create({
-      items: [
-        {id: "inputA", name: "a", value: 1, unit: "m/"},
-        {id: "inputB", name: "b", value: 100, unit: "s"},
-        {id: "variable", inputs: ["inputA", "inputB"],
-          expression: "a*b"}
-      ]
-    });
-    const variable = container.items[2] as VariableType;
+  describe("invalid units", () => {
+    it("handles incomplete unit strings", () => {
+      // This can happen when a user is typing a unit
+      const container = VariablesContainer.create({
+        items: [
+          {id: "inputA", name: "a", value: 1, unit: "m/"},
+          {id: "inputB", name: "b", value: 100, unit: "s"},
+          {id: "variable", inputs: ["inputA", "inputB"],
+            expression: "a*b"}
+        ]
+      });
+      const variable = container.items[2] as VariableType;
+  
+      expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
+      expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+    });  
 
-    expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
-    expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+    it("handles incomplete unit conversion without crashing", () => {
+      const container = VariablesContainer.create({
+        items: [
+          {id: "input", name: "a", value: 9, unit: "m/"},
+          {id: "variable", inputs: ["input"], expression: "a to cm"}
+        ]
+      });
+      const variable = container.items[1] as VariableType;
+  
+      expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+      expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
+  
+    });
+    
+    // Currently we only allow units to be letters, `$`, and `_`
+    // Numbers are allowed if they aren't the first character
+    // A string which is not a valid "variable" will go through one code path.
+    // A string which is a valid "variable" will go through a different code path.
+    // The char `Ā` is a valid variable, but not a valid unit.
+    // This section describes the valid variable characters:
+    // https://mathjs.org/docs/expressions/syntax.html#constants-and-variables
+    it("handles valid variable which is not a valid unit", () => {
+      const container = VariablesContainer.create({
+        items: [
+          {id: "inputA", name: "a", value: 1, unit: "Ā"},
+          {id: "variable", inputs: ["inputA"],
+            expression: "a"}
+        ]
+      });
+      const variable = container.items[1] as VariableType;
+  
+      expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
+      expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+    });  
+
+    it("handles invalid variable character", () => {
+      const container = VariablesContainer.create({
+        items: [
+          {id: "inputA", name: "a", value: 1, unit: "✔"},
+          {id: "variable", inputs: ["inputA"],
+            expression: "a"}
+        ]
+      });
+      const variable = container.items[1] as VariableType;
+  
+      expect(variable.computedUnitIncludingMessageAndError.error?.short).toEqual("Warning: invalid input units");
+      expect(variable.computedValueIncludingMessageAndError.message?.short).toEqual("Warning: cannot compute value from inputs");
+    });  
   });
 
   it("handles adding compatible inputs first with a value and second without a value", () => {
