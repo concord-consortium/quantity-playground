@@ -1,9 +1,18 @@
 import { createMath } from "./custom-mathjs";
 import { UnitsManager } from "./units-manager";
+import { IMathLib } from "./utils/mathjs-utils";
 
 describe("MathJS", () => {
-  const unitsManager = new UnitsManager();
-  const { evaluate, unit } = createMath(unitsManager);
+  let unitsManager: UnitsManager;
+  let evaluate: IMathLib["evaluate"];
+  let unit: IMathLib["unit"];
+
+  beforeEach(() => {
+    unitsManager = new UnitsManager();
+    const math = createMath(unitsManager);
+    evaluate = math.evaluate;
+    unit = math.unit;
+  });
 
   it("can handle unit conversion with evaluate and unit values", () => {
     const scope = {
@@ -211,6 +220,40 @@ describe("MathJS", () => {
       const result = localMath.evaluate("a*b", scope);
       const simpl = result.simplify();
       expect(simpl.toString()).toEqual("1 m");
+    });
+
+    it("handles '_'", () => {
+      unitsManager.addUnit("t_s");
+      const localMath = createMath(unitsManager);
+      const scope = {
+        a: localMath.unit(1, "m/t_s"),
+        b: localMath.unit(1, "t_s")
+      };
+      const result = localMath.evaluate("a*b", scope);
+      const simpl = result.simplify();
+      expect(simpl.toString()).toEqual("1 m");
+    });
+
+    // This section describes the valid variable characters:
+    // https://mathjs.org/docs/expressions/syntax.html#constants-and-variables
+    it("handles a valid variable which is an invalid unit", () => {
+      unitsManager.addUnit("Ā");
+      const localMath = createMath(unitsManager);
+      const scope = {
+        a: localMath.unit(1, "m")
+      };
+      const result = localMath.evaluate("a", scope);
+      expect(result.toString()).toEqual("1 m");
+    });
+
+    it("handles an invalid variable", () => {
+      unitsManager.addUnit("✔");
+      const localMath = createMath(unitsManager);
+      const scope = {
+        a: localMath.unit(1, "m")
+      };
+      const result = localMath.evaluate("a", scope);
+      expect(result.toString()).toEqual("1 m");
     });
 
     it("handles units with options", () => {

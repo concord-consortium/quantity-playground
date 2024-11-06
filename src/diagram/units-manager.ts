@@ -32,7 +32,7 @@ export class UnitsManager {
 
     const isAlphaOriginal = mathUnit.isValidAlpha;
     mathUnit.isValidAlpha = function (c: string): boolean {
-      return isAlphaOriginal(c) || c === "$";
+      return isAlphaOriginal(c) || c === "$" || c === "_";
     };
   
     deleteUnits.forEach((u: string) => mathUnit.deleteUnit(u));
@@ -42,10 +42,16 @@ export class UnitsManager {
       //   createUnit(units: Record<string, string | UnitDefinition>, options?: CreateUnitOptions): Unit;
       // If u.options is undefined and we call `m.createUnit(u.unit, u.options);` Typescript's overloading
       // support fails for some reason. So this is split out to 2 function calls.
-      if (u.options) {
-        m.createUnit(u.unit, u.options);
-      } else {
-        m.createUnit(u.unit);
+      try {
+        if (u.options) {
+          m.createUnit(u.unit, u.options);
+        } else {
+          m.createUnit(u.unit);
+        }  
+      } catch (e) {
+        // Ignore any invalid units. If we remove them from the units array that will trigger loop.
+        // In practice no invalid units should be added because they should be skipped during the call 
+        // to `getMathUnit`.
       }
     });
 
@@ -91,6 +97,9 @@ export class UnitsManager {
     try {
       const isValidUnknownUnitName = (name: string) => {
         // MathJS doesn't handle empty string units.        
+        // NOTE: this isn't really checking if the string is valid, it is just making sure it isn't
+        // empty and is unknown. The Unit library is more strict about what is a valid unit,
+        // however there isn't an easy way to access this without just trying to create a Value
         return name && !mathLib.Unit.isValuelessUnit(name);
       };
 
@@ -99,7 +108,6 @@ export class UnitsManager {
       };
       
       const registerUnit = (name: string, options?: CreateUnitOptions) => {
-        this.addUnit(name, options);
         // NOTE: this `createUnit` call only adds the unit to the passed in mathLib. 
         // Each variable has its own mathLib, so the other variable's mathLibs are not
         // updated here.
@@ -111,6 +119,11 @@ export class UnitsManager {
           // mathLib.createUnit fails if options is undefined
           mathLib.createUnit(name);
         }
+
+        // This is called after the createUnit call on purpose. The createUnit call above will
+        // throw an exception if the unit is invalid. In that case this addUnit call will never
+        // happen. So the invalid unit will not be added to the unit manager.
+        this.addUnit(name, options);
       };
 
       // Look for unknown units in the unit string
