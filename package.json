@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Concord Consortium quantity playground",
   "main": "./dist/cjs/diagram/index.js",
   "module": "./dist/esm/diagram/index.js",
