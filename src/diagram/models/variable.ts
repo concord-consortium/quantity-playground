@@ -6,6 +6,7 @@ import { getUsedInputs, replaceInputNames } from "../utils/mathjs-utils";
 import { createMath } from "../custom-mathjs";
 import { basicErrorMessage, ErrorMessage, getErrorMessage } from "../utils/error";
 import { Colors, legacyColors } from "../utils/theme-utils";
+import { roundForDisplay } from "../utils/math-utils";
 import { UnitsManager } from "../units-manager";
 
 export enum Operation {
@@ -353,9 +354,10 @@ export const Variable = types.model("Variable", {
     if (value === undefined) {
       return "NaN";
     }
+    const rounded = roundForDisplay(value, 3);
     // The first argument is the locale, using undefined means it should pick up the default
     // browser locale
-    return new Intl.NumberFormat(undefined, { maximumFractionDigits: 4 }).format(value);
+    return new Intl.NumberFormat(undefined, { maximumFractionDigits: 20 }).format(rounded);
   },
   get computedValueError() {
     return self.computedValueIncludingMessageAndError.error;

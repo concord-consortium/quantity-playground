@@ -1,6 +1,6 @@
 {
   "name": "@concord-consortium/diagram-view",
-  "version": "1.0.0-beta.2",
+  "version": "2.0.0",
   "description": "Concord Consortium quantity playground",
   "main": "./dist/cjs/diagram/index.js",
   "module": "./dist/esm/diagram/index.js",
@@ -63,6 +63,7 @@
     "postinstall": "patch-package",
     "clean": "rimraf dist",
     "tsc": "tsc -p tsconfig-esm.json && tsc -p tsconfig-cjs.json",
+    "check:types": "tsc --noEmit",
     "copycss-esm": "copyfiles -u 1 \"src/**/*.scss\" dist/esm",
     "copycss-cjs": "copyfiles -u 1 \"src/**/*.scss\" dist/cjs",
     "copycss": "npm-run-all copycss-esm copycss-cjs",
@@ -94,8 +95,8 @@
     "mobx-react-lite": "^3.3.0",
     "nanoid": "^3.3.1",
     "rc-slider": "^10.2.1",
-    "react": ">=18",
-    "react-dom": "^18.2.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
     "tslib": "^2.3.1"
   },
   "devDependencies": {
@@ -105,11 +106,10 @@
     "@jsdevtools/coverage-istanbul-loader": "^3.0.0",
     "@svgr/webpack": "^6.1.0",
     "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/react-hooks": "^7.0.2",
+    "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.2.0",
     "@types/jest": "^27.4.1",
-    "@types/react": "^17.0.75",
+    "@types/react": "^18.2.0",
     "@types/react-color": "^3.0.11",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
@@ -139,6 +139,7 @@
     "npm-run-all": "^4.1.5",
     "postcss-loader": "^6.2.1",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.47.0",
     "sass-loader": "^12.4.0",
     "script-loader": "^0.7.2",
@@ -161,5 +162,8 @@
     "react-color": ">=2.19.3",
     "react-textarea-autosize": "^8.3.4",
     "reactflow": "^11.7.2"
+  },
+  "overrides": {
+    "@types/d3-dispatch": "3.0.6"
   }
 }
