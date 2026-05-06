@@ -90,7 +90,7 @@
     "report-dir": "coverage-cypress"
   },
   "peerDependencies": {
-    "@concord-consortium/mobx-state-tree": "^5.1.8-cc.1",
+    "@concord-consortium/mobx-state-tree": "^6.0.0-cc.1",
     "mobx": "^6.4.2",
     "mobx-react-lite": "^3.3.0",
     "nanoid": "^3.3.1",
