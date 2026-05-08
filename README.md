@@ -114,20 +114,60 @@ To deploy a production release:
 
 ## Publishing the library to NPM
 
-1. Update the version number in `package.json` and `package-lock.json`
-    - `npm version --no-git-tag-version [patch|minor|major]`
-1. Verify that everything builds correctly
-    - `npm run lint && npm run test && npm run tsc`
-1. Commit and push the changes either directly or via GitHub pull request
-1. Create/push a tag for the new version (e.g. v0.5.0) and a description (e.g. Release 0.5.0)
-    - This can be done in a local git client or on the releases page of the GitHub repository
-1. Publish new release on releases page of GitHub repository
-1. Test a dry-run of publishing the package to the npm repository
-    - `npm run publish:test`
-1. Publish the package to the npm repository
-    - `npm run publish:npm`
+The library is published by the `Publish diagram-view to npm` GitHub Actions
+workflow (`.github/workflows/publish-library.yml`), triggered by pushing a
+`diagram-view-v<semver>` git tag. The committed `package.json` version is
+always `0.0.0-development`; the real version is parsed from the tag and
+stamped into `package.json` by the workflow before it publishes.
 
-The updates should show up on NPM at <https://www.npmjs.com/package/@concord-consortium/diagram-view> .
+The dist-tag is chosen automatically:
+
+- version contains `-` (prerelease) → `beta`
+- otherwise → `latest`
+
+Authentication uses npm trusted publishing (OIDC). No `NPM_TOKEN` secret is
+configured; instead, the npm package's "Trusted Publishers" settings list
+this repository and this workflow file.
+
+### Cutting a release
+
+1. Decide on the version. Follow semver. Use prerelease suffixes (e.g.
+   `2.0.0-pre.0`, `2.0.0-pre.1`, `2.0.0-rc.0`) for prereleases.
+1. Make sure the branch you're tagging is green on CI and merged to where
+   you want it (typically `main`).
+1. Create and push the tag:
+    - `git tag diagram-view-v<version>` (e.g. `diagram-view-v2.0.0-pre.0`)
+    - `git push origin diagram-view-v<version>`
+1. The workflow runs: `npm ci`, `npm run check:types`, `npm test`, then
+   stamps the version into `package.json` and runs `npm publish`. Watch it
+   under the Actions tab.
+1. After it completes, verify on
+   <https://www.npmjs.com/package/@concord-consortium/diagram-view>.
+
+The `diagram-view-v` tag prefix leaves the `v<semver>` namespace free for
+standalone-app releases (see "Releasing the standalone app" above), since
+this repo serves both roles from one `package.json`.
+
+### Local dry-run
+
+`npm run publish:test` runs `npm publish --dry-run` and prints the tarball
+contents. Useful for checking what files would ship before tagging. It does
+not contact the registry.
+
+### Local testing via yalc
+
+For testing changes in a consumer (e.g. CLUE) before publishing:
+
+1. From this repo: `npm run yalc:publish` — builds and pushes to the local
+   yalc store at version `0.0.0-development`. With `--push`, this also
+   updates any consumer that has previously run `yalc add`.
+1. From the consumer (one-time):
+   `yalc add @concord-consortium/diagram-view@0.0.0-development`. Specifying
+   the version pins to the local-development version and ignores any later
+   yalc publishes of other versions.
+1. To swap back to the registry version temporarily: `yalc retreat`.
+   To re-apply the yalc version: `yalc restore`. To remove permanently:
+   `yalc remove`.
 
 ## License
 
