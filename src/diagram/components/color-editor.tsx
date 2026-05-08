@@ -1,5 +1,5 @@
 import React from "react";
-import { CirclePicker } from "react-color";
+import Circle from "@uiw/react-color-circle";
 import { VariableType } from "../models/variable";
 import { Colors, colorPalette } from "../utils/theme-utils";
 
@@ -14,20 +14,19 @@ export const ColorEditor = ({variable, onShowColorEditor}: IProps) => {
   const colorsForPicker = colorPalette.map(c => c.hex);
   const selectedColorHex = colorPalette.find(c => c.name === variable.color)?.hex || "#e6e6e6";
 
-  const handleColorChange = (evt: any) => {
-    const colorName = colorPalette.find(c => c.hex === evt.hex)?.name || Colors.LightGray;
+  const handleColorChange = (color: { hex: string }) => {
+    const colorName = colorPalette.find(c => c.hex === color.hex)?.name || Colors.LightGray;
     variable.setColor(colorName);
     onShowColorEditor(false);
   };
 
   return (
     <div className="color-editor-dialog" title="color picker">
-      <CirclePicker
-        circleSize={14}
-        circleSpacing={8}
+      <Circle
         color={selectedColorHex}
         colors={colorsForPicker}
-        width={"132px"}
+        pointProps={{ style: { width: 14, height: 14 } }}
+        style={{ gap: 8, width: 132 }}
         onChange={handleColorChange}
       />
     </div>
