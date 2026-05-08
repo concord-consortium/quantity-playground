@@ -54,5 +54,7 @@ jobs:
           echo "Publishing $VERSION under dist-tag $DIST_TAG"
       - name: Stamp version into package.json
         run: npm version --no-git-tag-version "${{ steps.meta.outputs.version }}"
+      - name: Stamp version into src/diagram/version.ts
+        run: sed -i "s/0[.]0[.]0-development/${{ steps.meta.outputs.version }}/" src/diagram/version.ts
       - name: Publish to npm
         run: npm publish --access public --tag "${{ steps.meta.outputs.dist_tag }}" --provenance
