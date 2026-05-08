@@ -46,7 +46,7 @@ context("Test Diagram interaction", () => {
     cp().should("not.exist");
     clickButton();
     cp().should("exist");
-    cp().find("span div span div").eq(5).click();
+    cp().find("[title]").eq(5).click();
     nodeToEdit().should("have.class", "red");
     cp().should("not.exist");
 

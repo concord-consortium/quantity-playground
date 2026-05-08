@@ -32,7 +32,7 @@ export const enterNotes = (index: number, notes: string) => notesField(index).cl
 export const enterValue = (index: number, value: string) => valueField(index).clear().type(value);
 export const enterUnit = (index: number, unit: string) => unitField(index).clear().type(unit);
 
-export const circlePicker = (index: number) => node(index).find(".circle-picker");
+export const circlePicker = (index: number) => node(index).find(".w-color-circle");
 
 // The default setup has node with index 2 as the output node. 0, 1, and 3 are inputs.
 export const computedNodeIndex = 2;
