@@ -24,7 +24,12 @@ import "./diagram.scss";
 import "./quantity-node.scss";
 import "./floating-edge.scss";
 
-// Webpack/Vite consumers replace `process.env.NODE_ENV` at build time.
+// Webpack/Vite consumers replace `process.env.NODE_ENV` at build time. In a
+// raw-browser environment without that substitution, the unguarded reference
+// below would throw ReferenceError. We accept that risk to keep our onError
+// formatting byte-for-byte identical to reactflow's own devWarn
+// (@reactflow/core, devWarn): any environment that breaks ours would already
+// be breaking reactflow itself.
 declare const process: { env: { NODE_ENV?: string } };
 
 const nodeTypes = {
