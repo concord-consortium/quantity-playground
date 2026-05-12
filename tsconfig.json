@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
+    "skipLibCheck": true,
     "strict": true,
     "paths": {
       "mobx-state-tree": ["node_modules/@concord-consortium/mobx-state-tree/dist"]

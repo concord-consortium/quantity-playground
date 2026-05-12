@@ -7,7 +7,7 @@ export interface IErrorMessage {
 }
 export interface ErrorMessage {
   emoji?: string;
-  short: string | JSX.Element;
+  short: string | React.ReactElement;
   expanded?: string;
 }
 

@@ -1,5 +1,13 @@
 @import "../../scss/vars.scss";
 
+// React Flow needs the wrapper to have an explicit width/height to compute
+// its viewport (otherwise it logs error #004). Filling the parent is the
+// canonical pattern; consumers size the parent of <Diagram>.
+.diagram {
+  width: 100%;
+  height: 100%;
+}
+
 .def-container {
   height: 0;
   width: 0;

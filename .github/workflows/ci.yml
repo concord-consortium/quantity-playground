@@ -7,8 +7,8 @@ jobs:
     name: Build and Run Jest Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
       - name: Install Dependencies
         run: npm ci
       - name: Build
@@ -20,6 +20,31 @@ jobs:
         with:
           flags: jest
           token: ${{ secrets.CODECOV_TOKEN }}
+  peer_dep_matrix:
+    name: Verify React peerDep range
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        react: ["18.2.0", "19.0.0"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - name: Install Dependencies
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Override React version
+        run: |
+          npm install --no-save \
+            react@${{ matrix.react }} \
+            react-dom@${{ matrix.react }} \
+            @types/react@${{ matrix.react }} \
+            @types/react-dom@${{ matrix.react }}
+      - name: Type check
+        run: npm run check:types
+      - name: Run Tests
+        run: npm test -- --runInBand
   cypress:
     runs-on: ubuntu-latest
     strategy:
@@ -33,7 +58,7 @@ jobs:
         containers: [1, 2, 3]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: cypress-io/github-action@v4
         with:
           start: npm start
@@ -66,8 +91,8 @@ jobs:
       - build_test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
       - name: Install Dependencies
         run: npm ci
         env:

@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Controls, Edge, MiniMap, OnConnectEnd, OnConnectStart,
-  OnEdgeUpdateFunc, OnNodesDelete, ReactFlowProvider, Viewport
+  OnEdgeUpdateFunc, OnError, OnNodesDelete, ReactFlowProvider, Viewport
 } from "reactflow";
 
 import { DQRootType } from "../models/dq-root";
@@ -23,6 +23,14 @@ import "reactflow/dist/base.css";
 import "./diagram.scss";
 import "./quantity-node.scss";
 import "./floating-edge.scss";
+
+// Webpack/Vite consumers replace `process.env.NODE_ENV` at build time. In a
+// raw-browser environment without that substitution, the unguarded reference
+// below would throw ReferenceError. We accept that risk to keep our onError
+// formatting byte-for-byte identical to reactflow's own devWarn
+// (@reactflow/core, devWarn): any environment that breaks ours would already
+// be breaking reactflow itself.
+declare const process: { env: { NODE_ENV?: string } };
 
 const nodeTypes = {
   quantityNode: QuantityNode,
@@ -206,6 +214,17 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
     dqRoot.setSelectedNode();
   };
 
+  // CLUE pre-mounts read-only diagram thumbnails inside a collapsed bottom
+  // panel, so the wrapper measures 0x0 and React Flow logs warning #004 once
+  // per thumbnail. Swallow that one code; for everything else, mirror React
+  // Flow's own devWarn (prefix, help link, dev-only gating).
+  const onError: OnError = (code, message) => {
+    if (code === "004") return;
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[React Flow]: ${message} Help: https://reactflow.dev/error#${code}`);
+    }
+  };
+
   const { x, y, zoom } = dqRoot.flowTransform || { x: 0, y: 0, zoom: 1 };
   const defaultViewport: Viewport = { x, y, zoom };
 
@@ -241,6 +260,11 @@ export const _Diagram = ({ dqRoot, getDiagramExport, hideControls, hideNavigator
           onDragOver={onDragOver}
           onNodeDrag={onNodeDrag}
           onNodeDragStop={onNodeDragStop}
+          // @ts-expect-error reactflow's ReactFlowProps intersects
+          // HTMLAttributes<HTMLDivElement>['onError'] (a DOM event handler)
+          // with their OnError type, producing an unsatisfiable intersection.
+          // Our function matches OnError, which is what's actually invoked.
+          onError={onError}
           onMoveEnd={handleViewportChange}
           onPaneClick={onPaneClick}
           panOnDrag={true}

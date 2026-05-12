@@ -26,6 +26,8 @@ export {
   VariableSnapshot, 
   VariableType,
 
-  updateVariable, 
+  updateVariable,
   useSelectMultipleVariables,
 };
+
+export { version } from "./version";
