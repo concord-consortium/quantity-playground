@@ -42,8 +42,16 @@ jobs:
         run: npm test -- --runInBand
       - name: Resolve version and dist-tag from git tag
         id: meta
+        # The `diagram-view-v*` trigger glob matches any suffix; guard
+        # against malformed tags (empty, non-semver) before stamping
+        # anything or attempting to publish. Pattern allows X.Y.Z and
+        # X.Y.Z-prerelease.
         run: |
           VERSION="${GITHUB_REF_NAME#diagram-view-v}"
+          if ! npx --yes semver -- "$VERSION" >/dev/null; then
+            echo "::error::Tag version '$VERSION' is not valid semver"
+            exit 1
+          fi
           if [[ "$VERSION" == *-* ]]; then
             DIST_TAG=beta
           else
