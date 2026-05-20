@@ -48,8 +48,8 @@ jobs:
         # X.Y.Z-prerelease.
         run: |
           VERSION="${GITHUB_REF_NAME#diagram-view-v}"
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?$ ]]; then
-            echo "::error::Tag version '$VERSION' is not valid semver (expected X.Y.Z or X.Y.Z-prerelease)"
+          if ! npm version --no-git-tag-version --dry-run "$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag version '$VERSION' is not valid semver for npm version"
             exit 1
           fi
           if [[ "$VERSION" == *-* ]]; then
