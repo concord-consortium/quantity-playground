@@ -4,6 +4,18 @@ This project is configured to automatically deploy branches and tags to S3. Thes
 
 Deploying to S3 is handled by the [S3 Deploy Action](https://github.com/concord-consortium/s3-deploy-action). Building the `index-top.html` is done by webpack when it receives a `DEPLOY_PATH` environment variable from the S3 Deploy Action.
 
+## AWS Access
+
+The GitHub Actions workflows in this project are allowed to update files in S3 using OIDC.
+An IAM role has been created in AWS with a trust policy that allows GitHub Actions in
+this specific repository to assume this IAM role. The IAM role has a `RepoName` tag
+and a managed policy that uses this tag to give the role permission to update files under
+`s3://models-resources/quantity-playground/`.
+
+See
+[deploy-setup.md in starter-projects](https://github.com/concord-consortium/starter-projects/blob/main/doc/deploy-setup.md)
+for how the AWS side is set up.
+
 ## Where to find builds
 
 - **branch builds**: when a developer pushes a branch, GitHub actions will build and deploy it to `starter-projects/branch/[branch-name]/index.html`. If the branch starts or ends with a number this is automatically stripped off and not included in the folder name.
